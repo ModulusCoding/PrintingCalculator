@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Calculadora de Impressao 3D",
-  description: "Calculadora publica de precificacao para impressao 3D",
+  title: "Modulus 3D Calculator",
+  description:
+    "Plataforma SaaS para calculo de precificacao de impressao 3D, estimativas rapidas e vendas em marketplaces.",
 };
 
 export default function RootLayout({

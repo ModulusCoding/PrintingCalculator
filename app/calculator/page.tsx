@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 type MachineMode = "manual" | "automatic";
 
@@ -14,6 +16,7 @@ type Step = {
   title: string;
   eyebrow: string;
   description: string;
+  icon: string;
 };
 
 const steps: Step[] = [
@@ -21,36 +24,43 @@ const steps: Step[] = [
     title: "Material",
     eyebrow: "Etapa 1",
     description: "Calcule o custo real do filamento, resina ou outro insumo usado na peça.",
+    icon: "◐",
   },
   {
     title: "Energia",
     eyebrow: "Etapa 2",
     description: "Inclua o consumo da impressora durante todo o tempo de impressão.",
+    icon: "⚡",
   },
   {
     title: "Tempo de Máquina",
     eyebrow: "Etapa 3",
     description: "Defina quanto a impressora deve recuperar por hora de uso.",
+    icon: "◷",
   },
   {
     title: "Acabamento",
     eyebrow: "Etapa 4",
     description: "Some acabamento fixo e mão de obra para limpeza, pintura ou montagem.",
+    icon: "✦",
   },
   {
     title: "Embalagem",
     eyebrow: "Etapa 5",
     description: "Monte uma lista com todos os itens usados para entregar a peça.",
+    icon: "▣",
   },
   {
     title: "Impostos",
     eyebrow: "Etapa 6",
     description: "Aplique a alíquota sobre o subtotal operacional.",
+    icon: "%",
   },
   {
     title: "Resultado",
     eyebrow: "Etapa 7",
     description: "Veja o custo detalhado e três sugestões de venda com margem.",
+    icon: "✓",
   },
 ];
 
@@ -254,16 +264,20 @@ export default function CalculatorPage() {
   const showError = attemptedSteps.includes(currentStep) && stepErrors[currentStep];
 
   return (
+    
     <main className="min-h-screen bg-[#F9FAFB] text-[#000000]">
+      <Header></Header>
       <section className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
-        <header className="rounded-[8px] border border-black/10 bg-white px-5 py-6 shadow-sm sm:px-8">
+        <header className="relative overflow-hidden rounded-[8px] border border-black/10 bg-white px-5 py-6 shadow-xl shadow-[#5852FF]/10 sm:px-8">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_10%,rgba(88,82,255,0.18),transparent_30%),radial-gradient(circle_at_90%_0%,rgba(186,74,0,0.12),transparent_26%)]" />
+          <div className="relative">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#BA4A00]">
-                Calculadora publica
+                Professional Calculator
               </p>
               <h1 className="mt-3 text-3xl font-semibold tracking-normal text-black sm:text-4xl lg:text-5xl">
-                Precificacao para impressao 3D
+                Precificacao profissional para impressao 3D
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-black/70">
                 Material + Energia + Tempo de Maquina + Acabamento + Embalagem +
@@ -277,6 +291,7 @@ export default function CalculatorPage() {
               </span>
               custo total estimado
             </div>
+          </div>
           </div>
         </header>
 
@@ -299,13 +314,15 @@ export default function CalculatorPage() {
                 key={step.title}
                 type="button"
                 onClick={() => goToStep(index)}
-                className={`rounded-[8px] border px-3 py-2 text-left text-xs font-semibold transition ${
+                className={`rounded-[8px] border px-3 py-2 text-left text-xs font-semibold transition hover:-translate-y-0.5 ${
                   index === currentStep
-                    ? "border-[#5852FF] bg-[#5852FF] text-white shadow-sm"
-                    : "border-black/10 bg-[#F9FAFB] text-black/70 hover:border-[#5852FF]/50 hover:text-[#5852FF]"
+                    ? "border-[#5852FF] bg-[#5852FF] text-white shadow-lg shadow-[#5852FF]/25"
+                    : "border-black/10 bg-[#F9FAFB] text-black/70 hover:border-[#5852FF]/50 hover:bg-white hover:text-[#5852FF]"
                 }`}
               >
-                <span className="block text-[11px] opacity-70">{index + 1}</span>
+                <span className="mb-1 flex h-7 w-7 items-center justify-center rounded-[6px] bg-white/20 text-sm">
+                  {step.icon}
+                </span>
                 {step.title}
               </button>
             ))}
@@ -313,13 +330,16 @@ export default function CalculatorPage() {
         </div>
 
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="rounded-[8px] border border-black/10 bg-white p-5 shadow-sm transition-all duration-300 sm:p-7">
+          <div className="rounded-[8px] border border-black/10 bg-white p-5 shadow-xl shadow-black/5 transition-all duration-300 sm:p-7">
             <div className="mb-6 flex flex-col gap-2">
               <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#BA4A00]">
                 {current.eyebrow}
               </p>
-              <h2 className="text-2xl font-semibold text-black sm:text-3xl">
-                {current.title}
+              <h2 className="flex items-center gap-3 text-2xl font-semibold text-black sm:text-3xl">
+                <span className="flex h-11 w-11 items-center justify-center rounded-[8px] bg-[#5852FF]/10 text-xl text-[#5852FF]">
+                  {current.icon}
+                </span>
+                <span>{current.title}</span>
               </h2>
               <p className="max-w-2xl text-sm leading-6 text-black/65">
                 {current.description}
@@ -618,7 +638,7 @@ export default function CalculatorPage() {
             </div>
           </div>
 
-          <aside className="h-fit rounded-[8px] border border-black/10 bg-white p-5 shadow-sm lg:sticky lg:top-6">
+          <aside className="h-fit rounded-[8px] border border-black/10 bg-white p-5 shadow-xl shadow-black/5 lg:sticky lg:top-6">
             <h3 className="text-base font-semibold text-black">Resumo ao vivo</h3>
             <p className="mt-1 text-sm text-black/60">
               Os valores sao recalculados no navegador a cada alteracao.
@@ -640,6 +660,7 @@ export default function CalculatorPage() {
           </aside>
         </section>
       </section>
+      <Footer></Footer>
     </main>
   );
 }
@@ -802,19 +823,23 @@ function ResultView({
       title: "Economico",
       margin: "30%",
       value: values.precoEconomico,
+      badge: "entrada competitiva",
       className: "border-[#5852FF]/25 bg-[#5852FF]/5",
     },
     {
       title: "Profissional",
       margin: "50%",
       value: values.precoProfissional,
-      className: "border-[#5852FF] bg-[#5852FF] text-white shadow-md",
+      badge: "recomendado",
+      className:
+        "scale-[1.02] border-[#5852FF] bg-gradient-to-br from-[#5852FF] to-black text-white shadow-2xl shadow-[#5852FF]/30",
     },
     {
       title: "Premium",
       margin: "80%",
       value: values.precoPremium,
-      className: "border-[#BA4A00]/35 bg-[#BA4A00]/10",
+      badge: "maior margem",
+      className: "border-[#BA4A00]/35 bg-[#BA4A00]/10 shadow-lg shadow-[#BA4A00]/10",
     },
   ];
 
@@ -845,9 +870,14 @@ function ResultView({
           {priceCards.map((card) => (
             <div
               key={card.title}
-              className={`rounded-[8px] border p-5 shadow-sm ${card.className}`}
+              className={`rounded-[8px] border p-5 transition hover:-translate-y-1 ${card.className}`}
             >
-              <p className="text-sm font-semibold opacity-75">{card.title}</p>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold opacity-75">{card.title}</p>
+                <span className="rounded-full bg-white/75 px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] text-black">
+                  {card.badge}
+                </span>
+              </div>
               <strong className="mt-3 block text-3xl font-semibold">
                 {formatCurrency(card.value)}
               </strong>
