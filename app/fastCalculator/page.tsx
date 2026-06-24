@@ -22,7 +22,7 @@ export default function FastCalculator() {
   const [totalWeight, setTotalWeight] = useState("");
   const [materialPrice, setMaterialPrice] = useState("");
   const [printingHours, setPrintingHours] = useState("");
-  const [machineHourValue, setMachineHourValue] = useState("");
+  const [printingMinutes, setPrintingMinutes] = useState("");
   const [margin, setMargin] = useState("30");
 
   const result = useMemo(() => {
@@ -30,19 +30,20 @@ export default function FastCalculator() {
     const pesoTotalAdquirido = toNumber(totalWeight);
     const precoMaterial = toNumber(materialPrice);
     const horasImpressao = toNumber(printingHours);
-    const valorHoraMaquina = toNumber(machineHourValue);
+    const minutosImpressao = toNumber(printingMinutes);
     const margem = toNumber(margin);
 
+    const totalPrintingMinutes = horasImpressao * 60 + minutosImpressao;
     const custoPorGrama =
       pesoTotalAdquirido > 0 ? precoMaterial / pesoTotalAdquirido : 0;
     const custoMaterial = materialUtilizado * custoPorGrama;
-    const custoMaquina = horasImpressao * valorHoraMaquina;
+    const custoMaquina = 0;
     const custoTotal = custoMaterial + custoMaquina;
     const precoFinal = custoTotal * (1 + margem / 100);
     const lucro = precoFinal - custoTotal;
 
-    return { custoMaterial, custoMaquina, custoTotal, precoFinal, lucro };
-  }, [machineHourValue, margin, materialPrice, materialUsed, printingHours, totalWeight]);
+    return { custoMaterial, custoMaquina, custoTotal, precoFinal, lucro, totalPrintingMinutes };
+  }, [margin, materialPrice, materialUsed, printingHours, printingMinutes, totalWeight]);
 
   return (
     <main className="min-h-screen bg-[#F9FAFB] text-black">
@@ -70,11 +71,11 @@ export default function FastCalculator() {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Material utilizado" suffix="g" value={materialUsed} onChange={setMaterialUsed} placeholder="120" />
-            <Field label="Peso total adquirido" suffix="g" value={totalWeight} onChange={setTotalWeight} placeholder="1000" />
-            <Field label="Preco pago pelo material" prefix="R$" value={materialPrice} onChange={setMaterialPrice} placeholder="89,90" />
-            <Field label="Tempo de impressao" suffix="h" value={printingHours} onChange={setPrintingHours} placeholder="8" />
-            <Field label="Valor por hora da maquina" prefix="R$" value={machineHourValue} onChange={setMachineHourValue} placeholder="5,00" />
+            <Field label="Filamento Consumido" suffix="g" value={materialUsed} onChange={setMaterialUsed} placeholder="120" />
+            <Field label="Tamanho do Carretel" suffix="g" value={totalWeight} onChange={setTotalWeight} placeholder="1000" />
+            <Field label="Preço do Carretel" prefix="R$" value={materialPrice} onChange={setMaterialPrice} placeholder="89,90" />
+            <Field label="Horas de impressão" suffix="h" value={printingHours} onChange={setPrintingHours} placeholder="1" />
+            <Field label="Minutos de impressão" suffix="min" value={printingMinutes} onChange={setPrintingMinutes} placeholder="30" />
             <Field label="Margem desejada" suffix="%" value={margin} onChange={setMargin} placeholder="30" />
           </div>
         </div>
@@ -90,7 +91,7 @@ export default function FastCalculator() {
             <BigNumber label="Lucro" value={money(result.lucro)} accent />
           </div>
           <div className="mt-6 rounded-[8px] border border-white/10 p-4 text-sm text-white/70">
-            Material: {money(result.custoMaterial)} · Maquina: {money(result.custoMaquina)}
+            Material: {money(result.custoMaterial)}
           </div>
         </aside>
       </section>

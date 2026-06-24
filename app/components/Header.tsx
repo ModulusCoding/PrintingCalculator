@@ -41,12 +41,9 @@ export default function Header() {
       <header className="sticky top-0 z-40 border-b border-black/10 bg-[#F9FAFB]/85 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-8">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 rounded-[10px] border border-black/10 bg-white/85 px-4 py-3 shadow-sm">
           <Link href="/" className="flex min-w-0 items-center gap-2">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[7px] bg-[#5852FF]">
-              <span className="text-sm font-black text-white">M</span>
-            </span>
-            <span className="truncate text-sm font-black tracking-[0.18em] text-[#5852FF]">
-              MODULUS
-            </span>
+           <div>
+            <img className="h-12" src="../logo_Horizontal.png " alt="Logo Modulus" ></img>
+            </div>
           </Link>
 
           <nav className="hidden items-center gap-1 md:flex" aria-label="Navegacao principal">

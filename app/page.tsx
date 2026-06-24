@@ -290,7 +290,7 @@ export default function Home() {
             </p>
             <h2 className="mt-3 text-4xl font-black">Conheca a Modulus</h2>
             <p className="mt-3 text-base leading-7 text-black/55">
-              Construida para quem leva a fabricacao digital a serio — e quer numeros confiaveis antes de precificar.
+              Construida para quem leva a fabricacao digital a serio e quer números confiáveis antes de precificar.
             </p>
           </div>
           <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -322,7 +322,7 @@ export default function Home() {
               <h2 className="mt-2 text-4xl font-black">Como funciona</h2>
             </div>
             <p className="max-w-xs text-sm text-black/50">
-              Tres passos e voce ja tem o preco ideal na tela.
+              <em className="font-bold">Três passos e você ja tem o preco ideal na tela.</em>
             </p>
           </div>
 
