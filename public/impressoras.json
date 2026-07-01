@@ -1,0 +1,380 @@
+{
+  "observacao_geral": "Valores de consumo (pico/médio) foram compilados a partir de especificações oficiais dos fabricantes quando disponíveis. Para modelos muito recentes sem dado oficial de watts publicado, o valor foi estimado com base na potência da mesa/câmara aquecida e na classe do equipamento (mesma metodologia usada nos modelos originais do arquivo). Recomenda-se confirmar no manual/spec sheet oficial antes de dimensionar instalação elétrica.",
+  "marcas_impressoras_3d": [
+    {
+      "marca": "Bambu Lab",
+      "modelos": [
+        {
+          "id": "bambu_a1_mini",
+          "nome_modelo": "A1 Mini",
+          "consumo_W": { "pico": 300, "medio": 80 }
+        },
+        {
+          "id": "bambu_a1",
+          "nome_modelo": "A1",
+          "consumo_W": { "pico": 1300, "medio": 110 }
+        },
+        {
+          "id": "bambu_a2l",
+          "nome_modelo": "A2L",
+          "consumo_W": { "pico": 1000, "medio": 120 }
+        },
+        {
+          "id": "bambu_p1s",
+          "nome_modelo": "P1S",
+          "consumo_W": { "pico": 1000, "medio": 90 }
+        },
+        {
+          "id": "bambu_p2s",
+          "nome_modelo": "P2S",
+          "consumo_W": { "pico": 1000, "medio": 100 }
+        },
+        {
+          "id": "bambu_x1c",
+          "nome_modelo": "X1 Carbon",
+          "consumo_W": { "pico": 1000, "medio": 120 }
+        },
+        {
+          "id": "bambu_x1e",
+          "nome_modelo": "X1E",
+          "consumo_W": { "pico": 1000, "medio": 150 }
+        },
+        {
+          "id": "bambu_x2d",
+          "nome_modelo": "X2D",
+          "consumo_W": { "pico": 1000, "medio": 140 }
+        },
+        {
+          "id": "bambu_h2s",
+          "nome_modelo": "H2S",
+          "consumo_W": { "pico": 1500, "medio": 220 }
+        },
+        {
+          "id": "bambu_h2d",
+          "nome_modelo": "H2D",
+          "consumo_W": { "pico": 1500, "medio": 250 }
+        },
+        {
+          "id": "bambu_h2c",
+          "nome_modelo": "H2C (Vortek)",
+          "consumo_W": { "pico": 1500, "medio": 260 }
+        }
+      ]
+    },
+    {
+      "marca": "Creality",
+      "modelos": [
+        {
+          "id": "creality_ender_3_v3_se",
+          "nome_modelo": "Ender 3 V3 SE",
+          "consumo_W": { "pico": 350, "medio": 110 }
+        },
+        {
+          "id": "creality_ender_3_v3",
+          "nome_modelo": "Ender 3 V3",
+          "consumo_W": { "pico": 360, "medio": 115 }
+        },
+        {
+          "id": "creality_ender_3_v3_plus",
+          "nome_modelo": "Ender 3 V3 Plus",
+          "consumo_W": { "pico": 500, "medio": 150 }
+        },
+        {
+          "id": "creality_ender_3_v4",
+          "nome_modelo": "Ender-3 V4",
+          "consumo_W": { "pico": 400, "medio": 120 }
+        },
+        {
+          "id": "creality_ender_5_max",
+          "nome_modelo": "Ender-5 Max",
+          "consumo_W": { "pico": 700, "medio": 180 }
+        },
+        {
+          "id": "creality_k1_max",
+          "nome_modelo": "K1 Max",
+          "consumo_W": { "pico": 1000, "medio": 180 }
+        },
+        {
+          "id": "creality_k1c",
+          "nome_modelo": "K1C",
+          "consumo_W": { "pico": 350, "medio": 130 }
+        },
+        {
+          "id": "creality_k2",
+          "nome_modelo": "K2",
+          "consumo_W": { "pico": 1000, "medio": 190 }
+        },
+        {
+          "id": "creality_k2_se",
+          "nome_modelo": "K2 SE",
+          "consumo_W": { "pico": 800, "medio": 160 }
+        },
+        {
+          "id": "creality_k2_pro",
+          "nome_modelo": "K2 Pro",
+          "consumo_W": { "pico": 1000, "medio": 200 }
+        },
+        {
+          "id": "creality_k2_plus",
+          "nome_modelo": "K2 Plus",
+          "consumo_W": { "pico": 1100, "medio": 220 }
+        },
+        {
+          "id": "creality_hi",
+          "nome_modelo": "Creality Hi",
+          "consumo_W": { "pico": 900, "medio": 200 }
+        },
+        {
+          "id": "creality_sparkx_i7",
+          "nome_modelo": "SparkX i7",
+          "consumo_W": { "pico": 500, "medio": 150 }
+        },
+        {
+          "id": "creality_halot_mage",
+          "nome_modelo": "HALOT-MAGE (Resina)",
+          "consumo_W": { "pico": 130, "medio": 100 }
+        },
+        {
+          "id": "creality_halot_mage_s",
+          "nome_modelo": "HALOT-MAGE S (Resina)",
+          "consumo_W": { "pico": 140, "medio": 105 }
+        },
+        {
+          "id": "creality_halot_x1",
+          "nome_modelo": "HALOT-X1 (Resina)",
+          "consumo_W": { "pico": 150, "medio": 110 }
+        }
+      ]
+    },
+    {
+      "marca": "Elegoo",
+      "modelos": [
+        {
+          "id": "elegoo_mars_5_ultra",
+          "nome_modelo": "Mars 5 Ultra (Resina)",
+          "consumo_W": { "pico": 72, "medio": 55 }
+        },
+        {
+          "id": "elegoo_saturn_3_ultra",
+          "nome_modelo": "Saturn 3 Ultra (Resina)",
+          "consumo_W": { "pico": 130, "medio": 95 }
+        },
+        {
+          "id": "elegoo_saturn_4_ultra",
+          "nome_modelo": "Saturn 4 Ultra (Resina)",
+          "consumo_W": { "pico": 150, "medio": 110 }
+        },
+        {
+          "id": "elegoo_jupiter_se",
+          "nome_modelo": "Jupiter SE (Resina)",
+          "consumo_W": { "pico": 300, "medio": 200 }
+        },
+        {
+          "id": "elegoo_neptune_4_pro",
+          "nome_modelo": "Neptune 4 Pro",
+          "consumo_W": { "pico": 350, "medio": 120 }
+        },
+        {
+          "id": "elegoo_neptune_4_plus",
+          "nome_modelo": "Neptune 4 Plus",
+          "consumo_W": { "pico": 500, "medio": 150 }
+        },
+        {
+          "id": "elegoo_neptune_4_max",
+          "nome_modelo": "Neptune 4 Max",
+          "consumo_W": { "pico": 600, "medio": 170 }
+        },
+        {
+          "id": "elegoo_centauri_carbon",
+          "nome_modelo": "Centauri Carbon",
+          "consumo_W": { "pico": 350, "medio": 130 }
+        }
+      ]
+    },
+    {
+      "marca": "Anycubic",
+      "modelos": [
+        {
+          "id": "anycubic_kobra_3",
+          "nome_modelo": "Kobra 3",
+          "consumo_W": { "pico": 350, "medio": 120 }
+        },
+        {
+          "id": "anycubic_kobra_3_plus",
+          "nome_modelo": "Kobra 3 Plus",
+          "consumo_W": { "pico": 400, "medio": 130 }
+        },
+        {
+          "id": "anycubic_kobra_3_max",
+          "nome_modelo": "Kobra 3 Max",
+          "consumo_W": { "pico": 600, "medio": 160 }
+        },
+        {
+          "id": "anycubic_kobra_2_pro",
+          "nome_modelo": "Kobra 2 Pro",
+          "consumo_W": { "pico": 350, "medio": 115 }
+        },
+        {
+          "id": "anycubic_photon_mono_m5s",
+          "nome_modelo": "Photon Mono M5s (Resina)",
+          "consumo_W": { "pico": 100, "medio": 80 }
+        },
+        {
+          "id": "anycubic_photon_mono_x",
+          "nome_modelo": "Photon Mono X (Resina)",
+          "consumo_W": { "pico": 120, "medio": 90 }
+        },
+        {
+          "id": "anycubic_photon_d2",
+          "nome_modelo": "Photon D2 (DLP - Resina)",
+          "consumo_W": { "pico": 90, "medio": 70 }
+        }
+      ]
+    },
+    {
+      "marca": "Flashforge",
+      "modelos": [
+        {
+          "id": "flashforge_adv_5m",
+          "nome_modelo": "Adventurer 5M",
+          "consumo_W": { "pico": 350, "medio": 110 }
+        },
+        {
+          "id": "flashforge_adv_5m_pro",
+          "nome_modelo": "Adventurer 5M Pro",
+          "consumo_W": { "pico": 350, "medio": 120 }
+        },
+        {
+          "id": "flashforge_ad5x",
+          "nome_modelo": "AD5X",
+          "consumo_W": { "pico": 400, "medio": 130 }
+        },
+        {
+          "id": "flashforge_guider_3",
+          "nome_modelo": "Guider 3",
+          "consumo_W": { "pico": 500, "medio": 200 }
+        },
+        {
+          "id": "flashforge_guider_3_ultra",
+          "nome_modelo": "Guider 3 Ultra",
+          "consumo_W": { "pico": 700, "medio": 230 }
+        },
+        {
+          "id": "flashforge_creator_4",
+          "nome_modelo": "Creator 4",
+          "consumo_W": { "pico": 750, "medio": 250 }
+        }
+      ]
+    },
+    {
+      "marca": "Prusa Research",
+      "modelos": [
+        {
+          "id": "prusa_mini_plus",
+          "nome_modelo": "Original Prusa MINI+",
+          "consumo_W": { "pico": 120, "medio": 60 }
+        },
+        {
+          "id": "prusa_mk4",
+          "nome_modelo": "Original Prusa MK4",
+          "consumo_W": { "pico": 240, "medio": 100 }
+        },
+        {
+          "id": "prusa_mk4s",
+          "nome_modelo": "Original Prusa MK4S",
+          "consumo_W": { "pico": 250, "medio": 100 }
+        },
+        {
+          "id": "prusa_core_one",
+          "nome_modelo": "Original Prusa CORE One",
+          "consumo_W": { "pico": 350, "medio": 130 }
+        },
+        {
+          "id": "prusa_xl",
+          "nome_modelo": "Original Prusa XL",
+          "consumo_W": { "pico": 1000, "medio": 300 }
+        }
+      ]
+    },
+    {
+      "marca": "AnkerMake",
+      "modelos": [
+        {
+          "id": "ankermake_m5",
+          "nome_modelo": "AnkerMake M5",
+          "consumo_W": { "pico": 350, "medio": 150 }
+        },
+        {
+          "id": "ankermake_m5c",
+          "nome_modelo": "AnkerMake M5C",
+          "consumo_W": { "pico": 240, "medio": 110 }
+        }
+      ]
+    },
+    {
+      "marca": "Qidi Tech",
+      "modelos": [
+        {
+          "id": "qidi_xsmart_3",
+          "nome_modelo": "X-Smart 3",
+          "consumo_W": { "pico": 350, "medio": 120 }
+        },
+        {
+          "id": "qidi_xplus_4",
+          "nome_modelo": "X-Plus 4",
+          "consumo_W": { "pico": 850, "medio": 210 }
+        },
+        {
+          "id": "qidi_xmax_3",
+          "nome_modelo": "X-Max 3",
+          "consumo_W": { "pico": 900, "medio": 250 }
+        },
+        {
+          "id": "qidi_q1_pro",
+          "nome_modelo": "Q1 Pro",
+          "consumo_W": { "pico": 350, "medio": 130 }
+        }
+      ]
+    },
+    {
+      "marca": "Artillery",
+      "modelos": [
+        {
+          "id": "artillery_sidewinder_x4_pro",
+          "nome_modelo": "Sidewinder X4 Pro",
+          "consumo_W": { "pico": 300, "medio": 120 }
+        },
+        {
+          "id": "artillery_sidewinder_x3_plus",
+          "nome_modelo": "Sidewinder X3 Plus",
+          "consumo_W": { "pico": 400, "medio": 140 }
+        },
+        {
+          "id": "artillery_genius_pro",
+          "nome_modelo": "Genius Pro",
+          "consumo_W": { "pico": 250, "medio": 90 }
+        }
+      ]
+    },
+    {
+      "marca": "Phrozen",
+      "modelos": [
+        {
+          "id": "phrozen_sonic_mighty_8k",
+          "nome_modelo": "Sonic Mighty 8K (Resina)",
+          "consumo_W": { "pico": 120, "medio": 90 }
+        },
+        {
+          "id": "phrozen_sonic_mini_8ks",
+          "nome_modelo": "Sonic Mini 8K S (Resina)",
+          "consumo_W": { "pico": 50, "medio": 40 }
+        },
+        {
+          "id": "phrozen_sonic_mega_8ks",
+          "nome_modelo": "Sonic Mega 8K S (Resina)",
+          "consumo_W": { "pico": 200, "medio": 150 }
+        }
+      ]
+    }
+  ]
+}

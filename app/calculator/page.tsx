@@ -1,6 +1,8 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
+import printersData from "../../public/impressoras.json";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
@@ -15,51 +17,102 @@ type PackagingItem = {
 type Step = {
   title: string;
   eyebrow: string;
-  description: string;
+  description: ReactNode;
   icon: string;
+};
+
+type PrinterCatalog = {
+  marcas_impressoras_3d: {
+    marca: string;
+    modelos: {
+      id: string;
+      nome_modelo: string;
+      consumo_W: {
+        pico: number;
+        medio: number;
+      };
+    }[];
+  }[];
+};
+
+type PrinterOption = {
+  id: string;
+  brand: string;
+  model: string;
+  averageConsumption: number;
+  peakConsumption: number;
+  searchableText: string;
 };
 
 const steps: Step[] = [
   {
     title: "Material",
     eyebrow: "Etapa 1",
-    description: "Calcule o custo real do filamento, resina ou outro insumo usado na peça.",
+    description: (
+      <>
+        Calcule o <strong>custo real</strong> do filamento, resina ou outro insumo usado na peça.
+      </>
+    ),
     icon: "◐",
   },
   {
     title: "Energia",
     eyebrow: "Etapa 2",
-    description: "Inclua o consumo da impressora durante todo o tempo de impressão.",
+    description: (
+      <>
+        Encontre sua impressora por <strong>nome ou marca</strong> e use o consumo médio em Watts, sem chute.
+      </>
+    ),
     icon: "⚡",
   },
   {
     title: "Tempo de Máquina",
     eyebrow: "Etapa 3",
-    description: "Defina quanto a impressora deve recuperar por hora de uso.",
+    description: (
+      <>
+        Defina quanto a impressora precisa recuperar por hora para manter sua operação <em>saudável</em>.
+      </>
+    ),
     icon: "◷",
   },
   {
     title: "Acabamento",
     eyebrow: "Etapa 4",
-    description: "Some acabamento fixo e mão de obra para limpeza, pintura ou montagem.",
+    description: (
+      <>
+        Some acabamento fixo e mão de obra para que o detalhe final também entre no <strong>preço certo</strong>.
+      </>
+    ),
     icon: "✦",
   },
   {
     title: "Embalagem",
     eyebrow: "Etapa 5",
-    description: "Monte uma lista com todos os itens usados para entregar a peça.",
+    description: (
+      <>
+        Monte uma lista com tudo o que protege e valoriza a entrega da peça.
+      </>
+    ),
     icon: "▣",
   },
   {
     title: "Impostos",
     eyebrow: "Etapa 6",
-    description: "Aplique a alíquota sobre o subtotal operacional.",
+    description: (
+      <>
+        Aplique a alíquota sobre o subtotal operacional e evite vender com margem <em>ilusória</em>.
+      </>
+    ),
     icon: "%",
   },
   {
     title: "Resultado",
     eyebrow: "Etapa 7",
-    description: "Veja o custo detalhado e três sugestões de venda com margem.",
+    description: (
+      <>
+        Veja o custo detalhado e três sugestões de venda para decidir com <strong>clareza</strong>.
+      </>
+    ),
     icon: "✓",
   },
 ];
@@ -84,12 +137,34 @@ const toNumber = (value: string) => {
 
 const formatCurrency = (value: number) => currencyFormatter.format(value || 0);
 
+const normalizeSearch = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+const printerOptions: PrinterOption[] = (printersData as PrinterCatalog)
+  .marcas_impressoras_3d.flatMap((brand) =>
+    brand.modelos.map((printer) => ({
+      id: printer.id,
+      brand: brand.marca,
+      model: printer.nome_modelo,
+      averageConsumption: printer.consumo_W.medio,
+      peakConsumption: printer.consumo_W.pico,
+      searchableText: normalizeSearch(`${brand.marca} ${printer.nome_modelo}`),
+    })),
+  )
+  .sort((a, b) => `${a.brand} ${a.model}`.localeCompare(`${b.brand} ${b.model}`));
+
 export default function CalculatorPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [attemptedSteps, setAttemptedSteps] = useState<number[]>([]);
+  const [pieceQuantity, setPieceQuantity] = useState("1");
   const [quantityUsed, setQuantityUsed] = useState("");
   const [totalWeight, setTotalWeight] = useState("");
   const [materialPrice, setMaterialPrice] = useState("");
+  const [printerSearch, setPrinterSearch] = useState("");
+  const [selectedPrinterId, setSelectedPrinterId] = useState("");
   const [printerConsumption, setPrinterConsumption] = useState("");
   const [printingHours, setPrintingHours] = useState("");
   const [kwhValue, setKwhValue] = useState("");
@@ -109,6 +184,7 @@ export default function CalculatorPage() {
 
   const values = useMemo(() => {
     const quantidadeUtilizada = toNumber(quantityUsed);
+    const quantidadePecas = Math.max(1, toNumber(pieceQuantity) || 1);
     const pesoTotalAdquirido = toNumber(totalWeight);
     const precoMaterial = toNumber(materialPrice);
     const consumoWatts = toNumber(printerConsumption);
@@ -124,18 +200,18 @@ export default function CalculatorPage() {
 
     const custoPorGrama =
       pesoTotalAdquirido > 0 ? precoMaterial / pesoTotalAdquirido : 0;
-    const custoMaterial = quantidadeUtilizada * custoPorGrama;
+    const custoMaterial = quantidadeUtilizada * custoPorGrama * quantidadePecas;
     const consumoKW = consumoWatts / 1000;
-    const custoEnergia = consumoKW * horasImpressao * valorKwh;
+    const custoEnergia = consumoKW * horasImpressao * valorKwh * quantidadePecas;
     const valorHoraMaquina =
       machineMode === "automatic"
         ? vidaUtilHoras > 0
           ? valorImpressora / vidaUtilHoras
           : 0
         : valorHoraManual;
-    const custoMaquina = horasImpressao * valorHoraMaquina;
+    const custoMaquina = horasImpressao * valorHoraMaquina * quantidadePecas;
     const custoAcabamento =
-      valorFixoAcabamento + horasAcabamento * valorHoraAcabamento;
+      (valorFixoAcabamento + horasAcabamento * valorHoraAcabamento) * quantidadePecas;
     const custoEmbalagem = packagingItems.reduce(
       (total, item) => total + toNumber(item.value),
       0,
@@ -154,6 +230,7 @@ export default function CalculatorPage() {
       custoMaterial,
       custoEnergia,
       valorHoraMaquina,
+      quantidadePecas,
       custoMaquina,
       custoAcabamento,
       custoEmbalagem,
@@ -186,7 +263,7 @@ export default function CalculatorPage() {
     const required = (value: string) => toNumber(value) > 0;
 
     return [
-      !required(quantityUsed) || !required(totalWeight) || !required(materialPrice),
+      !required(pieceQuantity) || !required(quantityUsed) || !required(totalWeight) || !required(materialPrice),
       !required(printerConsumption) || !required(printingHours) || !required(kwhValue),
       machineMode === "manual"
         ? !required(machineHourValue)
@@ -218,6 +295,20 @@ export default function CalculatorPage() {
 
   const progress = ((currentStep + 1) / steps.length) * 100;
   const current = steps[currentStep];
+  const selectedPrinter = printerOptions.find(
+    (printer) => printer.id === selectedPrinterId,
+  );
+  const filteredPrinters = useMemo(() => {
+    const term = normalizeSearch(printerSearch.trim());
+
+    if (!term) {
+      return printerOptions.slice(0, 8);
+    }
+
+    return printerOptions
+      .filter((printer) => printer.searchableText.includes(term))
+      .slice(0, 8);
+  }, [printerSearch]);
 
   const goNext = () => {
     if (stepErrors[currentStep]) {
@@ -261,6 +352,12 @@ export default function CalculatorPage() {
     );
   };
 
+  const selectPrinter = (printer: PrinterOption) => {
+    setSelectedPrinterId(printer.id);
+    setPrinterSearch(`${printer.brand} ${printer.model}`);
+    setPrinterConsumption(String(printer.averageConsumption));
+  };
+
   const showError = attemptedSteps.includes(currentStep) && stepErrors[currentStep];
 
   return (
@@ -280,8 +377,8 @@ export default function CalculatorPage() {
                 Precificacao profissional para impressao 3D
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-black/70">
-                Material + Energia + Tempo de Maquina + Acabamento + Embalagem +
-                Impostos + Margem = Preco Final
+                <strong>Material</strong> + Energia + Tempo de Maquina + Acabamento + Embalagem +
+                Impostos + <em>Margem</em> = Preco Final
               </p>
             </div>
 
@@ -349,6 +446,15 @@ export default function CalculatorPage() {
             {currentStep === 0 && (
               <div className="grid gap-4 sm:grid-cols-2">
                 <NumberField
+                  label="Quantidade de peças"
+                  hint="Número total de peças que serão produzidas ou vendidas."
+                  suffix="peças"
+                  value={pieceQuantity}
+                  onChange={setPieceQuantity}
+                  placeholder="1"
+                  required
+                />
+                <NumberField
                   label="Quantidade utilizada"
                   hint="Quantidade utilizada em gramas."
                   suffix="g"
@@ -384,39 +490,95 @@ export default function CalculatorPage() {
             )}
 
             {currentStep === 1 && (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <NumberField
-                  label="Consumo medio da impressora"
-                  hint="Potencia media durante a impressao, em Watts."
-                  suffix="W"
-                  value={printerConsumption}
-                  onChange={setPrinterConsumption}
-                  placeholder="120"
-                  required
-                />
-                <NumberField
-                  label="Tempo de impressao"
-                  hint="Tempo total de impressao em horas."
-                  suffix="h"
-                  value={printingHours}
-                  onChange={setPrintingHours}
-                  placeholder="8"
-                  required
-                />
-                <NumberField
-                  label="Valor do kWh"
-                  hint="Valor cobrado por kWh na sua conta de energia."
-                  prefix="R$"
-                  value={kwhValue}
-                  onChange={setKwhValue}
-                  placeholder="0,95"
-                  required
-                />
-                <MetricCard
-                  label="Custo de energia"
-                  value={formatCurrency(values.custoEnergia)}
-                  helper="Consumo em kW multiplicado pelas horas e pelo valor do kWh."
-                />
+              <div className="flex flex-col gap-5">
+                <div className="rounded-[8px] border border-black/10 bg-[#F9FAFB] p-4">
+                  <TextField
+                    label="Buscar impressora"
+                    hint="Digite a marca ou o modelo para encontrar o consumo médio cadastrado."
+                    value={printerSearch}
+                    onChange={(value) => {
+                      setPrinterSearch(value);
+                      setSelectedPrinterId("");
+                    }}
+                    placeholder="Bambu Lab A1, Ender 3, Prusa..."
+                  />
+
+                  <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                    {filteredPrinters.map((printer) => (
+                      <button
+                        key={printer.id}
+                        type="button"
+                        onClick={() => selectPrinter(printer)}
+                        className={`rounded-[8px] border p-3 text-left transition hover:-translate-y-0.5 hover:border-[#5852FF] hover:bg-white ${
+                          selectedPrinterId === printer.id
+                            ? "border-[#5852FF] bg-white shadow-sm shadow-[#5852FF]/20"
+                            : "border-black/10 bg-white/70"
+                        }`}
+                      >
+                        <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-[#BA4A00]">
+                          {printer.brand}
+                        </span>
+                        <strong className="mt-1 block text-sm text-black">
+                          {printer.model}
+                        </strong>
+                        <span className="mt-2 block text-xs text-black/60">
+                          Médio: <strong>{printer.averageConsumption} W</strong> · Pico: {printer.peakConsumption} W
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {filteredPrinters.length === 0 && (
+                    <p className="mt-4 rounded-[8px] border border-[#BA4A00]/20 bg-[#BA4A00]/10 px-3 py-2 text-sm text-[#8f3900]">
+                      Nenhum modelo encontrado. Use o campo manual de Watts abaixo para continuar o cálculo.
+                    </p>
+                  )}
+
+                  {selectedPrinter && (
+                    <p className="mt-4 text-sm leading-6 text-black/65">
+                      Usando o consumo médio da <strong>{selectedPrinter.brand} {selectedPrinter.model}</strong>:{" "}
+                      <strong>{selectedPrinter.averageConsumption} W</strong>.
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <NumberField
+                    label="Consumo médio usado no cálculo"
+                    hint="Potência média durante a impressão, em Watts. Você pode ajustar manualmente."
+                    suffix="W"
+                    value={printerConsumption}
+                    onChange={(value) => {
+                      setPrinterConsumption(value);
+                      setSelectedPrinterId("");
+                    }}
+                    placeholder="120"
+                    required
+                  />
+                  <NumberField
+                    label="Tempo de impressao"
+                    hint="Tempo total de impressao em horas."
+                    suffix="h"
+                    value={printingHours}
+                    onChange={setPrintingHours}
+                    placeholder="8"
+                    required
+                  />
+                  <NumberField
+                    label="Valor do kWh"
+                    hint="Valor cobrado por kWh na sua conta de energia."
+                    prefix="R$"
+                    value={kwhValue}
+                    onChange={setKwhValue}
+                    placeholder="0,95"
+                    required
+                  />
+                  <MetricCard
+                    label="Custo de energia"
+                    value={formatCurrency(values.custoEnergia)}
+                    helper="Consumo em kW multiplicado pelas horas e pelo valor do kWh."
+                  />
+                </div>
               </div>
             )}
 
@@ -641,7 +803,7 @@ export default function CalculatorPage() {
           <aside className="h-fit rounded-[8px] border border-black/10 bg-white p-5 shadow-xl shadow-black/5 lg:sticky lg:top-6">
             <h3 className="text-base font-semibold text-black">Resumo ao vivo</h3>
             <p className="mt-1 text-sm text-black/60">
-              Os valores sao recalculados no navegador a cada alteracao.
+              Os valores sao recalculados <strong>em tempo real</strong> a cada alteracao.
             </p>
             <div className="mt-5 space-y-3">
               <SummaryRow label="Material" value={values.custoMaterial} />

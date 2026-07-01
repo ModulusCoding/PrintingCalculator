@@ -18,6 +18,7 @@ const toNumber = (value: string) => {
 const money = (value: number) => currencyFormatter.format(value || 0);
 
 const fields = [
+  ["Quantidade de peças", "peças", "1"],
   ["Material utilizado", "g", "120"],
   ["Peso total adquirido", "g", "1000"],
   ["Preco pago pelo material", "R$", "89,90"],
@@ -33,6 +34,7 @@ const fields = [
 
 export default function MarketplaceCalculator() {
   const [values, setValues] = useState<Record<string, string>>({
+    "Quantidade de peças": "1",
     "Impostos": "6",
     "Taxa Marketplace": "16",
     "Taxa de Anuncio": "4",
@@ -40,6 +42,7 @@ export default function MarketplaceCalculator() {
   });
 
   const result = useMemo(() => {
+    const quantidadePecas = Math.max(1, toNumber(values["Quantidade de peças"] || "") || 1);
     const materialUtilizado = toNumber(values["Material utilizado"] || "");
     const pesoTotalAdquirido = toNumber(values["Peso total adquirido"] || "");
     const precoMaterial = toNumber(values["Preco pago pelo material"] || "");
@@ -54,8 +57,8 @@ export default function MarketplaceCalculator() {
 
     const custoPorGrama =
       pesoTotalAdquirido > 0 ? precoMaterial / pesoTotalAdquirido : 0;
-    const custoMaterial = materialUtilizado * custoPorGrama;
-    const custoMaquina = horasImpressao * valorHoraMaquina;
+    const custoMaterial = materialUtilizado * custoPorGrama * quantidadePecas;
+    const custoMaquina = horasImpressao * valorHoraMaquina * quantidadePecas;
     const custoProducao = custoMaterial + custoMaquina + embalagem + frete;
     const taxasMarketplace =
       (custoProducao * (taxaMarketplace + taxaAnuncio)) / 100;
