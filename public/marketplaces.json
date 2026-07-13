@@ -1,0 +1,728 @@
+[
+{
+"id": "mercadolivre_br",
+"nome": "Mercado Livre Brasil",
+"pais": "BR",
+"tipo": "C2C_B2C",
+"moeda": "BRL",
+"url": "https://www.mercadolivre.com.br",
+"descricao": "Maior marketplace da America Latina, venda de produtos fisicos.",
+"ativo": true,
+"tipo_produto": ["fisico"],
+"categorias": [
+{
+"nome": "Geral",
+"dependente_categoria": true
+}
+],
+"planos": [],
+"modalidades": [
+{
+"nome": "Classico",
+"regras": {
+"faixas": [
+{
+"valor_min": 0,
+"valor_max": 78.99,
+"percentual_min": 10,
+"percentual_max": 14,
+"taxa_fixa": 6.50
+},
+{
+"valor_min": 79.00,
+"valor_max": 999999.99,
+"percentual_min": 10,
+"percentual_max": 14,
+"taxa_fixa": 0
+}
+]
+}
+},
+{
+"nome": "Premium",
+"regras": {
+"faixas": [
+{
+"valor_min": 0,
+"valor_max": 78.99,
+"percentual_min": 15,
+"percentual_max": 19,
+"taxa_fixa": 6.50
+},
+{
+"valor_min": 79.00,
+"valor_max": 999999.99,
+"percentual_min": 15,
+"percentual_max": 19,
+"taxa_fixa": 0
+}
+]
+}
+}
+],
+"regras": {},
+"faixas": [],
+"comissoes": [],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {
+"subsidiado": true,
+"valor_minimo_frete_gratis": 79.00,
+"custeio_vendedor_percentual_min": 40,
+"custeio_vendedor_percentual_max": 50
+},
+"impostos": {},
+"observacoes": "Taxa percentual exata depende da categoria do produto.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://vendedores.mercadolivre.com.br"
+},
+{
+"id": "shopee_br",
+"nome": "Shopee Brasil",
+"pais": "BR",
+"tipo": "C2C_B2C",
+"moeda": "BRL",
+"url": "https://shopee.com.br",
+"descricao": "Marketplace popular com forte subsidio de frete.",
+"ativo": true,
+"tipo_produto": ["fisico"],
+"categorias": [],
+"planos": [
+{
+"nome": "Padrao",
+"regras": {
+"taxas_percentuais": [{"nome": "Comissao Padrao", "valor": 14}],
+"taxas_fixas": [{"nome": "Taxa por Item", "valor": 3.00}]
+}
+},
+{
+"nome": "Programa Frete Gratis",
+"regras": {
+"taxas_percentuais": [{"nome": "Comissao Padrao + Programa", "valor": 20}],
+"taxas_fixas": [{"nome": "Taxa por Item", "valor": 3.00}]
+}
+}
+],
+"modalidades": [],
+"regras": {
+"limite_comissao_maxima": 100.00
+},
+"faixas": [],
+"comissoes": [],
+"taxas": {},
+"taxas_fixas": [
+{"valor": 3.00, "descricao": "Por item vendido"}
+],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {
+"subsidiado": true
+},
+"impostos": {},
+"observacoes": "Comissao maxima cobrada por item e de R$100,00.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "[https://seller.shopee.com.br](https://seller.shopee.com.br)"
+},
+{
+"id": "amazon_br",
+"nome": "Amazon Brasil",
+"pais": "BR",
+"tipo": "B2C",
+"moeda": "BRL",
+"url": "[https://venda.amazon.com.br](https://venda.amazon.com.br)",
+"descricao": "Amazon Marketplace Brasil.",
+"ativo": true,
+"tipo_produto": ["fisico"],
+"categorias": [
+{"nome": "Eletronicos", "percentual": 11},
+{"nome": "Impressao 3D / Casa", "percentual": 15},
+{"nome": "Geral", "percentual_min": 8, "percentual_max": 15, "dependente_categoria": true}
+],
+"planos": [
+{
+"nome": "Individual",
+"mensalidades": [],
+"taxas_fixas": [{"nome": "Taxa por item", "valor": 2.00}]
+},
+{
+"nome": "Profissional",
+"mensalidades": [{"nome": "Assinatura Mensal", "valor": 19.00}],
+"taxas_fixas": [{"nome": "Taxa por item", "valor": 0}]
+}
+],
+"modalidades": [],
+"regras": {},
+"faixas": [],
+"comissoes": [],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {
+"fba_logistica_amazon": true,
+"fba_taxa_min": 13.45,
+"fba_taxa_max": 60.00,
+"dependente_peso_dimensao": true
+},
+"impostos": {},
+"observacoes": "Taxas de logística variam muito conforme peso/tamanho.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "[https://venda.amazon.com.br/precos](https://venda.amazon.com.br/precos)"
+},
+{
+"id": "elo7",
+"nome": "Elo7",
+"pais": "BR",
+"tipo": "C2C_B2C",
+"moeda": "BRL",
+"url": "[https://www.elo7.com.br](https://www.elo7.com.br)",
+"descricao": "Marketplace focado em produtos artesanais e personalizados.",
+"ativo": true,
+"tipo_produto": ["fisico", "digital"],
+"categorias": [],
+"planos": [],
+"modalidades": [
+{
+"nome": "Regular",
+"regras": {
+"taxas_percentuais": [{"nome": "Comissao Regular", "valor": 12}]
+}
+},
+{
+"nome": "Plus",
+"regras": {
+"taxas_percentuais": [{"nome": "Comissao Plus", "valor": 18}]
+}
+}
+],
+"regras": {},
+"faixas": [],
+"comissoes": [],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {},
+"impostos": {},
+"observacoes": "Ideal para impressao 3D personalizada.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "[https://elo7.zendesk.com](https://elo7.zendesk.com)"
+},
+{
+"id": "magalu",
+"nome": "Magalu Marketplace",
+"pais": "BR",
+"tipo": "B2C",
+"moeda": "BRL",
+"url": "[https://parceiromagalu.com.br](https://parceiromagalu.com.br)",
+"descricao": "Magazine Luiza Marketplace.",
+"ativo": true,
+"tipo_produto": ["fisico"],
+"categorias": [
+{"nome": "Geral", "percentual_min": 10, "percentual_max": 20, "dependente_categoria": true}
+],
+"planos": [],
+"modalidades": [],
+"regras": {
+"faixas": [
+{
+"valor_min": 0,
+"valor_max": 78.99,
+"taxa_fixa": 3.00,
+"percentual": 12.8
+},
+{
+"valor_min": 79.00,
+"valor_max": 999999.99,
+"taxa_fixa": 0,
+"percentual": 12.8,
+"frete_gratis_mandatorio": true
+}
+]
+},
+"faixas": [],
+"comissoes": [],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {
+"subsidiado": true,
+"magalu_entregas": true
+},
+"impostos": {},
+"observacoes": "Taxa fixa de R$ 3 apenas para pedidos abaixo de R$ 79. Percentual de comissão é base, mas pode variar por categoria.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://parceiromagalu.com.br"
+},
+{
+"id": "americanas",
+"nome": "Americanas Marketplace",
+"pais": "BR",
+"tipo": "B2C",
+"moeda": "BRL",
+"url": "https://www.americanasmarketplace.com.br",
+"descricao": "B2W Digital (Americanas, Submarino, Shoptime).",
+"ativo": true,
+"tipo_produto": ["fisico"],
+"categorias": [],
+"planos": [],
+"modalidades": [],
+"regras": {
+"comissao_padrao": 16,
+"taxa_fixa_por_pedido": 5.00
+},
+"faixas": [],
+"comissoes": [
+{"nome": "Comissao Geral", "percentual": 16}
+],
+"taxas": {},
+"taxas_fixas": [
+{"nome": "Taxa Fixa Pedido", "valor": 5.00}
+],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {},
+"impostos": {},
+"observacoes": "A taxa fixa geralmente e aplicada sobre o pedido aprovado.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://www.americanasmarketplace.com.br"
+},
+{
+"id": "madeiramadeira",
+"nome": "MadeiraMadeira Marketplace",
+"pais": "BR",
+"tipo": "B2C",
+"moeda": "BRL",
+"url": "https://marketplace.madeiramadeira.com.br",
+"descricao": "Marketplace focado em casa, moveis e decoracao.",
+"ativo": true,
+"tipo_produto": ["fisico"],
+"categorias": [
+{"nome": "Decoracao / Impressao 3D", "percentual_min": 15, "percentual_max": 20, "dependente_categoria": true}
+],
+"planos": [],
+"modalidades": [],
+"regras": {},
+"faixas": [],
+"comissoes": [],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {},
+"impostos": {},
+"observacoes": "Necessita CNPJ para cadastro.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://marketplace.madeiramadeira.com.br"
+},
+{
+"id": "carrefour",
+"nome": "Carrefour Marketplace",
+"pais": "BR",
+"tipo": "B2C",
+"moeda": "BRL",
+"url": "https://www.carrefour.com.br/marketplace",
+"descricao": "Marketplace rede Carrefour.",
+"ativo": true,
+"tipo_produto": ["fisico"],
+"categorias": [
+{"nome": "Geral", "percentual_min": 10, "percentual_max": 14, "dependente_categoria": true}
+],
+"planos": [],
+"modalidades": [],
+"regras": {},
+"faixas": [],
+"comissoes": [],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {},
+"impostos": {},
+"observacoes": "Foco em grandes varejistas e bens de consumo.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://www.carrefour.com.br"
+},
+{
+"id": "casasbahia",
+"nome": "Casas Bahia Marketplace",
+"pais": "BR",
+"tipo": "B2C",
+"moeda": "BRL",
+"url": "https://viavarejo.com.br",
+"descricao": "Via Marketplace (Casas Bahia, Ponto, Extra).",
+"ativo": true,
+"tipo_produto": ["fisico"],
+"categorias": [
+{"nome": "Geral", "percentual_min": 16, "percentual_max": 21, "dependente_categoria": true}
+],
+"planos": [],
+"modalidades": [],
+"regras": {},
+"faixas": [],
+"comissoes": [],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {
+"envia": true
+},
+"impostos": {},
+"observacoes": "Comissões variam estritamente por categoria negociada.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://viavarejo.com.br"
+},
+{
+"id": "mercadoshops",
+"nome": "Mercado Shops",
+"pais": "BR",
+"tipo": "B2C",
+"moeda": "BRL",
+"url": "https://mercadoshops.mercadolivre.com.br",
+"descricao": "Plataforma de e-commerce integrada ao Mercado Livre.",
+"ativo": true,
+"tipo_produto": ["fisico", "digital"],
+"categorias": [],
+"planos": [],
+"modalidades": [
+{
+"nome": "Classico",
+"regras": {
+"taxas_percentuais": [],
+"taxas_fixas": []
+},
+"observacoes": "Isento de comissao de venda, paga-se apenas a taxa de processamento do Mercado Pago."
+},
+{
+"nome": "Premium",
+"regras": {
+"taxas_percentuais": [{"nome": "Comissao Premium", "valor": 9.99}],
+"taxas_fixas": []
+}
+}
+],
+"regras": {},
+"faixas": [],
+"comissoes": [],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [
+{"nome": "Mercado Pago", "percentual_min": 3.99, "percentual_max": 4.99}
+],
+"mensalidades": [],
+"frete": {
+"integrado_mercado_envios": true
+},
+"impostos": {},
+"observacoes": "Estrutura de taxas atrelada as tarifas do gateway de pagamento (Mercado Pago).",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://mercadoshops.mercadolivre.com.br/tarifas"
+},
+{
+"id": "etsy",
+"nome": "Etsy",
+"pais": "US",
+"tipo": "C2C_B2C",
+"moeda": "USD",
+"url": "https://www.etsy.com",
+"descricao": "Marketplace global focado em artesanato, vintage e digitais.",
+"ativo": true,
+"tipo_produto": ["fisico", "digital"],
+"categorias": [],
+"planos": [],
+"modalidades": [],
+"regras": {},
+"faixas": [],
+"comissoes": [
+{"nome": "Transaction Fee", "percentual": 6.5}
+],
+"taxas": {},
+"taxas_fixas": [
+{"nome": "Listing Fee", "valor": 0.20, "moeda": "USD", "frequencia": "a cada renovacao / 4 meses"}
+],
+"taxas_percentuais": [],
+"taxas_processamento": [
+{"nome": "Etsy Payments", "percentual": 3, "taxa_fixa": 0.25, "moeda": "USD"}
+],
+"mensalidades": [],
+"frete": {},
+"impostos": {},
+"observacoes": "Taxas de conversao de moeda (2.5%) aplicam-se a vendedores fora dos EUA.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://www.etsy.com/legal/fees/"
+},
+{
+"id": "ebay",
+"nome": "eBay",
+"pais": "US",
+"tipo": "C2C_B2C",
+"moeda": "USD",
+"url": "https://www.ebay.com",
+"descricao": "Um dos maiores marketplaces globais.",
+"ativo": true,
+"tipo_produto": ["fisico", "digital"],
+"categorias": [
+{"nome": "Geral", "percentual_min": 10, "percentual_max": 15, "dependente_categoria": true}
+],
+"planos": [
+{
+"nome": "Starter Store",
+"mensalidades": [{"valor": 4.95}]
+},
+{
+"nome": "Basic Store",
+"mensalidades": [{"valor": 21.95}]
+}
+],
+"modalidades": [],
+"regras": {},
+"faixas": [],
+"comissoes": [
+{"nome": "Final Value Fee", "percentual_min": 10, "percentual_max": 15, "taxa_fixa": 0.30}
+],
+"taxas": {},
+"taxas_fixas": [
+{"nome": "Insertion Fee", "valor": 0.35, "isencoes_mensais": 250}
+],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {},
+"impostos": {},
+"observacoes": "Muitas variaveis baseadas no tipo de loja e mercado internacional.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://www.ebay.com/help/selling/fees-credits-invoices/selling-fees"
+},
+{
+"id": "cults3d",
+"nome": "Cults3D",
+"pais": "FR",
+"tipo": "C2C_B2C",
+"moeda": "USD",
+"url": "https://cults3d.com",
+"descricao": "Marketplace focado em arquivos STL para impressao 3D.",
+"ativo": true,
+"tipo_produto": ["digital"],
+"categorias": [],
+"planos": [],
+"modalidades": [],
+"regras": {
+"repasse_criador": 80
+},
+"faixas": [],
+"comissoes": [
+{"nome": "Comissao Cults", "percentual": 20}
+],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [
+{"nome": "PayPal/Gateway", "embutido_na_comissao": true}
+],
+"mensalidades": [],
+"frete": {},
+"impostos": {},
+"observacoes": "Taxas de processamento bancario ja estao embutidas na comissao de 20%.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://cults3d.com/en/creators"
+},
+{
+"id": "myminifactory",
+"nome": "MyMiniFactory",
+"pais": "UK",
+"tipo": "B2C",
+"moeda": "USD",
+"url": "https://www.myminifactory.com",
+"descricao": "Marketplace premium para modelos 3D.",
+"ativo": true,
+"tipo_produto": ["digital"],
+"categorias": [],
+"planos": [
+{
+"nome": "Creator",
+"mensalidades": [{"valor": 24.99}]
+}
+],
+"modalidades": [],
+"regras": {},
+"faixas": [],
+"comissoes": [
+{"nome": "Comissao Loja", "percentual": 8}
+],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [
+{"nome": "Gateway", "percentual": 2.9, "taxa_fixa": 0.30}
+],
+"mensalidades": [],
+"frete": {},
+"impostos": {},
+"observacoes": "Exige assinatura mensal para abrir loja paga.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://www.myminifactory.com/pages/store-creator"
+},
+{
+"id": "printables",
+"nome": "Printables",
+"pais": "CZ",
+"tipo": "C2C_B2C",
+"moeda": "USD",
+"url": "https://www.printables.com",
+"descricao": "Plataforma de modelos 3D da Prusa Research, com sistema de clubes.",
+"ativo": true,
+"tipo_produto": ["digital"],
+"categorias": [],
+"planos": [],
+"modalidades": [],
+"regras": {
+"clube_assinaturas": true,
+"loja_arquivos": true
+},
+"faixas": [],
+"comissoes": [
+{"nome": "Taxa Printables", "percentual": 10}
+],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [
+{"nome": "Stripe", "percentual_min": 2.9, "percentual_max": 4.0, "taxa_fixa": 0.30}
+],
+"mensalidades": [],
+"frete": {},
+"impostos": {},
+"observacoes": "Comissões da Printables (10%) mais as taxas do Stripe repassadas ao criador.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://www.printables.com/clubs"
+},
+{
+"id": "cgtrader",
+"nome": "CGTrader",
+"pais": "LT",
+"tipo": "B2C",
+"moeda": "USD",
+"url": "https://www.cgtrader.com",
+"descricao": "Marketplace abrangente de modelos 3D gerais.",
+"ativo": true,
+"tipo_produto": ["digital"],
+"categorias": [],
+"planos": [],
+"modalidades": [],
+"regras": {
+"sistema_reputacao": true,
+"faixas": [
+{"reputacao_min": 0, "reputacao_max": 500, "royalties_criador": 70, "percentual_comissao": 30},
+{"reputacao_min": 501, "reputacao_max": 999999, "royalties_criador_max": 80, "percentual_comissao_min": 20}
+]
+},
+"faixas": [],
+"comissoes": [
+{"nome": "Comissao Dinamica", "percentual_min": 20, "percentual_max": 30}
+],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {},
+"impostos": {},
+"observacoes": "Quanto maior a reputação do vendedor, menor a taxa da plataforma.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://www.cgtrader.com/pages/royalties"
+},
+{
+"id": "turbosquid",
+"nome": "TurboSquid",
+"pais": "US",
+"tipo": "B2C",
+"moeda": "USD",
+"url": "https://www.turbosquid.com",
+"descricao": "Um dos marketplaces mais antigos e profissionais de modelos 3D.",
+"ativo": true,
+"tipo_produto": ["digital"],
+"categorias": [],
+"planos": [],
+"modalidades": [
+{
+"nome": "Standard",
+"regras": {
+"percentual_comissao": 60
+}
+},
+{
+"nome": "SquidGuild (Exclusivo)",
+"regras": {
+"percentual_comissao_min": 40,
+"percentual_comissao_max": 46,
+"dependente_volume_vendas": true
+}
+}
+],
+"regras": {},
+"faixas": [],
+"comissoes": [
+{"nome": "Comissao Vendedor Base", "percentual": 60}
+],
+"taxas": {},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {},
+"impostos": {},
+"observacoes": "Taxas muito altas para contas padrao; exclusividade reduz as taxas significativamente.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "https://blog.turbosquid.com/turbosquid-royalties/"
+},
+{
+"id": "outro_marketplace",
+"nome": "Outro Marketplace",
+"pais": "GLOBAL",
+"tipo": "CUSTOM",
+"moeda": "BRL",
+"url": "",
+"descricao": "Estrutura para preenchimento manual de plataformas personalizadas.",
+"ativo": true,
+"tipo_produto": ["fisico", "digital"],
+"categorias": [],
+"planos": [],
+"modalidades": [],
+"regras": {},
+"faixas": [],
+"comissoes": [],
+"taxas": {
+"percentual_comissao": 0,
+"taxa_fixa": 0,
+"taxa_processamento": 0,
+"taxa_anuncio": 0,
+"frete": 0,
+"impostos": 0,
+"mensalidade": 0,
+"outras_taxas": 0
+},
+"taxas_fixas": [],
+"taxas_percentuais": [],
+"taxas_processamento": [],
+"mensalidades": [],
+"frete": {},
+"impostos": {},
+"observacoes": "Preenchimento dinamico pelo usuario na calculadora Modulus.",
+"ultima_atualizacao": "2024-05-01",
+"fonte": "Manual"
+}
+]

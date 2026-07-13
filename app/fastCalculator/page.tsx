@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import { formatCurrencyInput } from "@/utils/currency";
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -24,10 +25,19 @@ export default function FastCalculator() {
   const [printingHours, setPrintingHours] = useState("");
   const [printingMinutes, setPrintingMinutes] = useState("");
   const [margin, setMargin] = useState("30");
-
+const [materialUnit, setMaterialUnit] = useState<"g" | "kg">("g");
+const [totalWeightUnit, setTotalWeightUnit] = useState<"g" | "kg">("g");
   const result = useMemo(() => {
-    const materialUtilizado = toNumber(materialUsed);
-    const pesoTotalAdquirido = toNumber(totalWeight);
+    const materialUtilizado =
+    materialUnit === "kg"
+        ? toNumber(materialUsed) * 1000
+        : toNumber(materialUsed);
+
+    const pesoTotalAdquirido =
+        totalWeightUnit === "kg"
+            ? toNumber(totalWeight) * 1000
+            : toNumber(totalWeight);
+    
     const precoMaterial = toNumber(materialPrice);
     const horasImpressao = toNumber(printingHours);
     const minutosImpressao = toNumber(printingMinutes);
@@ -66,16 +76,24 @@ export default function FastCalculator() {
               </p>
             </div>
             <span className="rounded-[8px] bg-[#5852FF]/10 px-4 py-3 text-sm font-bold text-[#5852FF]">
-              sem botao calcular
+              sem botão calcular
             </span>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Filamento Consumido" suffix="g" value={materialUsed} onChange={setMaterialUsed} placeholder="120" />
-            <Field label="Tamanho do Carretel" suffix="g" value={totalWeight} onChange={setTotalWeight} placeholder="1000" />
-            <Field label="Preço do Carretel" prefix="R$" value={materialPrice} onChange={setMaterialPrice} placeholder="89,90" />
+            <Field label="Filamento Consumido" suffix="g" value={materialUsed} onChange={setMaterialUsed} placeholder="120" suffixOptions={["g", "kg"]}
+    suffixValue={materialUnit}
+    onSuffixChange={(value) =>
+        setMaterialUnit(value as "g" | "kg")
+    }/>
+            <Field label="Tamanho do Carretel" suffix="g" value={totalWeight} onChange={setTotalWeight} placeholder="1000" suffixOptions={["g", "kg"]}
+    suffixValue={totalWeightUnit}
+    onSuffixChange={(value) =>
+        setTotalWeightUnit(value as "g" | "kg")
+    }/>
+            <Field label="Preço do Carretel" prefix="R$" value={materialPrice}  placeholder="89,90" onChange={(value) => setMaterialPrice(formatCurrencyInput(value, 3))}/>
             <Field label="Horas de impressão" suffix="h" value={printingHours} onChange={setPrintingHours} placeholder="1" />
-            <Field label="Minutos de impressão" suffix="min" value={printingMinutes} onChange={setPrintingMinutes} placeholder="30" />
+            <Field label="Minutos de impressão" suffix="min" value={printingMinutes} onChange={setPrintingMinutes} placeholder="30"numericOnly  maxLength={2} max={59} />
             <Field label="Margem desejada" suffix="%" value={margin} onChange={setMargin} placeholder="30" />
           </div>
         </div>
@@ -106,7 +124,13 @@ function Field({
   onChange,
   placeholder,
   prefix,
-  suffix,
+   suffix,
+  suffixOptions,
+  suffixValue,
+  onSuffixChange,
+  maxLength,
+  max,
+  numericOnly,
 }: {
   label: string;
   value: string;
@@ -114,6 +138,13 @@ function Field({
   placeholder: string;
   prefix?: string;
   suffix?: string;
+suffixOptions?: string[];
+suffixValue?: string;
+onSuffixChange?: (value: string) => void;
+  maxLength?: number;
+  max?: number;
+numericOnly?: boolean;
+  
 }) {
   return (
     <label className="block">
@@ -123,11 +154,49 @@ function Field({
         <input
           value={value}
           inputMode="decimal"
-          onChange={(event) => onChange(event.target.value.replace(/[^\d.,]/g, ""))}
+          onChange={(event) => {
+  let value = event.target.value;
+
+  if (numericOnly) {
+    value = value.replace(/\D/g, "");
+  } else {
+    value = value.replace(/[^\d.,]/g, "");
+  }
+
+  if (maxLength) {
+    value = value.slice(0, maxLength);
+  }
+
+  if (max !== undefined && value !== "") {
+    value = Math.min(Number(value), max).toString();
+  }
+
+  onChange(value);
+}}
           placeholder={placeholder}
+          maxLength={maxLength}
+          max={max}
           className="min-w-0 flex-1 bg-transparent outline-none placeholder:text-black/35"
         />
-        {suffix && <span className="ml-2 text-sm font-bold text-black/45">{suffix}</span>}
+        {suffixOptions ? (
+    <select
+        value={suffixValue}
+        onChange={(e) => onSuffixChange?.(e.target.value)}
+        className="ml-2 bg-transparent text-sm font-bold text-black/45 outline-none cursor-pointer"
+    >
+        {suffixOptions.map(option => (
+            <option key={option} value={option}>
+                {option}
+            </option>
+        ))}
+    </select>
+) : (
+    suffix && (
+        <span className="ml-2 text-sm font-bold text-black/45">
+            {suffix}
+        </span>
+    )
+)}
       </span>
     </label>
   );

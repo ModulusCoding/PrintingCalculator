@@ -1,12 +1,30 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import printersData from "../../public/impressoras.json";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import { formatCurrencyInput } from "@/utils/currency";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 type MachineMode = "manual" | "automatic";
+type WeightUnit = "g" | "kg";
+type Currency = "BRL" | "USD" | "EUR";
+
+type ColorMaterial = {
+  id: number;
+  name: string;
+  /** Quantity used per piece */
+  quantity: string;
+  unit: WeightUnit;
+  /** Total weight of the spool/batch purchased */
+  spoolWeight: string;
+  spoolWeightUnit: WeightUnit;
+  /** Price paid for the spool/batch */
+  price: string;
+};
 
 type PackagingItem = {
   id: number;
@@ -27,10 +45,7 @@ type PrinterCatalog = {
     modelos: {
       id: string;
       nome_modelo: string;
-      consumo_W: {
-        pico: number;
-        medio: number;
-      };
+      consumo_W: { pico: number; medio: number };
     }[];
   }[];
 };
@@ -44,13 +59,24 @@ type PrinterOption = {
   searchableText: string;
 };
 
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const CACHE_KEY = "modulus_calculator_state";
+
+const CURRENCY_CONFIG: Record<Currency, { symbol: string; locale: string; code: string }> = {
+  BRL: { symbol: "R$", locale: "pt-BR", code: "BRL" },
+  USD: { symbol: "$", locale: "en-US", code: "USD" },
+  EUR: { symbol: "€", locale: "de-DE", code: "EUR" },
+};
+
 const steps: Step[] = [
   {
     title: "Material",
     eyebrow: "Etapa 1",
     description: (
       <>
-        Calcule o <strong>custo real</strong> do filamento, resina ou outro insumo usado na peça.
+        Informe cada cor ou material utilizado na peça com sua quantidade, rolo adquirido e{" "}
+        <strong>preço pago individualmente</strong>.
       </>
     ),
     icon: "◐",
@@ -60,7 +86,8 @@ const steps: Step[] = [
     eyebrow: "Etapa 2",
     description: (
       <>
-        Encontre sua impressora por <strong>nome ou marca</strong> e use o consumo médio em Watts, sem chute.
+        Encontre sua impressora por <strong>nome ou marca</strong> e use o consumo médio em Watts,
+        sem chute.
       </>
     ),
     icon: "⚡",
@@ -70,7 +97,9 @@ const steps: Step[] = [
     eyebrow: "Etapa 3",
     description: (
       <>
-        Defina quanto a impressora precisa recuperar por hora para manter sua operação <em>saudável</em>.
+        Defina quanto a impressora precisa recuperar por hora para manter sua operação{" "}
+        <em>saudável</em>. Esta etapa é <strong>opcional</strong> — pule caso não queira incluir
+        custo de máquina.
       </>
     ),
     icon: "◷",
@@ -80,7 +109,8 @@ const steps: Step[] = [
     eyebrow: "Etapa 4",
     description: (
       <>
-        Some acabamento fixo e mão de obra para que o detalhe final também entre no <strong>preço certo</strong>.
+        Some acabamento fixo e mão de obra para que o detalhe final também entre no{" "}
+        <strong>preço certo</strong>.
       </>
     ),
     icon: "✦",
@@ -100,7 +130,8 @@ const steps: Step[] = [
     eyebrow: "Etapa 6",
     description: (
       <>
-        Aplique a alíquota sobre o subtotal operacional e evite vender com margem <em>ilusória</em>.
+        Aplique a alíquota sobre o subtotal operacional e evite vender com margem{" "}
+        <em>ilusória</em>.
       </>
     ),
     icon: "%",
@@ -117,25 +148,24 @@ const steps: Step[] = [
   },
 ];
 
-const currencyFormatter = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-});
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const emptyPackagingItem = (id: number): PackagingItem => ({
-  id,
-  name: "",
-  value: "",
-});
-
-const toNumber = (value: string) => {
-  const normalized = value.replace(/\./g, "").replace(",", ".");
+const toNumber = (value: string = "") => {
+  const normalized = value.replace(/[^\d.]/g, "");
   const parsed = Number.parseFloat(normalized);
-
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
-const formatCurrency = (value: number) => currencyFormatter.format(value || 0);
+const toCurrencyNumber = (value: string) => {
+  const normalized = value.replace(/\./g, "").replace(",", ".");
+  const parsed = Number.parseFloat(normalized);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const toGrams = (value: string, unit: WeightUnit) => {
+  const n = toNumber(value);
+  return unit === "kg" ? n * 1000 : n;
+};
 
 const normalizeSearch = (value: string) =>
   value
@@ -143,8 +173,29 @@ const normalizeSearch = (value: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
-const printerOptions: PrinterOption[] = (printersData as PrinterCatalog)
-  .marcas_impressoras_3d.flatMap((brand) =>
+const formatCurrencyValue = (value: number, currency: Currency) => {
+  const { locale, code } = CURRENCY_CONFIG[currency];
+  return new Intl.NumberFormat(locale, { style: "currency", currency: code }).format(value || 0);
+};
+
+const sanitizeNumberInput = (raw: string) => {
+  const stripped = raw.replace(/[^\d.]/g, "");
+  const parts = stripped.split(".");
+  if (parts.length > 2) return parts[0] + "." + parts.slice(1).join("");
+  return stripped;
+};
+
+// ─── Printer catalog ──────────────────────────────────────────────────────────
+
+const printerOptions: PrinterOption[] = (
+  printersData as {
+    marcas_impressoras_3d: {
+      marca: string;
+      modelos: { id: string; nome_modelo: string; consumo_W: { pico: number; medio: number } }[];
+    }[];
+  }
+).marcas_impressoras_3d
+  .flatMap((brand) =>
     brand.modelos.map((printer) => ({
       id: printer.id,
       brand: brand.marca,
@@ -156,53 +207,213 @@ const printerOptions: PrinterOption[] = (printersData as PrinterCatalog)
   )
   .sort((a, b) => `${a.brand} ${a.model}`.localeCompare(`${b.brand} ${b.model}`));
 
+// ─── Default state ────────────────────────────────────────────────────────────
+
+const defaultColorMaterials = (): ColorMaterial[] => [
+  {
+    id: 1,
+    name: "Cor 1",
+    quantity: "",
+    unit: "g",
+    spoolWeight: "",
+    spoolWeightUnit: "g",
+    price: "0,000",
+  },
+];
+
+const defaultPackaging = (): PackagingItem[] => [
+  { id: 1, name: "Caixa", value: "" },
+  { id: 2, name: "Etiqueta", value: "" },
+  { id: 3, name: "Plastico bolha", value: "" },
+];
+
+const emptyColorMaterial = (id: number): ColorMaterial => ({
+  id,
+  name: "",
+  quantity: "",
+  unit: "g",
+  spoolWeight: "",
+  spoolWeightUnit: "g",
+  price: "",
+});
+
+const emptyPackagingItem = (id: number): PackagingItem => ({ id, name: "", value: "" });
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
 export default function CalculatorPage() {
+  // Currency
+  const [currency, setCurrency] = useState<Currency>("BRL");
+
+  // Step navigation
   const [currentStep, setCurrentStep] = useState(0);
   const [attemptedSteps, setAttemptedSteps] = useState<number[]>([]);
+
+  // Step 0 — Material
   const [pieceQuantity, setPieceQuantity] = useState("1");
-  const [quantityUsed, setQuantityUsed] = useState("");
-  const [totalWeight, setTotalWeight] = useState("");
-  const [materialPrice, setMaterialPrice] = useState("");
+  const [colorMaterials, setColorMaterials] = useState<ColorMaterial[]>(defaultColorMaterials());
+
+  // Step 1 — Energy
   const [printerSearch, setPrinterSearch] = useState("");
   const [selectedPrinterId, setSelectedPrinterId] = useState("");
   const [printerConsumption, setPrinterConsumption] = useState("");
   const [printingHours, setPrintingHours] = useState("");
-  const [kwhValue, setKwhValue] = useState("");
+  const [kwhValue, setKwhValue] = useState("0,000");
+
+  // Step 2 — Machine (optional)
   const [machineMode, setMachineMode] = useState<MachineMode>("manual");
   const [machineHourValue, setMachineHourValue] = useState("");
-  const [printerValue, setPrinterValue] = useState("");
+  const [printerValue, setPrinterValue] = useState("0,000");
   const [printerLifeHours, setPrinterLifeHours] = useState("");
+
+  // Step 3 — Finish
   const [finishFixedValue, setFinishFixedValue] = useState("");
   const [finishHours, setFinishHours] = useState("");
   const [finishHourValue, setFinishHourValue] = useState("");
-  const [packagingItems, setPackagingItems] = useState<PackagingItem[]>([
-    { id: 1, name: "Caixa", value: "" },
-    { id: 2, name: "Etiqueta", value: "" },
-    { id: 3, name: "Plastico bolha", value: "" },
-  ]);
+
+  // Step 4 — Packaging
+  const [packagingItems, setPackagingItems] = useState<PackagingItem[]>(defaultPackaging());
+
+  // Step 5 — Taxes
   const [taxPercent, setTaxPercent] = useState("");
 
+  // ─── Cache ───────────────────────────────────────────────────────────────────
+
+  const stateSnapshot = useMemo(
+    () => ({
+      currency,
+      currentStep,
+      attemptedSteps,
+      pieceQuantity,
+      colorMaterials,
+      printerSearch,
+      selectedPrinterId,
+      printerConsumption,
+      printingHours,
+      kwhValue,
+      machineMode,
+      machineHourValue,
+      printerValue,
+      printerLifeHours,
+      finishFixedValue,
+      finishHours,
+      finishHourValue,
+      packagingItems,
+      taxPercent,
+    }),
+    [
+      currency, currentStep, attemptedSteps, pieceQuantity, colorMaterials,
+      printerSearch, selectedPrinterId, printerConsumption, printingHours,
+      kwhValue, machineMode, machineHourValue, printerValue, printerLifeHours,
+      finishFixedValue, finishHours, finishHourValue, packagingItems, taxPercent,
+    ],
+  );
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(CACHE_KEY);
+      if (!raw) return;
+      const s = JSON.parse(raw);
+      if (s.currency) setCurrency(s.currency);
+      if (s.currentStep != null) setCurrentStep(s.currentStep);
+      if (s.attemptedSteps) setAttemptedSteps(s.attemptedSteps);
+      if (s.pieceQuantity) setPieceQuantity(s.pieceQuantity);
+      if (s.colorMaterials) setColorMaterials(s.colorMaterials);
+      if (s.printerSearch) setPrinterSearch(s.printerSearch);
+      if (s.selectedPrinterId) setSelectedPrinterId(s.selectedPrinterId);
+      if (s.printerConsumption) setPrinterConsumption(s.printerConsumption);
+      if (s.printingHours) setPrintingHours(s.printingHours);
+      if (s.kwhValue) setKwhValue(s.kwhValue);
+      if (s.machineMode) setMachineMode(s.machineMode);
+      if (s.machineHourValue) setMachineHourValue(s.machineHourValue);
+      if (s.printerValue) setPrinterValue(s.printerValue);
+      if (s.printerLifeHours) setPrinterLifeHours(s.printerLifeHours);
+      if (s.finishFixedValue) setFinishFixedValue(s.finishFixedValue);
+      if (s.finishHours) setFinishHours(s.finishHours);
+      if (s.finishHourValue) setFinishHourValue(s.finishHourValue);
+      if (s.packagingItems) setPackagingItems(s.packagingItems);
+      if (s.taxPercent) setTaxPercent(s.taxPercent);
+    } catch {
+      /* ignore malformed cache */
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(CACHE_KEY, JSON.stringify(stateSnapshot));
+    } catch {
+      /* ignore storage errors */
+    }
+  }, [stateSnapshot]);
+
+  // ─── Clear all ───────────────────────────────────────────────────────────────
+
+  const clearAll = () => {
+    setCurrency("BRL");
+    setCurrentStep(0);
+    setAttemptedSteps([]);
+    setPieceQuantity("1");
+    setColorMaterials(defaultColorMaterials());
+    setPrinterSearch("");
+    setSelectedPrinterId("");
+    setPrinterConsumption("");
+    setPrintingHours("");
+    setKwhValue("0,000");
+    setMachineMode("manual");
+    setMachineHourValue("");
+    setPrinterValue("0,000");
+    setPrinterLifeHours("");
+    setFinishFixedValue("");
+    setFinishHours("");
+    setFinishHourValue("");
+    setPackagingItems(defaultPackaging());
+    setTaxPercent("");
+    try {
+      sessionStorage.removeItem(CACHE_KEY);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  // ─── Derived values ───────────────────────────────────────────────────────────
+
   const values = useMemo(() => {
-    const quantidadeUtilizada = toNumber(quantityUsed);
     const quantidadePecas = Math.max(1, toNumber(pieceQuantity) || 1);
-    const pesoTotalAdquirido = toNumber(totalWeight);
-    const precoMaterial = toNumber(materialPrice);
+
+    // Per-color cost: each color has its own spool weight + price paid
+    // Cost contribution = (gramsUsedPerPiece / spoolGrams) * spoolPrice * numPieces
+    const colorCosts = colorMaterials.map((cm) => {
+      const gramsUsed = toGrams(cm.quantity, cm.unit);
+      const spoolGrams = toGrams(cm.spoolWeight, cm.spoolWeightUnit);
+      const spoolPrice = toCurrencyNumber(cm.price);
+      const costPerGram = spoolGrams > 0 ? spoolPrice / spoolGrams : 0;
+      return {
+        gramsUsed,
+        spoolGrams,
+        spoolPrice,
+        costPerGram,
+        costForAllPieces: gramsUsed * costPerGram * quantidadePecas,
+      };
+    });
+
+    const totalGramsPerPiece = colorCosts.reduce((sum, c) => sum + c.gramsUsed, 0);
+    const totalGramsAllPieces = totalGramsPerPiece * quantidadePecas;
+    const custoMaterial = colorCosts.reduce((sum, c) => sum + c.costForAllPieces, 0);
+
     const consumoWatts = toNumber(printerConsumption);
     const horasImpressao = toNumber(printingHours);
-    const valorKwh = toNumber(kwhValue);
-    const valorHoraManual = toNumber(machineHourValue);
-    const valorImpressora = toNumber(printerValue);
+    const valorKwh = toCurrencyNumber(kwhValue);
+    const valorHoraManual = toCurrencyNumber(machineHourValue);
+    const valorImpressora = toCurrencyNumber(printerValue);
     const vidaUtilHoras = toNumber(printerLifeHours);
-    const valorFixoAcabamento = toNumber(finishFixedValue);
+    const valorFixoAcabamento = toCurrencyNumber(finishFixedValue);
     const horasAcabamento = toNumber(finishHours);
-    const valorHoraAcabamento = toNumber(finishHourValue);
+    const valorHoraAcabamento = toCurrencyNumber(finishHourValue);
     const percentualImposto = toNumber(taxPercent);
 
-    const custoPorGrama =
-      pesoTotalAdquirido > 0 ? precoMaterial / pesoTotalAdquirido : 0;
-    const custoMaterial = quantidadeUtilizada * custoPorGrama * quantidadePecas;
     const consumoKW = consumoWatts / 1000;
     const custoEnergia = consumoKW * horasImpressao * valorKwh * quantidadePecas;
+
     const valorHoraMaquina =
       machineMode === "automatic"
         ? vidaUtilHoras > 0
@@ -210,27 +421,27 @@ export default function CalculatorPage() {
           : 0
         : valorHoraManual;
     const custoMaquina = horasImpressao * valorHoraMaquina * quantidadePecas;
+
     const custoAcabamento =
       (valorFixoAcabamento + horasAcabamento * valorHoraAcabamento) * quantidadePecas;
+
     const custoEmbalagem = packagingItems.reduce(
-      (total, item) => total + toNumber(item.value),
+      (total, item) => total + toCurrencyNumber(item.value),
       0,
     );
-    const subtotal =
-      custoMaterial +
-      custoEnergia +
-      custoMaquina +
-      custoAcabamento +
-      custoEmbalagem;
+
+    const subtotal = custoMaterial + custoEnergia + custoMaquina + custoAcabamento + custoEmbalagem;
     const custoImpostos = subtotal * (percentualImposto / 100);
     const custoTotal = subtotal + custoImpostos;
 
     return {
-      custoPorGrama,
+      colorCosts,
       custoMaterial,
       custoEnergia,
       valorHoraMaquina,
       quantidadePecas,
+      totalGramsPerPiece,
+      totalGramsAllPieces,
       custoMaquina,
       custoAcabamento,
       custoEmbalagem,
@@ -242,115 +453,114 @@ export default function CalculatorPage() {
       precoPremium: custoTotal * 1.8,
     };
   }, [
-    finishFixedValue,
-    finishHourValue,
-    finishHours,
-    kwhValue,
-    machineHourValue,
-    machineMode,
-    materialPrice,
-    packagingItems,
-    printerConsumption,
-    printerLifeHours,
-    printerValue,
-    printingHours,
-    quantityUsed,
-    taxPercent,
-    totalWeight,
+    colorMaterials, finishFixedValue, finishHourValue, finishHours, kwhValue,
+    machineHourValue, machineMode, packagingItems, printerConsumption,
+    printerLifeHours, printerValue, printingHours, taxPercent, pieceQuantity,
   ]);
 
+  // ─── Step validation ─────────────────────────────────────────────────────────
+
   const stepErrors = useMemo(() => {
-    const required = (value: string) => toNumber(value) > 0;
+    const requiredNum = (v: string) => toNumber(v) > 0;
+    const requiredCurrency = (v: string) => toCurrencyNumber(v) > 0;
+
+    // Step 0: at least one color with quantity + spool weight + price
+    const hasValidColor = colorMaterials.some(
+      (cm) =>
+        toNumber(cm.quantity) > 0 &&
+        toNumber(cm.spoolWeight) > 0 &&
+        toCurrencyNumber(cm.price) > 0,
+    );
 
     return [
-      !required(pieceQuantity) || !required(quantityUsed) || !required(totalWeight) || !required(materialPrice),
-      !required(printerConsumption) || !required(printingHours) || !required(kwhValue),
-      machineMode === "manual"
-        ? !required(machineHourValue)
-        : !required(printerValue) || !required(printerLifeHours),
-      toNumber(finishFixedValue) < 0 ||
-        toNumber(finishHours) < 0 ||
-        toNumber(finishHourValue) < 0,
-      packagingItems.some((item) => item.name.trim() && toNumber(item.value) <= 0),
+      // 0 — Material
+      !requiredNum(pieceQuantity) || !hasValidColor,
+      // 1 — Energy
+      !requiredNum(printerConsumption) || !requiredNum(printingHours) || !requiredCurrency(kwhValue),
+      // 2 — Machine: OPTIONAL — never blocks navigation
+      false,
+      // 3 — Finish: always passable (all optional fields)
+      false,
+      // 4 — Packaging
+      packagingItems.some((item) => item.name.trim() && toCurrencyNumber(item.value) <= 0),
+      // 5 — Taxes
       taxPercent.trim() === "" || toNumber(taxPercent) < 0,
+      // 6 — Result
       false,
     ];
   }, [
-    finishFixedValue,
-    finishHourValue,
-    finishHours,
-    kwhValue,
-    machineHourValue,
-    machineMode,
-    materialPrice,
-    packagingItems,
-    printerConsumption,
-    printerLifeHours,
-    printerValue,
-    printingHours,
-    quantityUsed,
-    taxPercent,
-    totalWeight,
+    colorMaterials, kwhValue, machineHourValue, machineMode, packagingItems,
+    printerConsumption, printerLifeHours, printerValue, printingHours,
+    taxPercent, pieceQuantity,
   ]);
+
+  // ─── Navigation ──────────────────────────────────────────────────────────────
 
   const progress = ((currentStep + 1) / steps.length) * 100;
   const current = steps[currentStep];
-  const selectedPrinter = printerOptions.find(
-    (printer) => printer.id === selectedPrinterId,
-  );
-  const filteredPrinters = useMemo(() => {
-    const term = normalizeSearch(printerSearch.trim());
-
-    if (!term) {
-      return printerOptions.slice(0, 8);
-    }
-
-    return printerOptions
-      .filter((printer) => printer.searchableText.includes(term))
-      .slice(0, 8);
-  }, [printerSearch]);
+  const showError = attemptedSteps.includes(currentStep) && stepErrors[currentStep];
 
   const goNext = () => {
     if (stepErrors[currentStep]) {
-      setAttemptedSteps((previous) =>
-        previous.includes(currentStep) ? previous : [...previous, currentStep],
+      setAttemptedSteps((prev) =>
+        prev.includes(currentStep) ? prev : [...prev, currentStep],
       );
       return;
     }
-
-    setCurrentStep((step) => Math.min(step + 1, steps.length - 1));
+    setCurrentStep((s) => Math.min(s + 1, steps.length - 1));
   };
 
-  const goBack = () => {
-    setCurrentStep((step) => Math.max(step - 1, 0));
+  const goBack = () => setCurrentStep((s) => Math.max(s - 1, 0));
+  const goToStep = (step: number) => setCurrentStep(step);
+
+  // ─── Color material helpers ───────────────────────────────────────────────────
+
+  const updateColorMaterial = (
+    id: number,
+    field: keyof Omit<ColorMaterial, "id">,
+    value: string,
+  ) => {
+    setColorMaterials((prev) =>
+      prev.map((cm) => (cm.id === id ? { ...cm, [field]: value } : cm)),
+    );
   };
 
-  const goToStep = (step: number) => {
-    setCurrentStep(step);
-  };
+  const addColorMaterial = () =>
+    setColorMaterials((prev) => [...prev, emptyColorMaterial(Date.now())]);
+
+  const removeColorMaterial = (id: number) =>
+    setColorMaterials((prev) =>
+      prev.length === 1 ? prev : prev.filter((cm) => cm.id !== id),
+    );
+
+  // ─── Packaging helpers ────────────────────────────────────────────────────────
 
   const updatePackagingItem = (
     id: number,
     field: keyof Omit<PackagingItem, "id">,
     value: string,
-  ) => {
-    setPackagingItems((items) =>
-      items.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
+  ) =>
+    setPackagingItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
     );
-  };
 
-  const addPackagingItem = () => {
-    setPackagingItems((items) => [
-      ...items,
-      emptyPackagingItem(Date.now()),
-    ]);
-  };
+  const addPackagingItem = () =>
+    setPackagingItems((prev) => [...prev, emptyPackagingItem(Date.now())]);
 
-  const removePackagingItem = (id: number) => {
-    setPackagingItems((items) =>
-      items.length === 1 ? items : items.filter((item) => item.id !== id),
+  const removePackagingItem = (id: number) =>
+    setPackagingItems((prev) =>
+      prev.length === 1 ? prev : prev.filter((item) => item.id !== id),
     );
-  };
+
+  // ─── Printer helpers ──────────────────────────────────────────────────────────
+
+  const selectedPrinter = printerOptions.find((p) => p.id === selectedPrinterId);
+
+  const filteredPrinters = useMemo(() => {
+    const term = normalizeSearch(printerSearch.trim());
+    if (!term) return printerOptions.slice(0, 8);
+    return printerOptions.filter((p) => p.searchableText.includes(term)).slice(0, 8);
+  }, [printerSearch]);
 
   const selectPrinter = (printer: PrinterOption) => {
     setSelectedPrinterId(printer.id);
@@ -358,40 +568,86 @@ export default function CalculatorPage() {
     setPrinterConsumption(String(printer.averageConsumption));
   };
 
-  const showError = attemptedSteps.includes(currentStep) && stepErrors[currentStep];
+  const fmt = (v: number) => formatCurrencyValue(v, currency);
+  const { symbol } = CURRENCY_CONFIG[currency];
+
+  // ─── Render ───────────────────────────────────────────────────────────────────
 
   return (
-    
     <main className="min-h-screen bg-[#F9FAFB] text-[#000000]">
-      <Header></Header>
+      <Header />
       <section className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
+
+        {/* ── Page header ── */}
         <header className="relative overflow-hidden rounded-[8px] border border-black/10 bg-white px-5 py-6 shadow-xl shadow-[#5852FF]/10 sm:px-8">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_10%,rgba(88,82,255,0.18),transparent_30%),radial-gradient(circle_at_90%_0%,rgba(186,74,0,0.12),transparent_26%)]" />
           <div className="relative">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-3xl">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#BA4A00]">
-                Professional Calculator
-              </p>
-              <h1 className="mt-3 text-3xl font-semibold tracking-normal text-black sm:text-4xl lg:text-5xl">
-                Precificacao profissional para impressao 3D
-              </h1>
-              <p className="mt-4 max-w-2xl text-base leading-7 text-black/70">
-                <strong>Material</strong> + Energia + Tempo de Maquina + Acabamento + Embalagem +
-                Impostos + <em>Margem</em> = Preco Final
-              </p>
-            </div>
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-3xl">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#BA4A00]">
+                  Professional Calculator
+                </p>
+                <h1 className="mt-3 text-3xl font-semibold tracking-normal text-black sm:text-4xl lg:text-5xl">
+                  Precificacao profissional para impressao 3D
+                </h1>
+                <p className="mt-4 max-w-2xl text-base leading-7 text-black/70">
+                  <strong>Material</strong> + Energia + Tempo de Maquina + Acabamento + Embalagem +
+                  Impostos + <em>Margem</em> = Preco Final
+                </p>
+              </div>
 
-            <div className="rounded-[8px] border border-[#5852FF]/20 bg-[#5852FF]/5 px-4 py-3 text-sm text-black/75">
-              <span className="block font-semibold text-[#5852FF]">
-                {formatCurrency(values.custoTotal)}
-              </span>
-              custo total estimado
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                {/* Currency selector */}
+                <div className="flex items-center gap-1 rounded-[8px] border border-black/10 bg-[#F9FAFB] p-1">
+                  {(["BRL", "USD", "EUR"] as Currency[]).map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setCurrency(c)}
+                      className={`rounded-[6px] px-3 py-1.5 text-xs font-bold transition ${
+                        currency === c
+                          ? "bg-[#5852FF] text-white shadow-sm"
+                          : "text-black/55 hover:text-[#5852FF]"
+                      }`}
+                    >
+                      {CURRENCY_CONFIG[c].symbol} {c}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Clear button */}
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  className="flex items-center gap-2 rounded-[8px] border border-[#BA4A00]/30 px-4 py-2.5 text-sm font-semibold text-[#BA4A00] transition hover:bg-[#BA4A00] hover:text-white"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
+                  Limpar tudo
+                </button>
+
+                <div className="rounded-[8px] border border-[#5852FF]/20 bg-[#5852FF]/5 px-4 py-3 text-sm text-black/75">
+                  <span className="block font-semibold text-[#5852FF]">
+                    {fmt(values.custoTotal)}
+                  </span>
+                  custo total estimado
+                </div>
+              </div>
             </div>
-          </div>
           </div>
         </header>
 
+        {/* ── Step progress ── */}
         <div className="rounded-[8px] border border-black/10 bg-white p-4 shadow-sm sm:p-5">
           <div className="mb-4 flex items-center justify-between gap-4 text-sm">
             <span className="font-semibold text-[#5852FF]">
@@ -421,11 +677,16 @@ export default function CalculatorPage() {
                   {step.icon}
                 </span>
                 {step.title}
+                {/* Optional badge for machine step */}
+                {index === 2 && (
+                  <span className="mt-1 block text-[10px] font-normal opacity-60">opcional</span>
+                )}
               </button>
             ))}
           </nav>
         </div>
 
+        {/* ── Main content ── */}
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="rounded-[8px] border border-black/10 bg-white p-5 shadow-xl shadow-black/5 transition-all duration-300 sm:p-7">
             <div className="mb-6 flex flex-col gap-2">
@@ -437,58 +698,178 @@ export default function CalculatorPage() {
                   {current.icon}
                 </span>
                 <span>{current.title}</span>
+                {currentStep === 2 && (
+                  <span className="rounded-full border border-black/10 bg-[#F9FAFB] px-3 py-1 text-xs font-semibold text-black/50">
+                    opcional
+                  </span>
+                )}
               </h2>
-              <p className="max-w-2xl text-sm leading-6 text-black/65">
-                {current.description}
-              </p>
+              <p className="max-w-2xl text-sm leading-6 text-black/65">{current.description}</p>
             </div>
 
+            {/* ── Step 0: Material ── */}
             {currentStep === 0 && (
-              <div className="grid gap-4 sm:grid-cols-2">
-                <NumberField
-                  label="Quantidade de peças"
-                  hint="Número total de peças que serão produzidas ou vendidas."
-                  suffix="peças"
-                  value={pieceQuantity}
-                  onChange={setPieceQuantity}
-                  placeholder="1"
-                  required
-                />
-                <NumberField
-                  label="Quantidade utilizada"
-                  hint="Quantidade utilizada em gramas."
-                  suffix="g"
-                  value={quantityUsed}
-                  onChange={setQuantityUsed}
-                  placeholder="120"
-                  required
-                />
-                <NumberField
-                  label="Peso total adquirido"
-                  hint="Peso total comprado do material, como 1000, 3000 ou 5000 g."
-                  suffix="g"
-                  value={totalWeight}
-                  onChange={setTotalWeight}
-                  placeholder="1000"
-                  required
-                />
-                <NumberField
-                  label="Preco pago pelo material"
-                  hint="Valor total pago pelo rolo, frasco ou lote."
-                  prefix="R$"
-                  value={materialPrice}
-                  onChange={setMaterialPrice}
-                  placeholder="89,90"
-                  required
-                />
-                <MetricCard
-                  label="Custo por grama"
-                  value={formatCurrency(values.custoPorGrama)}
-                  helper="Preco do material dividido pelo peso total adquirido."
-                />
+              <div className="flex flex-col gap-6">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <NumberField
+                    label="Quantidade de peças"
+                    hint="Número total de peças que serão produzidas ou vendidas."
+                    suffix="peças"
+                    value={pieceQuantity}
+                    onChange={setPieceQuantity}
+                    placeholder="1"
+                    required
+                  />
+                </div>
+
+                {/* Color materials with per-color pricing */}
+                <div>
+                  <div className="mb-3 flex items-center justify-between">
+                    <p className="text-sm font-semibold text-black">
+                      Cores / materiais utilizados
+                      <span className="ml-2 text-[#BA4A00]">*</span>
+                    </p>
+                    <button
+                      type="button"
+                      onClick={addColorMaterial}
+                      className="flex items-center gap-1.5 rounded-[6px] border border-[#5852FF]/30 px-3 py-1.5 text-xs font-semibold text-[#5852FF] transition hover:bg-[#5852FF] hover:text-white"
+                    >
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
+                      Adicionar cor
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col gap-4">
+                    {colorMaterials.map((cm, idx) => (
+                      <div
+                        key={cm.id}
+                        className="rounded-[8px] border border-black/10 bg-[#F9FAFB] p-4"
+                      >
+                        {/* Row header */}
+                        <div className="mb-3 flex items-center justify-between">
+                          <span className="text-xs font-bold uppercase tracking-wider text-[#5852FF]">
+                            Material {idx + 1}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removeColorMaterial(cm.id)}
+                            disabled={colorMaterials.length === 1}
+                            className="rounded-[6px] border border-[#BA4A00]/30 px-3 py-1 text-xs font-semibold text-[#BA4A00] transition hover:bg-[#BA4A00] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            Remover
+                          </button>
+                        </div>
+
+                        {/* Fields grid */}
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          {/* Name */}
+                          <div className="sm:col-span-2">
+                            <TextField
+                              label="Nome / cor"
+                              hint="Identifique este material (ex: Vermelho PLA, Transparente PETG)."
+                              value={cm.name}
+                              onChange={(v) => updateColorMaterial(cm.id, "name", v)}
+                              placeholder="Vermelho PLA"
+                            />
+                          </div>
+
+                          {/* Quantity used per piece */}
+                          <NumberField
+                            label="Qtd. usada por peça"
+                            hint="Quantidade deste material em cada peça individual."
+                            suffix="g"
+                            suffixOptions={["g", "kg"]}
+                            suffixValue={cm.unit}
+                            onSuffixChange={(v) =>
+                              updateColorMaterial(cm.id, "unit", v as WeightUnit)
+                            }
+                            value={cm.quantity}
+                            onChange={(v) => updateColorMaterial(cm.id, "quantity", v)}
+                            placeholder="100"
+                            required
+                          />
+
+                          {/* Spool / batch weight */}
+                          <NumberField
+                            label="Peso do rolo / lote"
+                            hint="Peso total do rolo ou lote adquirido (ex: 1000 g, 1 kg)."
+                            suffix="g"
+                            suffixOptions={["g", "kg"]}
+                            suffixValue={cm.spoolWeightUnit}
+                            onSuffixChange={(v) =>
+                              updateColorMaterial(cm.id, "spoolWeightUnit", v as WeightUnit)
+                            }
+                            value={cm.spoolWeight}
+                            onChange={(v) => updateColorMaterial(cm.id, "spoolWeight", v)}
+                            placeholder="1000"
+                            required
+                          />
+
+                          {/* Price paid for this spool */}
+                          <NumberField
+                            label="Preço pago pelo rolo / lote"
+                            hint="Valor total pago por este rolo ou lote específico."
+                            prefix={symbol}
+                            value={cm.price}
+                            onChange={(v) =>
+                              updateColorMaterial(cm.id, "price", formatCurrencyInput(v, 3))
+                            }
+                            placeholder="0,00"
+                            required
+                            isCurrencyField
+                          />
+
+                          {/* Derived metric for this color */}
+                          {values.colorCosts[idx] &&
+                            values.colorCosts[idx].costPerGram > 0 && (
+                              <MetricCard
+                                label="Custo desta cor"
+                                value={fmt(values.colorCosts[idx].costForAllPieces)}
+                                helper={`${values.colorCosts[idx].gramsUsed.toFixed(1)} g × ${fmt(values.colorCosts[idx].costPerGram)}/g × ${values.quantidadePecas} peça(s)`}
+                              />
+                            )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Total material summary callout */}
+                  {values.totalGramsPerPiece > 0 && (
+                    <div className="mt-3 rounded-[8px] border border-[#5852FF]/20 bg-[#5852FF]/5 px-4 py-3 text-sm leading-6 text-black/70">
+                      <strong className="text-[#5852FF]">
+                        {values.totalGramsPerPiece.toFixed(1)} g por peça
+                      </strong>{" "}
+                      ×{" "}
+                      <strong className="text-[#5852FF]">
+                        {values.quantidadePecas}{" "}
+                        {values.quantidadePecas === 1 ? "peça" : "peças"}
+                      </strong>{" "}
+                      ={" "}
+                      <strong className="text-[#5852FF]">
+                        {values.totalGramsAllPieces.toFixed(1)} g no total
+                      </strong>{" "}
+                      de material consumido em todas as peças.{" "}
+                      Custo total de material:{" "}
+                      <strong className="text-[#5852FF]">{fmt(values.custoMaterial)}</strong>.
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
+            {/* ── Step 1: Energy ── */}
             {currentStep === 1 && (
               <div className="flex flex-col gap-5">
                 <div className="rounded-[8px] border border-black/10 bg-[#F9FAFB] p-4">
@@ -496,13 +877,12 @@ export default function CalculatorPage() {
                     label="Buscar impressora"
                     hint="Digite a marca ou o modelo para encontrar o consumo médio cadastrado."
                     value={printerSearch}
-                    onChange={(value) => {
-                      setPrinterSearch(value);
+                    onChange={(v) => {
+                      setPrinterSearch(v);
                       setSelectedPrinterId("");
                     }}
                     placeholder="Bambu Lab A1, Ender 3, Prusa..."
                   />
-
                   <div className="mt-4 grid gap-2 sm:grid-cols-2">
                     {filteredPrinters.map((printer) => (
                       <button
@@ -518,38 +898,38 @@ export default function CalculatorPage() {
                         <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-[#BA4A00]">
                           {printer.brand}
                         </span>
-                        <strong className="mt-1 block text-sm text-black">
-                          {printer.model}
-                        </strong>
+                        <strong className="mt-1 block text-sm text-black">{printer.model}</strong>
                         <span className="mt-2 block text-xs text-black/60">
-                          Médio: <strong>{printer.averageConsumption} W</strong> · Pico: {printer.peakConsumption} W
+                          Médio: <strong>{printer.averageConsumption} W</strong> · Pico:{" "}
+                          {printer.peakConsumption} W
                         </span>
                       </button>
                     ))}
                   </div>
-
                   {filteredPrinters.length === 0 && (
                     <p className="mt-4 rounded-[8px] border border-[#BA4A00]/20 bg-[#BA4A00]/10 px-3 py-2 text-sm text-[#8f3900]">
-                      Nenhum modelo encontrado. Use o campo manual de Watts abaixo para continuar o cálculo.
+                      Nenhum modelo encontrado. Use o campo manual de Watts abaixo para continuar o
+                      cálculo.
                     </p>
                   )}
-
                   {selectedPrinter && (
                     <p className="mt-4 text-sm leading-6 text-black/65">
-                      Usando o consumo médio da <strong>{selectedPrinter.brand} {selectedPrinter.model}</strong>:{" "}
-                      <strong>{selectedPrinter.averageConsumption} W</strong>.
+                      Usando o consumo médio da{" "}
+                      <strong>
+                        {selectedPrinter.brand} {selectedPrinter.model}
+                      </strong>
+                      : <strong>{selectedPrinter.averageConsumption} W</strong>.
                     </p>
                   )}
                 </div>
-
                 <div className="grid gap-4 sm:grid-cols-2">
                   <NumberField
                     label="Consumo médio usado no cálculo"
                     hint="Potência média durante a impressão, em Watts. Você pode ajustar manualmente."
                     suffix="W"
                     value={printerConsumption}
-                    onChange={(value) => {
-                      setPrinterConsumption(value);
+                    onChange={(v) => {
+                      setPrinterConsumption(v);
                       setSelectedPrinterId("");
                     }}
                     placeholder="120"
@@ -567,23 +947,31 @@ export default function CalculatorPage() {
                   <NumberField
                     label="Valor do kWh"
                     hint="Valor cobrado por kWh na sua conta de energia."
-                    prefix="R$"
+                    prefix={symbol}
                     value={kwhValue}
-                    onChange={setKwhValue}
+                    onChange={(v) => setKwhValue(formatCurrencyInput(v, 3))}
                     placeholder="0,95"
                     required
+                    isCurrencyField
                   />
                   <MetricCard
                     label="Custo de energia"
-                    value={formatCurrency(values.custoEnergia)}
+                    value={fmt(values.custoEnergia)}
                     helper="Consumo em kW multiplicado pelas horas e pelo valor do kWh."
                   />
                 </div>
               </div>
             )}
 
+            {/* ── Step 2: Machine (optional) ── */}
             {currentStep === 2 && (
               <div className="flex flex-col gap-5">
+                {/* Optional notice */}
+                <div className="rounded-[8px] border border-black/10 bg-[#F9FAFB] px-4 py-3 text-sm text-black/60">
+                  Esta etapa é <strong>opcional</strong>. Se não quiser incluir custo de máquina,
+                  clique em <em>Próxima etapa</em> sem preencher nada.
+                </div>
+
                 <div className="grid rounded-[8px] border border-black/10 bg-[#F9FAFB] p-1 sm:w-fit sm:grid-cols-2">
                   {(["manual", "automatic"] as MachineMode[]).map((mode) => (
                     <button
@@ -606,15 +994,15 @@ export default function CalculatorPage() {
                     <NumberField
                       label="Valor por hora da maquina"
                       hint="Quanto a impressora deve cobrar por hora de uso."
-                      prefix="R$"
+                      prefix={symbol}
                       value={machineHourValue}
-                      onChange={setMachineHourValue}
+                      onChange={(v) => setMachineHourValue(formatCurrencyInput(v, 3))}
                       placeholder="5,00"
-                      required
+                      isCurrencyField
                     />
                     <MetricCard
                       label="Custo de maquina"
-                      value={formatCurrency(values.custoMaquina)}
+                      value={fmt(values.custoMaquina)}
                       helper="Tempo de impressao multiplicado pelo valor por hora."
                     />
                   </div>
@@ -623,11 +1011,11 @@ export default function CalculatorPage() {
                     <NumberField
                       label="Valor da impressora"
                       hint="Preco pago pela impressora ou valor de reposicao."
-                      prefix="R$"
+                      prefix={symbol}
                       value={printerValue}
-                      onChange={setPrinterValue}
+                      onChange={(v) => setPrinterValue(formatCurrencyInput(v, 3))}
                       placeholder="2500,00"
-                      required
+                      isCurrencyField
                     />
                     <NumberField
                       label="Vida util estimada"
@@ -636,16 +1024,15 @@ export default function CalculatorPage() {
                       value={printerLifeHours}
                       onChange={setPrinterLifeHours}
                       placeholder="5000"
-                      required
                     />
                     <MetricCard
                       label="Valor calculado por hora"
-                      value={formatCurrency(values.valorHoraMaquina)}
+                      value={fmt(values.valorHoraMaquina)}
                       helper="Valor da impressora dividido pela vida util estimada."
                     />
                     <MetricCard
                       label="Custo de maquina"
-                      value={formatCurrency(values.custoMaquina)}
+                      value={fmt(values.custoMaquina)}
                       helper="Valor por hora calculado multiplicado pelo tempo de impressao."
                     />
                   </div>
@@ -653,15 +1040,17 @@ export default function CalculatorPage() {
               </div>
             )}
 
+            {/* ── Step 3: Finish ── */}
             {currentStep === 3 && (
               <div className="grid gap-4 sm:grid-cols-2">
                 <NumberField
                   label="Valor fixo de acabamento"
                   hint="Materiais e custos fixos de acabamento."
-                  prefix="R$"
+                  prefix={symbol}
                   value={finishFixedValue}
-                  onChange={setFinishFixedValue}
+                  onChange={(v) => setFinishFixedValue(formatCurrencyInput(v, 3))}
                   placeholder="8,00"
+                  isCurrencyField
                 />
                 <NumberField
                   label="Horas de acabamento"
@@ -669,24 +1058,26 @@ export default function CalculatorPage() {
                   suffix="h"
                   value={finishHours}
                   onChange={setFinishHours}
-                  placeholder="1,5"
+                  placeholder="1.5"
                 />
                 <NumberField
                   label="Valor por hora"
                   hint="Valor da sua mao de obra por hora."
-                  prefix="R$"
+                  prefix={symbol}
                   value={finishHourValue}
-                  onChange={setFinishHourValue}
+                  onChange={(v) => setFinishHourValue(formatCurrencyInput(v, 3))}
                   placeholder="35,00"
+                  isCurrencyField
                 />
                 <MetricCard
                   label="Custo de acabamento"
-                  value={formatCurrency(values.custoAcabamento)}
+                  value={fmt(values.custoAcabamento)}
                   helper="Valor fixo mais horas de acabamento vezes valor por hora."
                 />
               </div>
             )}
 
+            {/* ── Step 4: Packaging ── */}
             {currentStep === 4 && (
               <div className="flex flex-col gap-4">
                 {packagingItems.map((item) => (
@@ -698,16 +1089,19 @@ export default function CalculatorPage() {
                       label="Nome"
                       hint="Item de embalagem, como caixa, etiqueta, plastico bolha ou manual."
                       value={item.name}
-                      onChange={(value) => updatePackagingItem(item.id, "name", value)}
+                      onChange={(v) => updatePackagingItem(item.id, "name", v)}
                       placeholder="Caixa"
                     />
                     <NumberField
                       label="Valor"
                       hint="Custo deste item."
-                      prefix="R$"
+                      prefix={symbol}
                       value={item.value}
-                      onChange={(value) => updatePackagingItem(item.id, "value", value)}
+                      onChange={(v) =>
+                        updatePackagingItem(item.id, "value", formatCurrencyInput(v, 3))
+                      }
                       placeholder="3,50"
+                      isCurrencyField
                     />
                     <button
                       type="button"
@@ -729,7 +1123,7 @@ export default function CalculatorPage() {
                   </button>
                   <MetricCard
                     label="Custo de embalagem"
-                    value={formatCurrency(values.custoEmbalagem)}
+                    value={fmt(values.custoEmbalagem)}
                     helper="Soma de todos os itens informados."
                     compact
                   />
@@ -737,6 +1131,7 @@ export default function CalculatorPage() {
               </div>
             )}
 
+            {/* ── Step 5: Taxes ── */}
             {currentStep === 5 && (
               <div className="grid gap-4 sm:grid-cols-2">
                 <NumberField
@@ -750,27 +1145,28 @@ export default function CalculatorPage() {
                 />
                 <MetricCard
                   label="Subtotal"
-                  value={formatCurrency(values.subtotal)}
+                  value={fmt(values.subtotal)}
                   helper="Soma de material, energia, maquina, acabamento e embalagem."
                 />
                 <MetricCard
                   label="Impostos"
-                  value={formatCurrency(values.custoImpostos)}
+                  value={fmt(values.custoImpostos)}
                   helper="Subtotal multiplicado pelo percentual de impostos."
                 />
               </div>
             )}
 
-            {currentStep === 6 && (
-              <ResultView values={values} />
-            )}
+            {/* ── Step 6: Result ── */}
+            {currentStep === 6 && <ResultView values={values} currency={currency} />}
 
+            {/* Error banner */}
             {showError && (
               <div className="mt-6 rounded-[8px] border border-[#BA4A00]/30 bg-[#BA4A00]/10 px-4 py-3 text-sm font-medium text-[#8f3900]">
                 Preencha os campos obrigatorios desta etapa antes de continuar.
               </div>
             )}
 
+            {/* Navigation */}
             <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="button"
@@ -794,38 +1190,39 @@ export default function CalculatorPage() {
                   onClick={() => setCurrentStep(0)}
                   className="rounded-[8px] bg-[#BA4A00] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#953b00]"
                 >
-                  Revisar calculo
+                  Revisar cálculo
                 </button>
               )}
             </div>
           </div>
 
+          {/* ── Live summary sidebar ── */}
           <aside className="h-fit rounded-[8px] border border-black/10 bg-white p-5 shadow-xl shadow-black/5 lg:sticky lg:top-6">
             <h3 className="text-base font-semibold text-black">Resumo ao vivo</h3>
             <p className="mt-1 text-sm text-black/60">
-              Os valores sao recalculados <strong>em tempo real</strong> a cada alteracao.
+              Os valores são recalculados <strong>em tempo real</strong> a cada alteracao.
             </p>
             <div className="mt-5 space-y-3">
-              <SummaryRow label="Material" value={values.custoMaterial} />
-              <SummaryRow label="Energia" value={values.custoEnergia} />
-              <SummaryRow label="Tempo de Maquina" value={values.custoMaquina} />
-              <SummaryRow label="Acabamento" value={values.custoAcabamento} />
-              <SummaryRow label="Embalagem" value={values.custoEmbalagem} />
-              <SummaryRow label="Impostos" value={values.custoImpostos} />
+              <SummaryRow label="Material" value={fmt(values.custoMaterial)} />
+              <SummaryRow label="Energia" value={fmt(values.custoEnergia)} />
+              <SummaryRow label="Tempo de Maquina" value={fmt(values.custoMaquina)} />
+              <SummaryRow label="Acabamento" value={fmt(values.custoAcabamento)} />
+              <SummaryRow label="Embalagem" value={fmt(values.custoEmbalagem)} />
+              <SummaryRow label="Impostos" value={fmt(values.custoImpostos)} />
             </div>
             <div className="mt-5 rounded-[8px] bg-black px-4 py-4 text-white">
               <span className="text-sm text-white/65">Custo total</span>
-              <strong className="mt-1 block text-2xl">
-                {formatCurrency(values.custoTotal)}
-              </strong>
+              <strong className="mt-1 block text-2xl">{fmt(values.custoTotal)}</strong>
             </div>
           </aside>
         </section>
       </section>
-      <Footer></Footer>
+      <Footer />
     </main>
   );
 }
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
 
 function NumberField({
   label,
@@ -835,38 +1232,72 @@ function NumberField({
   placeholder,
   prefix,
   suffix,
+  suffixOptions,
+  suffixValue,
+  onSuffixChange,
   required,
+  isCurrencyField = false,
 }: {
   label: string;
-  hint: string;
+  hint?: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   prefix?: string;
   suffix?: string;
+  suffixOptions?: string[];
+  suffixValue?: string;
+  onSuffixChange?: (value: string) => void;
   required?: boolean;
+  isCurrencyField?: boolean;
 }) {
   return (
     <label className="block">
       <span className="mb-2 flex items-center gap-2 text-sm font-semibold text-black">
         {label}
         {required && <span className="text-[#BA4A00]">*</span>}
-        <Tooltip text={hint} />
+        {hint && <Tooltip text={hint} />}
       </span>
       <span className="flex h-12 items-center rounded-[8px] border border-black/15 bg-white px-3 transition focus-within:border-[#5852FF] focus-within:ring-4 focus-within:ring-[#5852FF]/10">
-        {prefix && <span className="mr-2 text-sm font-semibold text-black/45">{prefix}</span>}
+        {prefix && (
+          <span className="mr-2 text-sm font-semibold text-black/45">{prefix}</span>
+        )}
         <input
           type="text"
           inputMode="decimal"
           value={value}
-          onChange={(event) => {
-            const next = event.target.value.replace(/[^\d.,]/g, "");
-            onChange(next);
+          onChange={(e) => {
+            const raw = e.target.value;
+            if (isCurrencyField) {
+              onChange(raw.replace(/[^\d.,]/g, ""));
+            } else {
+              const stripped = raw.replace(/[^\d.]/g, "");
+              const parts = stripped.split(".");
+              onChange(
+                parts.length > 2 ? parts[0] + "." + parts.slice(1).join("") : stripped,
+              );
+            }
           }}
           placeholder={placeholder}
           className="min-w-0 flex-1 bg-transparent text-base text-black outline-none placeholder:text-black/35"
         />
-        {suffix && <span className="ml-2 text-sm font-semibold text-black/45">{suffix}</span>}
+        {suffixOptions && suffixOptions.length > 0 ? (
+          <select
+            value={suffixValue}
+            onChange={(e) => onSuffixChange?.(e.target.value)}
+            className="ml-2 rounded-[6px] border border-black/15 bg-transparent px-2 text-sm font-semibold text-black outline-none"
+          >
+            {suffixOptions.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+        ) : (
+          suffix && (
+            <span className="ml-2 text-sm font-semibold text-black/45">{suffix}</span>
+          )
+        )}
       </span>
     </label>
   );
@@ -880,7 +1311,7 @@ function TextField({
   placeholder,
 }: {
   label: string;
-  hint: string;
+  hint?: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -889,12 +1320,12 @@ function TextField({
     <label className="block">
       <span className="mb-2 flex items-center gap-2 text-sm font-semibold text-black">
         {label}
-        <Tooltip text={hint} />
+        {hint && <Tooltip text={hint} />}
       </span>
       <input
         type="text"
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="h-12 w-full rounded-[8px] border border-black/15 bg-white px-3 text-base text-black outline-none transition focus:border-[#5852FF] focus:ring-4 focus:ring-[#5852FF]/10 placeholder:text-black/35"
       />
@@ -939,24 +1370,23 @@ function MetricCard({
         <span className="text-sm font-semibold text-black">{label}</span>
         <Tooltip text={helper} />
       </div>
-      <strong className="mt-2 block text-2xl font-semibold text-[#5852FF]">
-        {value}
-      </strong>
+      <strong className="mt-2 block text-2xl font-semibold text-[#5852FF]">{value}</strong>
     </div>
   );
 }
 
-function SummaryRow({ label, value }: { label: string; value: number }) {
+function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-4 border-b border-black/10 pb-3 text-sm last:border-b-0 last:pb-0">
       <span className="text-black/65">{label}</span>
-      <strong className="text-black">{formatCurrency(value)}</strong>
+      <strong className="text-black">{value}</strong>
     </div>
   );
 }
 
 function ResultView({
   values,
+  currency,
 }: {
   values: {
     custoMaterial: number;
@@ -970,7 +1400,10 @@ function ResultView({
     precoProfissional: number;
     precoPremium: number;
   };
+  currency: Currency;
 }) {
+  const fmt = (v: number) => formatCurrencyValue(v, currency);
+
   const resultRows = [
     ["Material", values.custoMaterial],
     ["Energia", values.custoEnergia],
@@ -982,7 +1415,7 @@ function ResultView({
 
   const priceCards = [
     {
-      title: "Economico",
+      title: "Econômico",
       margin: "30%",
       value: values.precoEconomico,
       badge: "entrada competitiva",
@@ -1012,7 +1445,7 @@ function ResultView({
           <div>
             <p className="text-sm font-semibold text-black/60">Custo total</p>
             <strong className="mt-1 block text-3xl font-semibold text-black">
-              {formatCurrency(values.custoTotal)}
+              {fmt(values.custoTotal)}
             </strong>
           </div>
           <span className="rounded-full bg-[#BA4A00]/10 px-3 py-1 text-sm font-semibold text-[#BA4A00]">
@@ -1021,13 +1454,19 @@ function ResultView({
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           {resultRows.map(([label, value]) => (
-            <SummaryRow key={label} label={label} value={value} />
+            <div
+              key={label}
+              className="flex items-center justify-between gap-4 border-b border-black/10 pb-3 text-sm last:border-b-0 last:pb-0"
+            >
+              <span className="text-black/65">{label}</span>
+              <strong className="text-black">{fmt(value)}</strong>
+            </div>
           ))}
         </div>
       </div>
 
       <div>
-        <h3 className="text-lg font-semibold text-black">Sugestoes de preco</h3>
+        <h3 className="text-lg font-semibold text-black">Sugestões de preco</h3>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
           {priceCards.map((card) => (
             <div
@@ -1040,9 +1479,7 @@ function ResultView({
                   {card.badge}
                 </span>
               </div>
-              <strong className="mt-3 block text-3xl font-semibold">
-                {formatCurrency(card.value)}
-              </strong>
+              <strong className="mt-3 block text-3xl font-semibold">{fmt(card.value)}</strong>
               <span className="mt-3 inline-flex rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-black">
                 Margem {card.margin}
               </span>

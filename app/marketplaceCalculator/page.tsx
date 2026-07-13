@@ -4,6 +4,14 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import marketData from "../../public/marketplaces.json";
+import { formatCurrencyInput } from "@/utils/currency";
+type MarketOption = {
+  id: string;
+  nome_marketplace: string;
+  tipo_segmento: string;
+  
+};
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -16,6 +24,14 @@ const toNumber = (value: string) => {
 };
 
 const money = (value: number) => currencyFormatter.format(value || 0);
+const marketplacesOptions: MarketOption[] = (marketData as unknown as MarketOption[])
+  .map((marketplace) => ({
+    id: marketplace.id,
+    nome_marketplace: marketplace.nome_marketplace,
+    tipo_segmento: marketplace.tipo_segmento,
+    
+  }))
+  .sort((a: { nome_marketplace: any; id: any; }, b: { nome_marketplace: any; id: any; }) => `${a.nome_marketplace} ${a.id}`.localeCompare(`${b.nome_marketplace} ${b.id}`));
 
 const fields = [
   ["Quantidade de peças", "peças", "1"],
@@ -121,7 +137,8 @@ export default function MarketplaceCalculator() {
                   suffix={unit !== "R$" ? unit : undefined}
                   value={values[label] || ""}
                   placeholder={placeholder}
-                  onChange={(value) => updateValue(label, value)}
+                  
+                  onChange={(value) => updateValue(label, formatCurrencyInput(value, 3))}
                 />
               ))}
             </div>
