@@ -200,8 +200,7 @@ const steps: Step[] = [
     description: (
       <>
         Defina quanto a impressora precisa recuperar por hora para manter sua operação{" "}
-        <em>saudável</em>. Esta etapa é <strong>opcional</strong> — pule caso não queira incluir
-        custo de máquina.
+        <em>saudável</em>. 
       </>
     ),
     icon: "◷",
@@ -301,7 +300,7 @@ type FeeBreakdown = {
   impostos: number;
   outrasTaxas: number;
   totalTaxas: number;
-  precoFinal: number;
+  preçoFinal: number;
   lucro: number;
   comissaoLabel: string;
 };
@@ -410,8 +409,8 @@ function calculateMarketplaceFees(
     const impostos = (custoProducao + freteVal) * (impostosPct / 100);
     const totalTaxas = comissao + taxaFixaVal + taxaProcessamento + taxaAnuncio + mensalidadeVal + outrasTaxasVal + freteVal + impostos;
     const custoTotal = custoProducao + totalTaxas;
-    const precoFinal = margem > 0 ? custoTotal / (1 - margem / 100) : custoTotal;
-    return { comissao, taxaFixa: taxaFixaVal, taxaProcessamento, mensalidade: mensalidadeVal, frete: freteVal, impostos, outrasTaxas: outrasTaxasVal + taxaAnuncio, totalTaxas, precoFinal, lucro: precoFinal - custoTotal, comissaoLabel: "Manual" };
+    const preçoFinal = margem > 0 ? custoTotal / (1 - margem / 100) : custoTotal;
+    return { comissao, taxaFixa: taxaFixaVal, taxaProcessamento, mensalidade: mensalidadeVal, frete: freteVal, impostos, outrasTaxas: outrasTaxasVal + taxaAnuncio, totalTaxas, preçoFinal, lucro: preçoFinal - custoTotal, comissaoLabel: "Manual" };
   }
 
   // Converge price estimate (faixas depend on price)
@@ -464,9 +463,9 @@ function calculateMarketplaceFees(
   const comissao = estimatedPrice * (comissaoPct / 100);
   const totalTaxas = comissao + taxaFixaFinal + taxaProcessamento + mensalidade + freteAmt + impostos;
   const custoTotal = custoProducao + totalTaxas;
-  const precoFinal = margem > 0 ? custoTotal / (1 - margem / 100) : custoTotal;
+  const preçoFinal = margem > 0 ? custoTotal / (1 - margem / 100) : custoTotal;
 
-  return { comissao, taxaFixa: taxaFixaFinal, taxaProcessamento, mensalidade, frete: freteAmt, impostos, outrasTaxas: 0, totalTaxas, precoFinal, lucro: precoFinal - custoTotal, comissaoLabel };
+  return { comissao, taxaFixa: taxaFixaFinal, taxaProcessamento, mensalidade, frete: freteAmt, impostos, outrasTaxas: 0, totalTaxas, preçoFinal, lucro: preçoFinal - custoTotal, comissaoLabel };
 }
 
 // ─── Printer catalog ──────────────────────────────────────────────────────────
@@ -530,6 +529,7 @@ export default function CalculatorPage() {
   const [selectedPrinterId, setSelectedPrinterId] = useState("");
   const [printerConsumption, setPrinterConsumption] = useState("");
   const [printingHours, setPrintingHours] = useState("");
+  const [printingMinutes, setPrintingMinutes] = useState("");
   const [kwhValue, setKwhValue] = useState("0,000");
   const [machineMode, setMachineMode] = useState<MachineMode>("manual");
   const [machineHourValue, setMachineHourValue] = useState("");
@@ -537,6 +537,7 @@ export default function CalculatorPage() {
   const [printerLifeHours, setPrinterLifeHours] = useState("");
   const [finishFixedValue, setFinishFixedValue] = useState("");
   const [finishHours, setFinishHours] = useState("");
+  const [finishMinutes, setFinishMinutes] = useState("");
   const [finishHourValue, setFinishHourValue] = useState("");
   const [packagingItems, setPackagingItems] = useState<PackagingItem[]>(defaultPackaging());
   const [taxPercent, setTaxPercent] = useState("");
@@ -557,17 +558,17 @@ export default function CalculatorPage() {
   const stateSnapshot = useMemo(() => ({
     currency, activeTab,
     currentStep, attemptedSteps, pieceQuantity, colorMaterials,
-    printerSearch, selectedPrinterId, printerConsumption, printingHours, kwhValue,
+    printerSearch, selectedPrinterId, printerConsumption, printingHours, printingMinutes, kwhValue,
     machineMode, machineHourValue, printerValue, printerLifeHours,
-    finishFixedValue, finishHours, finishHourValue, packagingItems, taxPercent,
+    finishFixedValue, finishHours, finishMinutes, finishHourValue, packagingItems, taxPercent,
     selectedMarketplaceId, selectedModalidade, selectedPlano, selectedCategoria,
     selectedFrete, customFreteValue, impostosMarketplace, margemDesejada, manualTaxes,
   }), [
     currency, activeTab,
     currentStep, attemptedSteps, pieceQuantity, colorMaterials,
-    printerSearch, selectedPrinterId, printerConsumption, printingHours, kwhValue,
+    printerSearch, selectedPrinterId, printerConsumption, printingHours, printingMinutes, kwhValue,
     machineMode, machineHourValue, printerValue, printerLifeHours,
-    finishFixedValue, finishHours, finishHourValue, packagingItems, taxPercent,
+    finishFixedValue, finishHours, finishMinutes, finishHourValue, packagingItems, taxPercent,
     selectedMarketplaceId, selectedModalidade, selectedPlano, selectedCategoria,
     selectedFrete, customFreteValue, impostosMarketplace, margemDesejada, manualTaxes,
   ]);
@@ -587,6 +588,7 @@ export default function CalculatorPage() {
       if (s.selectedPrinterId) setSelectedPrinterId(s.selectedPrinterId);
       if (s.printerConsumption) setPrinterConsumption(s.printerConsumption);
       if (s.printingHours) setPrintingHours(s.printingHours);
+      if (s.printingMinutes) setPrintingMinutes(s.printingMinutes);
       if (s.kwhValue) setKwhValue(s.kwhValue);
       if (s.machineMode) setMachineMode(s.machineMode);
       if (s.machineHourValue) setMachineHourValue(s.machineHourValue);
@@ -594,6 +596,7 @@ export default function CalculatorPage() {
       if (s.printerLifeHours) setPrinterLifeHours(s.printerLifeHours);
       if (s.finishFixedValue) setFinishFixedValue(s.finishFixedValue);
       if (s.finishHours) setFinishHours(s.finishHours);
+      if (s.finishMinutes) setFinishMinutes(s.finishMinutes);
       if (s.finishHourValue) setFinishHourValue(s.finishHourValue);
       if (s.packagingItems) setPackagingItems(s.packagingItems);
       if (s.taxPercent) setTaxPercent(s.taxPercent);
@@ -626,6 +629,7 @@ export default function CalculatorPage() {
     setSelectedPrinterId("");
     setPrinterConsumption("");
     setPrintingHours("");
+    setPrintingMinutes("");
     setKwhValue("0,000");
     setMachineMode("manual");
     setMachineHourValue("");
@@ -633,6 +637,7 @@ export default function CalculatorPage() {
     setPrinterLifeHours("");
     setFinishFixedValue("");
     setFinishHours("");
+    setFinishMinutes("");
     setFinishHourValue("");
     setPackagingItems(defaultPackaging());
     setTaxPercent("");
@@ -663,27 +668,29 @@ export default function CalculatorPage() {
     const totalGramsAllPieces = totalGramsPerPiece * quantidadePecas;
     const custoMaterial = colorCosts.reduce((sum, c) => sum + c.costForAllPieces, 0);
     const consumoKW = toNumber(printerConsumption) / 1000;
-    const custoEnergia = consumoKW * toNumber(printingHours) * toCurrencyNumber(kwhValue) * quantidadePecas;
-    const valorHoraMaquina = machineMode === "automatic"
+    const tempoImpressaoEmHoras = toNumber(printingHours) + toNumber(printingMinutes) / 60;
+    const tempoAcabamentoEmHoras = toNumber(finishHours) + toNumber(finishMinutes) / 60;
+    const custoEnergia = consumoKW * tempoImpressaoEmHoras * toCurrencyNumber(kwhValue) * quantidadePecas;
+    const valorHoraMáquina = machineMode === "automatic"
       ? (toNumber(printerLifeHours) > 0 ? toCurrencyNumber(printerValue) / toNumber(printerLifeHours) : 0)
       : toCurrencyNumber(machineHourValue);
-    const custoMaquina = toNumber(printingHours) * valorHoraMaquina * quantidadePecas;
-    const custoAcabamento = (toCurrencyNumber(finishFixedValue) + toNumber(finishHours) * toCurrencyNumber(finishHourValue)) * quantidadePecas;
+    const custoMáquina = tempoImpressaoEmHoras * valorHoraMáquina * quantidadePecas;
+    const custoAcabamento = (toCurrencyNumber(finishFixedValue) + tempoAcabamentoEmHoras * toCurrencyNumber(finishHourValue)) * quantidadePecas;
     const custoEmbalagem = packagingItems.reduce((total, item) => total + toCurrencyNumber(item.value), 0);
-    const subtotal = custoMaterial + custoEnergia + custoMaquina + custoAcabamento + custoEmbalagem;
+    const subtotal = custoMaterial + custoEnergia + custoMáquina + custoAcabamento + custoEmbalagem;
     const custoImpostos = subtotal * (toNumber(taxPercent) / 100);
     const custoTotal = subtotal + custoImpostos;
     return {
-      colorCosts, custoMaterial, custoEnergia, valorHoraMaquina, quantidadePecas,
-      totalGramsPerPiece, totalGramsAllPieces, custoMaquina, custoAcabamento,
+      colorCosts, custoMaterial, custoEnergia, valorHoraMáquina, quantidadePecas,
+      totalGramsPerPiece, totalGramsAllPieces, custoMáquina, custoAcabamento,
       custoEmbalagem, subtotal, custoImpostos, custoTotal,
-      precoEconomico: custoTotal * 1.3,
-      precoProfissional: custoTotal * 1.5,
-      precoPremium: custoTotal * 1.8,
+      preçoEconomico: custoTotal * 1.3,
+      preçoProfissional: custoTotal * 1.5,
+      preçoPremium: custoTotal * 1.8,
     };
-  }, [colorMaterials, finishFixedValue, finishHourValue, finishHours, kwhValue,
+  }, [colorMaterials, finishFixedValue, finishHourValue, finishHours, finishMinutes, kwhValue,
     machineHourValue, machineMode, packagingItems, printerConsumption,
-    printerLifeHours, printerValue, printingHours, taxPercent, pieceQuantity]);
+    printerLifeHours, printerValue, printingHours, printingMinutes, taxPercent, pieceQuantity]);
 
   // ─── Marketplace derived values ───────────────────────────────────────────
 
@@ -804,15 +811,15 @@ export default function CalculatorPage() {
           <div className="relative">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-3xl">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#BA4A00]">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#FF4E26]">
                   Professional Calculator
                 </p>
                 <h1 className="mt-3 text-3xl font-semibold tracking-normal text-black sm:text-4xl lg:text-5xl">
-                  Precificacao profissional para impressao 3D
+                  Precificação profissional para impressão 3D
                 </h1>
                 <p className="mt-4 max-w-2xl text-base leading-7 text-black/70">
-                  <strong>Material</strong> + Energia + Tempo de Maquina + Acabamento + Embalagem +
-                  Impostos + <em>Margem</em> = Preco Final
+                  <strong>Material</strong> + Energia + Tempo de Máquina + Acabamento + Embalagem +
+                  Impostos + <em>Margem</em> = Preço Final
                 </p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -825,7 +832,7 @@ export default function CalculatorPage() {
                   ))}
                 </div>
                 <button type="button" onClick={clearAll}
-                  className="flex items-center gap-2 rounded-[8px] border border-[#BA4A00]/30 px-4 py-2.5 text-sm font-semibold text-[#BA4A00] transition hover:bg-[#BA4A00] hover:text-white">
+                  className="flex items-center gap-2 rounded-[8px] border border-[#FF4E26]/30 px-4 py-2.5 text-sm font-semibold text-[#FF4E26] transition hover:bg-[#FF4E26] hover:text-white">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                   </svg>
@@ -871,7 +878,7 @@ export default function CalculatorPage() {
             Marketplace
             {marketplaceResult && (
               <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-black">
-                {fmt(marketplaceResult.precoFinal)}
+                {fmt(marketplaceResult.preçoFinal)}
               </span>
             )}
           </button>
@@ -909,7 +916,7 @@ export default function CalculatorPage() {
             <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
               <div className="rounded-[8px] border border-black/10 bg-white p-5 shadow-xl shadow-black/5 transition-all duration-300 sm:p-7">
                 <div className="mb-6 flex flex-col gap-2">
-                  <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#BA4A00]">{current.eyebrow}</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#FF4E26]">{current.eyebrow}</p>
                   <h2 className="flex items-center gap-3 text-2xl font-semibold text-black sm:text-3xl">
                     <span className="flex h-11 w-11 items-center justify-center rounded-[8px] bg-[#5852FF]/10 text-xl text-[#5852FF]">{current.icon}</span>
                     <span>{current.title}</span>
@@ -928,7 +935,7 @@ export default function CalculatorPage() {
                     </div>
                     <div>
                       <div className="mb-3 flex items-center justify-between">
-                        <p className="text-sm font-semibold text-black">Cores / materiais utilizados <span className="text-[#BA4A00]">*</span></p>
+                        <p className="text-sm font-semibold text-black">Cores / materiais utilizados <span className="text-[#FF4E26]">*</span></p>
                         <button type="button" onClick={addColorMaterial} className="flex items-center gap-1.5 rounded-[6px] border border-[#5852FF]/30 px-3 py-1.5 text-xs font-semibold text-[#5852FF] transition hover:bg-[#5852FF] hover:text-white">
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
                           Adicionar cor
@@ -940,7 +947,7 @@ export default function CalculatorPage() {
                             <div className="mb-3 flex items-center justify-between">
                               <span className="text-xs font-bold uppercase tracking-wider text-[#5852FF]">Material {idx + 1}</span>
                               <button type="button" onClick={() => removeColorMaterial(cm.id)} disabled={colorMaterials.length === 1}
-                                className="rounded-[6px] border border-[#BA4A00]/30 px-3 py-1 text-xs font-semibold text-[#BA4A00] transition hover:bg-[#BA4A00] hover:text-white disabled:cursor-not-allowed disabled:opacity-40">
+                                className="rounded-[6px] border border-[#FF4E26]/30 px-3 py-1 text-xs font-semibold text-[#FF4E26] transition hover:bg-[#FF4E26] hover:text-white disabled:cursor-not-allowed disabled:opacity-40">
                                 Remover
                               </button>
                             </div>
@@ -980,14 +987,14 @@ export default function CalculatorPage() {
                         {filteredPrinters.map((printer) => (
                           <button key={printer.id} type="button" onClick={() => selectPrinter(printer)}
                             className={`rounded-[8px] border p-3 text-left transition hover:-translate-y-0.5 hover:border-[#5852FF] hover:bg-white ${selectedPrinterId === printer.id ? "border-[#5852FF] bg-white shadow-sm shadow-[#5852FF]/20" : "border-black/10 bg-white/70"}`}>
-                            <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-[#BA4A00]">{printer.brand}</span>
+                            <span className="block text-xs font-semibold uppercase tracking-[0.12em] text-[#FF4E26]">{printer.brand}</span>
                             <strong className="mt-1 block text-sm text-black">{printer.model}</strong>
                             <span className="mt-2 block text-xs text-black/60">Médio: <strong>{printer.averageConsumption} W</strong> · Pico: {printer.peakConsumption} W</span>
                           </button>
                         ))}
                       </div>
                       {filteredPrinters.length === 0 && (
-                        <p className="mt-4 rounded-[8px] border border-[#BA4A00]/20 bg-[#BA4A00]/10 px-3 py-2 text-sm text-[#8f3900]">Nenhum modelo encontrado. Use o campo manual de Watts abaixo para continuar o cálculo.</p>
+                        <p className="mt-4 rounded-[8px] border border-[#FF4E26]/20 bg-[#FF4E26]/10 px-3 py-2 text-sm text-[#8f3900]">Nenhum modelo encontrado. Use o campo manual de Watts abaixo para continuar o cálculo.</p>
                       )}
                       {selectedPrinter && (
                         <p className="mt-4 text-sm leading-6 text-black/65">Usando o consumo médio da <strong>{selectedPrinter.brand} {selectedPrinter.model}</strong>: <strong>{selectedPrinter.averageConsumption} W</strong>.</p>
@@ -995,7 +1002,8 @@ export default function CalculatorPage() {
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2">
                       <NumberField label="Consumo médio usado no cálculo" hint="Potência média durante a impressão, em Watts. Você pode ajustar manualmente." suffix="W" value={printerConsumption} onChange={(v) => { setPrinterConsumption(v); setSelectedPrinterId(""); }} placeholder="120" required />
-                      <NumberField label="Tempo de impressao" hint="Tempo total de impressao em horas." suffix="h" value={printingHours} onChange={setPrintingHours} placeholder="8" required />
+                      <NumberField label="Horas de impressão" hint="Parte em horas do tempo total de impressão." suffix="h" value={printingHours} onChange={setPrintingHours} placeholder="8" required />
+                      <NumberField label="Minutos de impressão" hint="Parte em minutos do tempo total de impressão (de 0 a 59)." suffix="min" value={printingMinutes} onChange={setPrintingMinutes} placeholder="30" numericOnly maxLength={2} max={59} />
                       <NumberField label="Valor do kWh" hint="Valor cobrado por kWh na sua conta de energia." prefix={symbol} value={kwhValue} onChange={(v) => setKwhValue(formatCurrencyInput(v, 3))} placeholder="0,95" required isCurrencyField />
                       <MetricCard label="Custo de energia" value={fmt(values.custoEnergia)} helper="Consumo em kW multiplicado pelas horas e pelo valor do kWh." />
                     </div>
@@ -1005,9 +1013,7 @@ export default function CalculatorPage() {
                 {/* ── Step 2: Machine (optional) ── */}
                 {currentStep === 2 && (
                   <div className="flex flex-col gap-5">
-                    <div className="rounded-[8px] border border-black/10 bg-[#F9FAFB] px-4 py-3 text-sm text-black/60">
-                      Esta etapa é <strong>opcional</strong>. Se não quiser incluir custo de máquina, clique em <em>Próxima etapa</em> sem preencher nada.
-                    </div>
+                    
                     <div className="grid rounded-[8px] border border-black/10 bg-[#F9FAFB] p-1 sm:w-fit sm:grid-cols-2">
                       {(["manual", "automatic"] as MachineMode[]).map((mode) => (
                         <button key={mode} type="button" onClick={() => setMachineMode(mode)}
@@ -1018,15 +1024,15 @@ export default function CalculatorPage() {
                     </div>
                     {machineMode === "manual" ? (
                       <div className="grid gap-4 sm:grid-cols-2">
-                        <NumberField label="Valor por hora da maquina" hint="Quanto a impressora deve cobrar por hora de uso." prefix={symbol} value={machineHourValue} onChange={(v) => setMachineHourValue(formatCurrencyInput(v, 3))} placeholder="5,00" isCurrencyField />
-                        <MetricCard label="Custo de maquina" value={fmt(values.custoMaquina)} helper="Tempo de impressao multiplicado pelo valor por hora." />
+                        <NumberField label="Valor por hora da Máquina" hint="Quanto a impressora deve cobrar por hora de uso." prefix={symbol} value={machineHourValue} onChange={(v) => setMachineHourValue(formatCurrencyInput(v, 3))} placeholder="5,00" isCurrencyField />
+                        <MetricCard label="Custo de Máquina" value={fmt(values.custoMáquina)} helper="Tempo de impressão multiplicado pelo valor por hora." />
                       </div>
                     ) : (
                       <div className="grid gap-4 sm:grid-cols-2">
-                        <NumberField label="Valor da impressora" hint="Preco pago pela impressora ou valor de reposicao." prefix={symbol} value={printerValue} onChange={(v) => setPrinterValue(formatCurrencyInput(v, 3))} placeholder="2500,00" isCurrencyField />
-                        <NumberField label="Vida util estimada" hint="Vida util esperada da maquina, em horas." suffix="h" value={printerLifeHours} onChange={setPrinterLifeHours} placeholder="5000" />
-                        <MetricCard label="Valor calculado por hora" value={fmt(values.valorHoraMaquina)} helper="Valor da impressora dividido pela vida util estimada." />
-                        <MetricCard label="Custo de maquina" value={fmt(values.custoMaquina)} helper="Valor por hora calculado multiplicado pelo tempo de impressao." />
+                        <NumberField label="Valor da impressora" hint="preço pago pela impressora ou valor de reposicao." prefix={symbol} value={printerValue} onChange={(v) => setPrinterValue(formatCurrencyInput(v, 3))} placeholder="2500,00" isCurrencyField />
+                        <NumberField label="Vida util estimada" hint="Vida util esperada da Máquina, em horas." suffix="h" value={printerLifeHours} onChange={setPrinterLifeHours} placeholder="5000" />
+                        <MetricCard label="Valor calculado por hora" value={fmt(values.valorHoraMáquina)} helper="Valor da impressora dividido pela vida util estimada." />
+                        <MetricCard label="Custo de Máquina" value={fmt(values.custoMáquina)} helper="Valor por hora calculado multiplicado pelo tempo de impressão." />
                       </div>
                     )}
                   </div>
@@ -1036,7 +1042,8 @@ export default function CalculatorPage() {
                 {currentStep === 3 && (
                   <div className="grid gap-4 sm:grid-cols-2">
                     <NumberField label="Valor fixo de acabamento" hint="Materiais e custos fixos de acabamento." prefix={symbol} value={finishFixedValue} onChange={(v) => setFinishFixedValue(formatCurrencyInput(v, 3))} placeholder="8,00" isCurrencyField />
-                    <NumberField label="Horas de acabamento" hint="Tempo gasto em pos-processamento." suffix="h" value={finishHours} onChange={setFinishHours} placeholder="1.5" />
+                    <NumberField label="Horas de acabamento" hint="Parte em horas do tempo gasto em pos-processamento." suffix="h" value={finishHours} onChange={setFinishHours} placeholder="1" />
+                    <NumberField label="Minutos de acabamento" hint="Parte em minutos do tempo gasto em pos-processamento (de 0 a 59)." suffix="min" value={finishMinutes} onChange={setFinishMinutes} placeholder="30" numericOnly maxLength={2} max={59} />
                     <NumberField label="Valor por hora" hint="Valor da sua mao de obra por hora." prefix={symbol} value={finishHourValue} onChange={(v) => setFinishHourValue(formatCurrencyInput(v, 3))} placeholder="35,00" isCurrencyField />
                     <MetricCard label="Custo de acabamento" value={fmt(values.custoAcabamento)} helper="Valor fixo mais horas de acabamento vezes valor por hora." />
                   </div>
@@ -1050,7 +1057,7 @@ export default function CalculatorPage() {
                         <TextField label="Nome" hint="Item de embalagem, como caixa, etiqueta, plastico bolha ou manual." value={item.name} onChange={(v) => updatePackagingItem(item.id, "name", v)} placeholder="Caixa" />
                         <NumberField label="Valor" hint="Custo deste item." prefix={symbol} value={item.value} onChange={(v) => updatePackagingItem(item.id, "value", formatCurrencyInput(v, 3))} placeholder="3,50" isCurrencyField />
                         <button type="button" onClick={() => removePackagingItem(item.id)} disabled={packagingItems.length === 1}
-                          className="h-11 rounded-[8px] border border-[#BA4A00]/30 px-4 text-sm font-semibold text-[#BA4A00] transition hover:bg-[#BA4A00] hover:text-white disabled:cursor-not-allowed disabled:opacity-40">
+                          className="h-11 rounded-[8px] border border-[#FF4E26]/30 px-4 text-sm font-semibold text-[#FF4E26] transition hover:bg-[#FF4E26] hover:text-white disabled:cursor-not-allowed disabled:opacity-40">
                           Remover
                         </button>
                       </div>
@@ -1066,7 +1073,7 @@ export default function CalculatorPage() {
                 {currentStep === 5 && (
                   <div className="grid gap-4 sm:grid-cols-2">
                     <NumberField label="Percentual de impostos" hint="Percentual aplicado sobre o subtotal sem margem." suffix="%" value={taxPercent} onChange={setTaxPercent} placeholder="6" required />
-                    <MetricCard label="Subtotal" value={fmt(values.subtotal)} helper="Soma de material, energia, maquina, acabamento e embalagem." />
+                    <MetricCard label="Subtotal" value={fmt(values.subtotal)} helper="Soma de material, energia, Máquina, acabamento e embalagem." />
                     <MetricCard label="Impostos" value={fmt(values.custoImpostos)} helper="Subtotal multiplicado pelo percentual de impostos." />
                   </div>
                 )}
@@ -1075,7 +1082,7 @@ export default function CalculatorPage() {
                 {currentStep === 6 && <ResultView values={values} currency={currency} onGoToMarketplace={() => setActiveTab("marketplace")} />}
 
                 {showError && (
-                  <div className="mt-6 rounded-[8px] border border-[#BA4A00]/30 bg-[#BA4A00]/10 px-4 py-3 text-sm font-medium text-[#8f3900]">
+                  <div className="mt-6 rounded-[8px] border border-[#FF4E26]/30 bg-[#FF4E26]/10 px-4 py-3 text-sm font-medium text-[#8f3900]">
                     Preencha os campos obrigatorios desta etapa antes de continuar.
                   </div>
                 )}
@@ -1088,7 +1095,7 @@ export default function CalculatorPage() {
                   {currentStep < steps.length - 1 ? (
                     <button type="button" onClick={goNext} className="rounded-[8px] bg-[#5852FF] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#4741e8]">Proxima etapa</button>
                   ) : (
-                    <button type="button" onClick={() => setCurrentStep(0)} className="rounded-[8px] bg-[#BA4A00] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#953b00]">Revisar cálculo</button>
+                    <button type="button" onClick={() => setCurrentStep(0)} className="rounded-[8px] bg-[#FF4E26] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#953b00]">Revisar cálculo</button>
                   )}
                 </div>
               </div>
@@ -1096,11 +1103,11 @@ export default function CalculatorPage() {
               {/* Live summary sidebar */}
               <aside className="h-fit rounded-[8px] border border-black/10 bg-white p-5 shadow-xl shadow-black/5 lg:sticky lg:top-6">
                 <h3 className="text-base font-semibold text-black">Resumo ao vivo</h3>
-                <p className="mt-1 text-sm text-black/60">Os valores são recalculados <strong>em tempo real</strong> a cada alteracao.</p>
+                <p className="mt-1 text-sm text-black/60">Os valores são recalculados <strong>em tempo real</strong> a cada alteração.</p>
                 <div className="mt-5 space-y-3">
                   <SummaryRow label="Material" value={fmt(values.custoMaterial)} />
                   <SummaryRow label="Energia" value={fmt(values.custoEnergia)} />
-                  <SummaryRow label="Tempo de Maquina" value={fmt(values.custoMaquina)} />
+                  <SummaryRow label="Tempo de Máquina" value={fmt(values.custoMáquina)} />
                   <SummaryRow label="Acabamento" value={fmt(values.custoAcabamento)} />
                   <SummaryRow label="Embalagem" value={fmt(values.custoEmbalagem)} />
                   <SummaryRow label="Impostos" value={fmt(values.custoImpostos)} />
@@ -1131,7 +1138,7 @@ export default function CalculatorPage() {
               {/* Custo de produção (read-only, from Pro Calculator) */}
               <div className="rounded-[8px] border border-black/10 bg-white p-5 shadow-sm sm:p-7">
                 <div className="flex flex-col gap-2">
-                  <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#BA4A00]">Custo de Produção</p>
+                  <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#FF4E26]">Custo de Produção</p>
                   <h2 className="flex items-center gap-3 text-2xl font-semibold text-black">
                     <span className="flex h-11 w-11 items-center justify-center rounded-[8px] bg-[#5852FF]/10 text-xl text-[#5852FF]">◐</span>
                     Base de custo
@@ -1147,15 +1154,15 @@ export default function CalculatorPage() {
                     <div className="flex flex-col gap-2 text-xs text-black/50">
                       <span>Material: <strong className="text-black">{fmt(values.custoMaterial)}</strong></span>
                       <span>Energia: <strong className="text-black">{fmt(values.custoEnergia)}</strong></span>
-                      <span>Maquina: <strong className="text-black">{fmt(values.custoMaquina)}</strong></span>
+                      <span>Máquina: <strong className="text-black">{fmt(values.custoMáquina)}</strong></span>
                       <span>Acabamento: <strong className="text-black">{fmt(values.custoAcabamento)}</strong></span>
                       <span>Embalagem: <strong className="text-black">{fmt(values.custoEmbalagem)}</strong></span>
                       <span>Impostos: <strong className="text-black">{fmt(values.custoImpostos)}</strong></span>
                     </div>
                   </div>
                 ) : (
-                  <div className="mt-5 rounded-[8px] border border-[#BA4A00]/20 bg-[#BA4A00]/5 px-4 py-4">
-                    <p className="text-sm font-semibold text-[#BA4A00]">Custo de produção não calculado</p>
+                  <div className="mt-5 rounded-[8px] border border-[#FF4E26]/20 bg-[#FF4E26]/5 px-4 py-4">
+                    <p className="text-sm font-semibold text-[#FF4E26]">Custo de produção não calculado</p>
                     <p className="mt-1 text-sm text-black/60">
                       Complete a aba <strong>Calculadora</strong> para obter o custo de produção antes de calcular o preço para marketplace.
                     </p>
@@ -1178,7 +1185,7 @@ export default function CalculatorPage() {
               {values.custoTotal > 0 && (
                 <div className="rounded-[8px] border border-black/10 bg-white p-5 shadow-sm sm:p-7">
                   <div className="flex flex-col gap-2">
-                    <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#BA4A00]">Marketplace</p>
+                    <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#FF4E26]">Marketplace</p>
                     <h2 className="flex items-center gap-3 text-2xl font-semibold text-black">
                       <span className="flex h-11 w-11 items-center justify-center rounded-[8px] bg-[#5852FF]/10 text-xl text-[#5852FF]">🏪</span>
                       Selecione a plataforma
@@ -1202,7 +1209,7 @@ export default function CalculatorPage() {
                   {marketplace && !isCustom && (
                     <div className="mt-4 rounded-[8px] border border-black/10 bg-[#F9FAFB] px-4 py-3">
                       <p className="text-xs font-semibold text-black/50">{marketplace.descricao}</p>
-                      {marketplace.observacoes && <p className="mt-1 text-xs leading-5 text-[#BA4A00]">⚠ {marketplace.observacoes}</p>}
+                      {marketplace.observacoes && <p className="mt-1 text-xs leading-5 text-[#FF4E26]">⚠ {marketplace.observacoes}</p>}
                     </div>
                   )}
 
@@ -1294,20 +1301,20 @@ export default function CalculatorPage() {
                     {marketplaceResult.impostos > 0 && <SummaryRow label="Impostos" value={fmt(marketplaceResult.impostos)} />}
                     {marketplaceResult.outrasTaxas > 0 && <SummaryRow label="Outras taxas" value={fmt(marketplaceResult.outrasTaxas)} />}
                   </div>
-                  <div className="mt-4 rounded-[8px] bg-[#BA4A00]/10 px-4 py-3">
-                    <p className="text-xs font-semibold text-[#BA4A00]">Total de taxas</p>
-                    <strong className="mt-1 block text-xl font-black text-[#BA4A00]">{fmt(marketplaceResult.totalTaxas)}</strong>
+                  <div className="mt-4 rounded-[8px] bg-[#FF4E26]/10 px-4 py-3">
+                    <p className="text-xs font-semibold text-[#FF4E26]">Total de taxas</p>
+                    <strong className="mt-1 block text-xl font-black text-[#FF4E26]">{fmt(marketplaceResult.totalTaxas)}</strong>
                   </div>
                   <div className="mt-3 rounded-[8px] bg-black px-4 py-4 text-white">
                     <p className="text-xs font-semibold text-white/60">Preço mínimo recomendado</p>
-                    <strong className="mt-1 block text-3xl font-black">{fmt(marketplaceResult.precoFinal)}</strong>
+                    <strong className="mt-1 block text-3xl font-black">{fmt(marketplaceResult.preçoFinal)}</strong>
                     <p className="mt-2 text-xs text-white/50">Lucro estimado: <strong className="text-white">{fmt(marketplaceResult.lucro)}</strong></p>
                   </div>
                   {/* Breakdown bars */}
                   <div className="mt-4 space-y-2">
                     {[
                       { label: "Produção", value: values.custoTotal, color: "bg-[#5852FF]" },
-                      { label: "Taxas", value: marketplaceResult.totalTaxas, color: "bg-[#BA4A00]" },
+                      { label: "Taxas", value: marketplaceResult.totalTaxas, color: "bg-[#FF4E26]" },
                       { label: "Lucro", value: marketplaceResult.lucro, color: "bg-black" },
                     ].map(({ label, value, color }) => {
                       const total = values.custoTotal + marketplaceResult.totalTaxas + marketplaceResult.lucro;
@@ -1370,7 +1377,7 @@ function FieldLabel({ label, hint, required }: { label: string; hint?: string; r
   return (
     <span className="mb-2 flex items-center gap-2 text-sm font-semibold text-black">
       {label}
-      {required && <span className="text-[#BA4A00]">*</span>}
+      {required && <span className="text-[#FF4E26]">*</span>}
       {hint && <Tooltip text={hint} />}
     </span>
   );
@@ -1404,16 +1411,17 @@ function SelectField({ label, hint, value, onChange, required, children }: { lab
   );
 }
 
-function NumberField({ label, hint, value, onChange, placeholder, prefix, suffix, suffixOptions, suffixValue, onSuffixChange, required, isCurrencyField = false }: {
+function NumberField({ label, hint, value, onChange, placeholder, prefix, suffix, suffixOptions, suffixValue, onSuffixChange, required, isCurrencyField = false, numericOnly = false, maxLength, max }: {
   label: string; hint?: string; value: string; onChange: (value: string) => void;
   placeholder?: string; prefix?: string; suffix?: string; suffixOptions?: string[];
   suffixValue?: string; onSuffixChange?: (value: string) => void; required?: boolean; isCurrencyField?: boolean;
+  numericOnly?: boolean; maxLength?: number; max?: number;
 }) {
   return (
     <label className="block">
       <span className="mb-2 flex items-center gap-2 text-sm font-semibold text-black">
         {label}
-        {required && <span className="text-[#BA4A00]">*</span>}
+        {required && <span className="text-[#FF4E26]">*</span>}
         {hint && <Tooltip text={hint} />}
       </span>
       <span className="flex h-12 items-center rounded-[8px] border border-black/15 bg-white px-3 transition focus-within:border-[#5852FF] focus-within:ring-4 focus-within:ring-[#5852FF]/10">
@@ -1422,9 +1430,17 @@ function NumberField({ label, hint, value, onChange, placeholder, prefix, suffix
           onChange={(e) => {
             const raw = e.target.value;
             if (isCurrencyField) { onChange(raw.replace(/[^\d.,]/g, "")); }
-            else { const s = raw.replace(/[^\d.]/g, ""); const p = s.split("."); onChange(p.length > 2 ? p[0] + "." + p.slice(1).join("") : s); }
+            else {
+              let nextValue = numericOnly ? raw.replace(/\D/g, "") : raw.replace(/[^\d.]/g, "");
+              if (!numericOnly) { const p = nextValue.split("."); nextValue = p.length > 2 ? p[0] + "." + p.slice(1).join("") : nextValue; }
+              if (maxLength) nextValue = nextValue.slice(0, maxLength);
+              if (max !== undefined && nextValue !== "") nextValue = Math.min(Number(nextValue), max).toString();
+              onChange(nextValue);
+            }
           }}
           placeholder={placeholder}
+          maxLength={maxLength}
+          max={max}
           className="min-w-0 flex-1 bg-transparent text-base text-black outline-none placeholder:text-black/35" />
         {suffixOptions && suffixOptions.length > 0 ? (
           <select value={suffixValue} onChange={(e) => onSuffixChange?.(e.target.value)} className="ml-2 rounded-[6px] border border-black/15 bg-transparent px-2 text-sm font-semibold text-black outline-none">
@@ -1480,20 +1496,20 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
 }
 
 function ResultView({ values, currency, onGoToMarketplace }: {
-  values: { custoMaterial: number; custoEnergia: number; custoMaquina: number; custoAcabamento: number; custoEmbalagem: number; custoImpostos: number; custoTotal: number; precoEconomico: number; precoProfissional: number; precoPremium: number; };
+  values: { custoMaterial: number; custoEnergia: number; custoMáquina: number; custoAcabamento: number; custoEmbalagem: number; custoImpostos: number; custoTotal: number; preçoEconomico: number; preçoProfissional: number; preçoPremium: number; };
   currency: Currency;
   onGoToMarketplace: () => void;
 }) {
   const fmt = (v: number) => formatCurrencyValue(v, currency);
   const resultRows = [
     ["Material", values.custoMaterial], ["Energia", values.custoEnergia],
-    ["Tempo de Maquina", values.custoMaquina], ["Acabamento", values.custoAcabamento],
+    ["Tempo de Máquina", values.custoMáquina], ["Acabamento", values.custoAcabamento],
     ["Embalagem", values.custoEmbalagem], ["Impostos", values.custoImpostos],
   ] as const;
   const priceCards = [
-    { title: "Econômico", margin: "30%", value: values.precoEconomico, badge: "entrada competitiva", className: "border-[#5852FF]/25 bg-[#5852FF]/5" },
-    { title: "Profissional", margin: "50%", value: values.precoProfissional, badge: "recomendado", className: "scale-[1.02] border-[#5852FF] bg-gradient-to-br from-[#5852FF] to-black text-white shadow-2xl shadow-[#5852FF]/30" },
-    { title: "Premium", margin: "80%", value: values.precoPremium, badge: "maior margem", className: "border-[#BA4A00]/35 bg-[#BA4A00]/10 shadow-lg shadow-[#BA4A00]/10" },
+    { title: "Econômico", margin: "30%", value: values.preçoEconomico, badge: "entrada competitiva", className: "border-[#5852FF]/25 bg-[#5852FF]/5" },
+    { title: "Profissional", margin: "50%", value: values.preçoProfissional, badge: "recomendado", className: "scale-[1.02] border-[#5852FF] bg-gradient-to-br from-[#5852FF] to-black text-white shadow-2xl shadow-[#5852FF]/30" },
+    { title: "Premium", margin: "80%", value: values.preçoPremium, badge: "maior margem", className: "border-[#FF4E26]/35 bg-[#FF4E26]/10 shadow-lg shadow-[#FF4E26]/10" },
   ];
   return (
     <div className="flex flex-col gap-6">
@@ -1503,7 +1519,7 @@ function ResultView({ values, currency, onGoToMarketplace }: {
             <p className="text-sm font-semibold text-black/60">Custo total</p>
             <strong className="mt-1 block text-3xl font-semibold text-black">{fmt(values.custoTotal)}</strong>
           </div>
-          <span className="rounded-full bg-[#BA4A00]/10 px-3 py-1 text-sm font-semibold text-[#BA4A00]">antes da margem</span>
+          <span className="rounded-full bg-[#FF4E26]/10 px-3 py-1 text-sm font-semibold text-[#FF4E26]">antes da margem</span>
         </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           {resultRows.map(([label, value]) => (
@@ -1515,7 +1531,7 @@ function ResultView({ values, currency, onGoToMarketplace }: {
         </div>
       </div>
       <div>
-        <h3 className="text-lg font-semibold text-black">Sugestões de preco</h3>
+        <h3 className="text-lg font-semibold text-black">Sugestões de preço</h3>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
           {priceCards.map((card) => (
             <div key={card.title} className={`rounded-[8px] border p-5 transition hover:-translate-y-1 ${card.className}`}>

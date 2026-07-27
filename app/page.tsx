@@ -10,21 +10,21 @@ const calculators = [
     title: "Fast Calculator",
     href: "/fastCalculator",
     description:
-      "Faca um orcamento em segundos utilizando apenas os dados mais importantes. Ideal para estimativas rapidas.",
+      "Faça um Orçamento em segundos utilizando apenas os dados mais importantes. Ideal para estimativas rapidas.",
   },
   {
     icon: "🧮",
     title: "Professional Calculator",
     href: "/calculator",
     description:
-      "Calcule todos os custos da sua impressao 3D incluindo energia, acabamento, embalagem e impostos.",
+      "Calcule todos os custos da sua impressão 3D incluindo energia, acabamento, embalagem e impostos.",
   },
   {
     icon: "🏪",
     title: "Marketplace Calculator",
     href: "/marketplaceCalculator",
     description:
-      "Descubra o preco ideal para vender em marketplaces considerando taxas, comissoes e custos adicionais.",
+      "Descubra o preço ideal para vender em marketplaces considerando taxas, comissões e custos adicionais.",
   },
 ];
 
@@ -40,7 +40,7 @@ const modulusBlocks = [
   },
   {
     title: "Visao",
-    text: "Construir uma camada inteligente para negocios de fabricacao digital que crescem com margem, nao no escuro.",
+    text: "Construir uma camada inteligente para negocios de fabricação digital que crescem com margem, nao no escuro.",
     icon: (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" />
@@ -71,7 +71,7 @@ const socialLinks = [
   {
     name: "TikTok",
     handle: "@modulus.studios",
-    description: "Conteudos curtos sobre impressao 3D, precificacao e bastidores de fabricacao.",
+    description: "Conteúdos curtos sobre impressão 3D, precificação e bastidores de fabricação.",
     href: "https://www.tiktok.com/@modulus.studios?_r=1&_t=zs-95u3cwvuqep",
     stat: "videos",
     color: "from-[#010101] to-[#69C9D0]",
@@ -101,7 +101,7 @@ const socialLinks = [
   {
     name: "WhatsApp",
     handle: "+55 (11) 91200-0753",
-    description: "Canal direto para conversas, suporte comercial e proximos lancamentos da plataforma.",
+    description: "Canal direto para conversas, suporte comercial e proximos lançamentos da plataforma.",
     href: "https://wa.me/5511912000753?text=%E2%98%BA%EF%B8%8E%20%20%E1%90%B8%20%20Bem-vindo%20%C3%A0%20%20%2AM%E1%B4%8F%E1%B4%85%E1%B4%9C%CA%9F%E1%B4%9C%EA%9C%B1%2A%20%20%21%20%20%2A%E2%9F%AF%2A%0A%20%20%E2%80%A2%20Tudo%20come%C3%A7a%20com%20sua%20ideia%0A%20%20%E2%80%A2%20Voc%C3%AA%20pensa%2C%20n%C3%B3s%20fazemos%0A%E2%86%92%20Sem%20custo%2C%20me%20conte%20como%20vamos%20dar%20vida%20a%20seu%20projeto%3A",
     stat: "chat",
     color: "from-[#25D366] to-[#128C7E]",
@@ -119,7 +119,7 @@ const steps = [
   {
     number: "01",
     title: "Escolha sua calculadora",
-    text: "Selecione o fluxo certo para estimativa rapida, precificacao completa ou marketplace.",
+    text: "Selecione o fluxo certo para estimativa rapida, precificação completa ou marketplace.",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
@@ -129,7 +129,7 @@ const steps = [
   {
     number: "02",
     title: "Informe os dados",
-    text: "Preencha material, horas, custos e percentuais com atualizacao em tempo real.",
+    text: "Preencha material, horas, custos e percentuais com atualização em tempo real.",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
@@ -138,8 +138,8 @@ const steps = [
   },
   {
     number: "03",
-    title: "Receba seu preco ideal",
-    text: "Visualize custo, lucro e preco final com uma leitura simples e pronta para vender.",
+    title: "Receba seu preço ideal",
+    text: "Visualize custo, lucro e preço final com uma leitura simples e pronta para vender.",
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
@@ -159,7 +159,7 @@ export default function Home() {
 
         {/* Decorative shapes */}
         <div className="absolute left-8 top-28 hidden h-24 w-24 rotate-12 rounded-[12px] border border-[#5852FF]/20 bg-white/60 shadow-xl backdrop-blur md:block" />
-        <div className="absolute bottom-20 right-10 hidden h-32 w-32 rounded-full border border-[#BA4A00]/20 bg-[#BA4A00]/10 blur-[1px] lg:block" />
+        <div className="absolute bottom-20 right-10 hidden h-32 w-32 rounded-full border border-[#FF4E26]/20 bg-[#FF4E26]/10 blur-[1px] lg:block" />
         <div className="absolute right-32 top-40 hidden h-8 w-8 rounded-full bg-[#5852FF]/15 lg:block" />
         <div className="absolute bottom-40 left-1/3 hidden h-5 w-5 rotate-45 border border-[#5852FF]/20 bg-transparent lg:block" />
 
@@ -172,7 +172,7 @@ export default function Home() {
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-2 rounded-full border border-[#5852FF]/20 bg-white/80 px-4 py-2 text-sm font-semibold text-[#5852FF] shadow-sm">
                 <span className="flex h-2 w-2 rounded-full bg-[#5852FF]" />
-                Precificacao inteligente para fabricacao digital
+                Precificação inteligente para fabricação digital
               </div>
               <h1 className="mt-7 text-5xl font-black leading-[0.96] tracking-tight text-black sm:text-6xl lg:text-[72px]">
                 Modulus<br />
@@ -180,7 +180,7 @@ export default function Home() {
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-8 text-black/60">
                 Uma plataforma moderna para makers, studios e negocios digitais
-                precificarem impressao 3D com velocidade, clareza e margem real.
+                precificarem impressão 3D com velocidade, clareza e margem real.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <button
@@ -220,7 +220,7 @@ export default function Home() {
               <div className="absolute inset-x-4 top-8 rounded-[14px] border border-black/10 bg-white p-5 shadow-2xl shadow-[#5852FF]/10">
                 <div className="flex items-center justify-between border-b border-black/8 pb-4">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-black/40">Simulacao ativa</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-black/40">Simulação ativa</p>
                     <strong className="mt-0.5 block text-xl font-black">Drone mount PLA+</strong>
                   </div>
                   <span className="rounded-full bg-[#5852FF]/10 px-3 py-1.5 text-xs font-bold text-[#5852FF]">
@@ -258,16 +258,16 @@ export default function Home() {
               </div>
 
               {/* Price badge */}
-              <div className="absolute bottom-12 left-0 rounded-[12px] border border-[#BA4A00]/15 bg-white p-5 shadow-xl">
-                <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#BA4A00]">
+              <div className="absolute bottom-12 left-0 rounded-[12px] border border-[#FF4E26]/15 bg-white p-5 shadow-xl">
+                <p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#FF4E26]">
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
                   </svg>
-                  Preco final sugerido
+                  preço final sugerido
                 </p>
                 <strong className="mt-2 block text-4xl font-black leading-none">R$ 129,90</strong>
                 <div className="mt-3 flex items-center gap-2">
-                  <span className="inline-flex rounded-full bg-[#BA4A00]/10 px-3 py-1 text-xs font-bold text-[#BA4A00]">
+                  <span className="inline-flex rounded-full bg-[#FF4E26]/10 px-3 py-1 text-xs font-bold text-[#FF4E26]">
                     margem 52%
                   </span>
                   <span className="inline-flex rounded-full bg-green-50 px-3 py-1 text-xs font-bold text-green-700">
@@ -284,13 +284,13 @@ export default function Home() {
       <section id="modulus" className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="max-w-2xl">
-            <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#BA4A00]">
-              <span className="h-px w-6 bg-[#BA4A00]" />
+            <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#FF4E26]">
+              <span className="h-px w-6 bg-[#FF4E26]" />
               Plataforma
             </p>
             <h2 className="mt-3 text-4xl font-black">Conheca a Modulus</h2>
             <p className="mt-3 text-base leading-7 text-black/55">
-              Construida para quem leva a fabricacao digital a serio e quer números confiáveis antes de precificar.
+              Construida para quem leva a fabricação digital a serio e quer números confiáveis antes de precificar.
             </p>
           </div>
           <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -322,7 +322,7 @@ export default function Home() {
               <h2 className="mt-2 text-4xl font-black">Como funciona</h2>
             </div>
             <p className="max-w-xs text-sm text-black/50">
-              <em className="font-bold">Três passos e você ja tem o preco ideal na tela.</em>
+              <em className="font-bold">Três passos e você ja tem o preço ideal na tela.</em>
             </p>
           </div>
 
@@ -354,13 +354,13 @@ export default function Home() {
       <section id="redes" className="px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 flex flex-col gap-2">
-            <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#BA4A00]">
-              <span className="h-px w-6 bg-[#BA4A00]" />
+            <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#FF4E26]">
+              <span className="h-px w-6 bg-[#FF4E26]" />
               Comunidade
             </p>
             <h2 className="text-4xl font-black">Nossas redes</h2>
             <p className="max-w-md text-base leading-7 text-black/55">
-              Acompanhe a Modulus no TikTok, Instagram e WhatsApp — conteudos, dicas e bastidores.
+              Acompanhe a Modulus no TikTok, Instagram e WhatsApp — Conteúdos, dicas e bastidores.
             </p>
           </div>
 
@@ -411,8 +411,8 @@ export default function Home() {
           <div className="w-full max-w-5xl rounded-[16px] border border-white/20 bg-white p-6 shadow-2xl sm:p-8">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#BA4A00]">
-                  <span className="h-px w-5 bg-[#BA4A00]" />
+                <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#FF4E26]">
+                  <span className="h-px w-5 bg-[#FF4E26]" />
                   Escolha seu fluxo
                 </p>
                 <h2 className="mt-2 text-3xl font-black">Calculadoras Modulus</h2>

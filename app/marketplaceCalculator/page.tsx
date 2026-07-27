@@ -302,7 +302,7 @@ function resolveCommissionPercent(
   return { percentual: 0, taxaFixa: 0, label: "" };
 }
 
-function calculateMarketplaceFees(input: EngineInput): FeeBreakdown & { precoFinal: number; lucro: number; comissaoLabel: string } {
+function calculateMarketplaceFees(input: EngineInput): FeeBreakdown & { preçoFinal: number; lucro: number; comissaoLabel: string } {
   const {
     marketplace, selectedModalidade, selectedPlano, selectedCategoria,
     selectedFrete, customFreteValue, impostosPercent, margemDesejada,
@@ -330,8 +330,8 @@ function calculateMarketplaceFees(input: EngineInput): FeeBreakdown & { precoFin
     const impostos = (custoProducao + freteVal) * (impostosPct / 100);
     const totalTaxas = comissao + taxaFixaVal + taxaProcessamento + taxaAnuncio + mensalidadeVal + outrasTaxasVal + freteVal + impostos;
     const custoTotal = custoProducao + totalTaxas;
-    const precoFinal = custoTotal / (1 - margem / 100);
-    const lucro = precoFinal - custoTotal;
+    const preçoFinal = custoTotal / (1 - margem / 100);
+    const lucro = preçoFinal - custoTotal;
 
     return {
       comissao,
@@ -342,7 +342,7 @@ function calculateMarketplaceFees(input: EngineInput): FeeBreakdown & { precoFin
       impostos,
       outrasTaxas: outrasTaxasVal + taxaAnuncio,
       totalTaxas,
-      precoFinal,
+      preçoFinal,
       lucro,
       comissaoLabel: "Manual",
     };
@@ -410,8 +410,8 @@ function calculateMarketplaceFees(input: EngineInput): FeeBreakdown & { precoFin
   const comissao = estimatedPrice * (comissaoPct / 100);
   const totalTaxas = comissao + taxaFixaFinal + taxaProcessamento + mensalidade + freteAmt + impostos;
   const custoTotal = custoProducao + totalTaxas;
-  const precoFinal = custoTotal / (1 - margem / 100);
-  const lucro = precoFinal - custoTotal;
+  const preçoFinal = custoTotal / (1 - margem / 100);
+  const lucro = preçoFinal - custoTotal;
 
   void currency;
 
@@ -424,7 +424,7 @@ function calculateMarketplaceFees(input: EngineInput): FeeBreakdown & { precoFin
     impostos,
     outrasTaxas: 0,
     totalTaxas,
-    precoFinal,
+    preçoFinal,
     lucro,
     comissaoLabel,
   };
@@ -578,7 +578,7 @@ export default function MarketplaceCalculator() {
           <div className="relative">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-3xl">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#BA4A00]">
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#FF4E26]">
                   Vendas em Marketplaces
                 </p>
                 <h1 className="mt-3 text-3xl font-semibold tracking-normal text-black sm:text-4xl lg:text-5xl">
@@ -586,7 +586,7 @@ export default function MarketplaceCalculator() {
                 </h1>
                 <p className="mt-4 max-w-2xl text-base leading-7 text-black/70">
                   Selecione o marketplace, configure as opções e descubra o{" "}
-                  <strong>preco mínimo defensável</strong> considerando todas as taxas automaticamente.
+                  <strong>preço mínimo defensável</strong> considerando todas as taxas automaticamente.
                 </p>
               </div>
 
@@ -612,7 +612,7 @@ export default function MarketplaceCalculator() {
                 <button
                   type="button"
                   onClick={clearAll}
-                  className="flex items-center gap-2 rounded-[8px] border border-[#BA4A00]/30 px-4 py-2.5 text-sm font-semibold text-[#BA4A00] transition hover:bg-[#BA4A00] hover:text-white"
+                  className="flex items-center gap-2 rounded-[8px] border border-[#FF4E26]/30 px-4 py-2.5 text-sm font-semibold text-[#FF4E26] transition hover:bg-[#FF4E26] hover:text-white"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
@@ -623,7 +623,7 @@ export default function MarketplaceCalculator() {
                 {result && (
                   <div className="rounded-[8px] bg-gradient-to-br from-[#5852FF] to-black p-4 text-white shadow-xl shadow-[#5852FF]/20">
                     <p className="text-xs font-semibold text-white/60">Preço mínimo</p>
-                    <strong className="mt-1 block text-2xl font-black">{fmt(result.precoFinal)}</strong>
+                    <strong className="mt-1 block text-2xl font-black">{fmt(result.preçoFinal)}</strong>
                   </div>
                 )}
               </div>
@@ -706,7 +706,7 @@ export default function MarketplaceCalculator() {
                 <div className="mt-4 rounded-[8px] border border-black/10 bg-[#F9FAFB] px-4 py-3">
                   <p className="text-xs font-semibold text-black/50">{marketplace.descricao}</p>
                   {marketplace.observacoes && (
-                    <p className="mt-1 text-xs leading-5 text-[#BA4A00]">
+                    <p className="mt-1 text-xs leading-5 text-[#FF4E26]">
                       ⚠ {marketplace.observacoes}
                     </p>
                   )}
@@ -871,14 +871,14 @@ export default function MarketplaceCalculator() {
                   {result.outrasTaxas > 0 && <SummaryRow label="Outras taxas" value={fmt(result.outrasTaxas)} />}
                 </div>
 
-                <div className="mt-4 rounded-[8px] bg-[#BA4A00]/10 px-4 py-3">
-                  <p className="text-xs font-semibold text-[#BA4A00]">Total de taxas</p>
-                  <strong className="mt-1 block text-xl font-black text-[#BA4A00]">{fmt(result.totalTaxas)}</strong>
+                <div className="mt-4 rounded-[8px] bg-[#FF4E26]/10 px-4 py-3">
+                  <p className="text-xs font-semibold text-[#FF4E26]">Total de taxas</p>
+                  <strong className="mt-1 block text-xl font-black text-[#FF4E26]">{fmt(result.totalTaxas)}</strong>
                 </div>
 
                 <div className="mt-3 rounded-[8px] bg-black px-4 py-4 text-white">
                   <p className="text-xs font-semibold text-white/60">Preço mínimo recomendado</p>
-                  <strong className="mt-1 block text-3xl font-black">{fmt(result.precoFinal)}</strong>
+                  <strong className="mt-1 block text-3xl font-black">{fmt(result.preçoFinal)}</strong>
                   <p className="mt-2 text-xs text-white/50">
                     Lucro estimado: <strong className="text-white">{fmt(result.lucro)}</strong>
                   </p>
@@ -888,7 +888,7 @@ export default function MarketplaceCalculator() {
                 <div className="mt-4 space-y-2">
                   {[
                     { label: "Produção", value: custoProducao, color: "bg-[#5852FF]" },
-                    { label: "Taxas", value: result.totalTaxas, color: "bg-[#BA4A00]" },
+                    { label: "Taxas", value: result.totalTaxas, color: "bg-[#FF4E26]" },
                     { label: "Lucro", value: result.lucro, color: "bg-black" },
                   ].map(({ label, value, color }) => {
                     const total = custoProducao + result.totalTaxas + result.lucro;
@@ -968,7 +968,7 @@ function SectionHeader({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#BA4A00]">{eyebrow}</p>
+      <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#FF4E26]">{eyebrow}</p>
       <h2 className="flex items-center gap-3 text-2xl font-semibold text-black">
         <span className="flex h-11 w-11 items-center justify-center rounded-[8px] bg-[#5852FF]/10 text-xl text-[#5852FF]">
           {icon}
@@ -984,7 +984,7 @@ function FieldLabel({ label, hint, required }: { label: string; hint?: string; r
   return (
     <span className="mb-2 flex items-center gap-2 text-sm font-semibold text-black">
       {label}
-      {required && <span className="text-[#BA4A00]">*</span>}
+      {required && <span className="text-[#FF4E26]">*</span>}
       {hint && <Tooltip text={hint} />}
     </span>
   );
@@ -1067,7 +1067,7 @@ function NumberField({
     <label className="block">
       <span className="mb-2 flex items-center gap-2 text-sm font-semibold text-black">
         {label}
-        {required && <span className="text-[#BA4A00]">*</span>}
+        {required && <span className="text-[#FF4E26]">*</span>}
         {hint && <Tooltip text={hint} />}
       </span>
       <span className="flex h-12 items-center rounded-[8px] border border-black/15 bg-white px-3 transition focus-within:border-[#5852FF] focus-within:ring-4 focus-within:ring-[#5852FF]/10">

@@ -15,21 +15,21 @@ const calculators = [
     title: "Fast Calculator",
     href: "/fastCalculator",
     description:
-      "Faca um orcamento em segundos utilizando apenas os dados mais importantes. Ideal para estimativas rapidas.",
+      "Faça um orçamento em segundos utilizando apenas os dados mais importantes. Ideal para estimativas rapidas.",
   },
   {
     icon: "🧮",
     title: "Professional Calculator",
     href: "/calculator",
     description:
-      "Calcule todos os custos da sua impressao 3D incluindo energia, acabamento, embalagem e impostos.",
+      "Calcule todos os custos da sua impressão 3D incluindo energia, acabamento, embalagem e impostos.",
   },
   {
     icon: "🏪",
     title: "Marketplace Calculator",
     href: "/marketplaceCalculator",
     description:
-      "Descubra o preco ideal para vender em marketplaces considerando taxas, comissoes e custos adicionais.",
+      "Descubra o preço ideal para vender em marketplaces considerando taxas, comissões e custos adicionais.",
   },
 ];
 
@@ -78,8 +78,8 @@ export default function Header() {
           <div className="max-h-[calc(100vh-48px)] w-full max-w-5xl overflow-y-auto rounded-[16px] border border-white/20 bg-white p-6 shadow-2xl sm:p-8">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#BA4A00]">
-                  <span className="h-px w-5 bg-[#BA4A00]" />
+                <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#FF4E26]">
+                  <span className="h-px w-5 bg-[#FF4E26]" />
                   Escolha seu fluxo
                 </p>
                 <h2 id="calculator-modal-title" className="mt-2 text-3xl font-black">

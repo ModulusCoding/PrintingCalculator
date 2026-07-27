@@ -38,21 +38,21 @@ const [totalWeightUnit, setTotalWeightUnit] = useState<"g" | "kg">("g");
             ? toNumber(totalWeight) * 1000
             : toNumber(totalWeight);
     
-    const precoMaterial = toNumber(materialPrice);
+    const preçoMaterial = toNumber(materialPrice);
     const horasImpressao = toNumber(printingHours);
     const minutosImpressao = toNumber(printingMinutes);
     const margem = toNumber(margin);
 
     const totalPrintingMinutes = horasImpressao * 60 + minutosImpressao;
     const custoPorGrama =
-      pesoTotalAdquirido > 0 ? precoMaterial / pesoTotalAdquirido : 0;
+      pesoTotalAdquirido > 0 ? preçoMaterial / pesoTotalAdquirido : 0;
     const custoMaterial = materialUtilizado * custoPorGrama;
     const custoMaquina = 0;
     const custoTotal = custoMaterial + custoMaquina;
-    const precoFinal = custoTotal * (1 + margem / 100);
-    const lucro = precoFinal - custoTotal;
+    const preçoFinal = custoTotal * (1 + margem / 100);
+    const lucro = preçoFinal - custoTotal;
 
-    return { custoMaterial, custoMaquina, custoTotal, precoFinal, lucro, totalPrintingMinutes };
+    return { custoMaterial, custoMaquina, custoTotal, preçoFinal, lucro, totalPrintingMinutes };
   }, [margin, materialPrice, materialUsed, printingHours, printingMinutes, totalWeight]);
 
   return (
@@ -65,14 +65,14 @@ const [totalWeightUnit, setTotalWeightUnit] = useState<"g" | "kg">("g");
               <Link href="/" className="text-sm font-bold text-[#5852FF]">
                 ← Modulus
               </Link>
-              <p className="mt-6 text-sm font-bold uppercase tracking-[0.2em] text-[#BA4A00]">
-                Orcamento em 15 segundos
+              <p className="mt-6 text-sm font-bold uppercase tracking-[0.2em] text-[#FF4E26]">
+                Orçamento em 15 segundos
               </p>
               <h1 className="mt-3 text-4xl font-black tracking-normal sm:text-5xl">
                 Fast Calculator
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-black/65">
-                Informe o essencial e veja custo, preco final e lucro em tempo real.
+                Informe o essencial e veja custo, preço final e lucro em tempo real.
               </p>
             </div>
             <span className="rounded-[8px] bg-[#5852FF]/10 px-4 py-3 text-sm font-bold text-[#5852FF]">
@@ -103,8 +103,8 @@ const [totalWeightUnit, setTotalWeightUnit] = useState<"g" | "kg">("g");
           <div className="mt-6 grid gap-4">
             <BigNumber label="Custo" value={money(result.custoTotal)} />
             <div className="rounded-[8px] bg-[#5852FF] p-5 shadow-lg shadow-[#5852FF]/30">
-              <p className="text-sm font-bold text-white/70">Preco Final</p>
-              <strong className="mt-2 block text-4xl font-black">{money(result.precoFinal)}</strong>
+              <p className="text-sm font-bold text-white/70">Preço Final</p>
+              <strong className="mt-2 block text-4xl font-black">{money(result.preçoFinal)}</strong>
             </div>
             <BigNumber label="Lucro" value={money(result.lucro)} accent />
           </div>
@@ -213,7 +213,7 @@ function BigNumber({
 }) {
   return (
     <div className="rounded-[8px] border border-white/10 bg-white/5 p-5">
-      <p className={`text-sm font-bold ${accent ? "text-[#BA4A00]" : "text-white/55"}`}>{label}</p>
+      <p className={`text-sm font-bold ${accent ? "text-[#FF4E26]" : "text-white/55"}`}>{label}</p>
       <strong className="mt-2 block text-3xl font-black">{value}</strong>
     </div>
   );
