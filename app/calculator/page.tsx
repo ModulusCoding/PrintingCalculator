@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { ReactNode } from "react";
@@ -553,6 +552,9 @@ export default function CalculatorPage() {
   const [margemDesejada, setMargemDesejada] = useState("30");
   const [manualTaxes, setManualTaxes] = useState<ManualTaxes>(defaultManualTaxes());
 
+  // ── Mobile UI ──
+  const [stepNavExpanded, setStepNavExpanded] = useState(false);
+
   // ─── Cache ────────────────────────────────────────────────────────────────
 
   const stateSnapshot = useMemo(() => ({
@@ -615,6 +617,13 @@ export default function CalculatorPage() {
   useEffect(() => {
     try { sessionStorage.setItem(CACHE_KEY, JSON.stringify(stateSnapshot)); } catch { /* ignore */ }
   }, [stateSnapshot]);
+
+  // ─── Scroll to top on step / tab change ───────────────────────────────────
+
+  const scrollToTop = () => {
+    if (typeof window === "undefined") return;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   // ─── Clear all ────────────────────────────────────────────────────────────
 
@@ -761,9 +770,22 @@ export default function CalculatorPage() {
       return;
     }
     setCurrentStep((s) => Math.min(s + 1, steps.length - 1));
+    scrollToTop();
   };
-  const goBack = () => setCurrentStep((s) => Math.max(s - 1, 0));
-  const goToStep = (step: number) => setCurrentStep(step);
+  const goBack = () => {
+    setCurrentStep((s) => Math.max(s - 1, 0));
+    scrollToTop();
+  };
+  const goToStep = (step: number) => {
+    setCurrentStep(step);
+    setStepNavExpanded(false);
+    scrollToTop();
+  };
+
+  const switchTab = (tab: ActiveTab) => {
+    setActiveTab(tab);
+    scrollToTop();
+  };
 
   // ─── Color helpers ────────────────────────────────────────────────────────
 
@@ -803,44 +825,49 @@ export default function CalculatorPage() {
   return (
     <main className="min-h-screen bg-[#F9FAFB] text-[#000000]">
       <Header />
-      <section className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
+      <section className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-4 sm:gap-8 sm:px-6 sm:py-6 lg:px-8 lg:py-10">
 
         {/* ── Page header ── */}
-        <header className="relative overflow-hidden rounded-[8px] border border-black/10 bg-white px-5 py-6 shadow-xl shadow-[#5852FF]/10 sm:px-8">
+        <header className="relative overflow-hidden rounded-[8px] border border-black/10 bg-white px-4 py-4 shadow-xl shadow-[#5852FF]/10 sm:px-8 sm:py-6">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_10%,rgba(88,82,255,0.18),transparent_30%),radial-gradient(circle_at_90%_0%,rgba(186,74,0,0.12),transparent_26%)]" />
           <div className="relative">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between lg:gap-5">
               <div className="max-w-3xl">
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#FF4E26]">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#FF4E26] sm:text-sm">
                   Professional Calculator
                 </p>
-                <h1 className="mt-3 text-3xl font-semibold tracking-normal text-black sm:text-4xl lg:text-5xl">
+                <h1 className="mt-2 text-xl font-semibold tracking-normal text-black sm:mt-3 sm:text-3xl lg:text-5xl">
                   Precificação profissional para impressão 3D
                 </h1>
-                <p className="mt-4 max-w-2xl text-base leading-7 text-black/70">
+                {/* Full explanatory line: hidden on phones to save vertical space, shown from sm up */}
+                <p className="mt-2 hidden max-w-2xl text-base leading-7 text-black/70 sm:mt-4 sm:block">
                   <strong>Material</strong> + Energia + Tempo de Máquina + Acabamento + Embalagem +
                   Impostos + <em>Margem</em> = Preço Final
                 </p>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="flex items-center justify-between gap-2 sm:flex-row sm:items-center lg:flex-col lg:items-end lg:gap-3">
                 <div className="flex items-center gap-1 rounded-[8px] border border-black/10 bg-[#F9FAFB] p-1">
                   {(["BRL", "USD", "EUR"] as Currency[]).map((c) => (
                     <button key={c} type="button" onClick={() => setCurrency(c)}
-                      className={`rounded-[6px] px-3 py-1.5 text-xs font-bold transition ${currency === c ? "bg-[#5852FF] text-white shadow-sm" : "text-black/55 hover:text-[#5852FF]"}`}>
+                      className={`rounded-[6px] px-2 py-1.5 text-xs font-bold transition sm:px-3 ${currency === c ? "bg-[#5852FF] text-white shadow-sm" : "text-black/55 hover:text-[#5852FF]"}`}>
                       {CURRENCY_CONFIG[c].symbol} {c}
                     </button>
                   ))}
                 </div>
-                <button type="button" onClick={clearAll}
-                  className="flex items-center gap-2 rounded-[8px] border border-[#FF4E26]/30 px-4 py-2.5 text-sm font-semibold text-[#FF4E26] transition hover:bg-[#FF4E26] hover:text-white">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                  </svg>
-                  Limpar tudo
-                </button>
-                <div className="rounded-[8px] border border-[#5852FF]/20 bg-[#5852FF]/5 px-4 py-3 text-sm text-black/75">
-                  <span className="block font-semibold text-[#5852FF]">{fmt(values.custoTotal)}</span>
-                  custo total estimado
+                {/* Compact combined total + clear on mobile */}
+                <div className="flex items-center gap-2">
+                  <div className="rounded-[8px] border border-[#5852FF]/20 bg-[#5852FF]/5 px-3 py-2 text-right text-xs text-black/75 sm:px-4 sm:py-3 sm:text-left sm:text-sm">
+                    <span className="block font-semibold text-[#5852FF]">{fmt(values.custoTotal)}</span>
+                    <span className="hidden sm:inline">custo total estimado</span>
+                    <span className="sm:hidden">total</span>
+                  </div>
+                  <button type="button" onClick={clearAll} aria-label="Limpar tudo"
+                    className="flex shrink-0 items-center gap-2 rounded-[8px] border border-[#FF4E26]/30 p-2.5 text-sm font-semibold text-[#FF4E26] transition hover:bg-[#FF4E26] hover:text-white sm:px-4 sm:py-2.5">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                    <span className="hidden sm:inline">Limpar tudo</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -848,11 +875,11 @@ export default function CalculatorPage() {
         </header>
 
         {/* ── Tab switcher ── */}
-        <div className="flex items-center gap-1 rounded-[8px] border border-black/10 bg-white p-1 shadow-sm w-fit">
+        <div className="flex w-full items-center gap-1 rounded-[8px] border border-black/10 bg-white p-1 shadow-sm sm:w-fit">
           <button
             type="button"
-            onClick={() => setActiveTab("calculator")}
-            className={`flex items-center gap-2 rounded-[6px] px-5 py-2.5 text-sm font-semibold transition ${
+            onClick={() => switchTab("calculator")}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-[6px] px-3 py-2 text-sm font-semibold transition sm:flex-none sm:px-5 sm:py-2.5 ${
               activeTab === "calculator"
                 ? "bg-[#5852FF] text-white shadow-sm"
                 : "text-black/55 hover:text-[#5852FF]"
@@ -865,8 +892,8 @@ export default function CalculatorPage() {
           </button>
           <button
             type="button"
-            onClick={() => setActiveTab("marketplace")}
-            className={`flex items-center gap-2 rounded-[6px] px-5 py-2.5 text-sm font-semibold transition ${
+            onClick={() => switchTab("marketplace")}
+            className={`flex flex-1 items-center justify-center gap-2 rounded-[6px] px-3 py-2 text-sm font-semibold transition sm:flex-none sm:px-5 sm:py-2.5 ${
               activeTab === "marketplace"
                 ? "bg-[#5852FF] text-white shadow-sm"
                 : "text-black/55 hover:text-[#5852FF]"
@@ -887,16 +914,68 @@ export default function CalculatorPage() {
         {/* ── CALCULATOR TAB ── */}
         {activeTab === "calculator" && (
           <>
-            {/* Step progress */}
-            <div className="rounded-[8px] border border-black/10 bg-white p-4 shadow-sm sm:p-5">
-              <div className="mb-4 flex items-center justify-between gap-4 text-sm">
-                <span className="font-semibold text-[#5852FF]">{current.eyebrow} de {steps.length}</span>
-                <span className="text-black/60">{Math.round(progress)}% concluido</span>
-              </div>
-              <div className="h-2 overflow-hidden rounded-full bg-black/10">
+            {/* Step progress — minimized by default on mobile */}
+            <div className="rounded-[8px] border border-black/10 bg-white p-3 shadow-sm sm:p-5">
+              <button
+                type="button"
+                onClick={() => setStepNavExpanded((v) => !v)}
+                className="flex w-full items-center justify-between gap-3 text-left sm:cursor-default"
+              >
+                <span className="flex items-center gap-2 text-sm">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[6px] bg-[#5852FF]/10 text-sm text-[#5852FF]">
+                    {current.icon}
+                  </span>
+                  <span className="font-semibold text-[#5852FF]">{current.eyebrow} de {steps.length}</span>
+                  <span className="hidden text-black/60 sm:inline">— {current.title}</span>
+                </span>
+                <span className="flex items-center gap-2 text-black/60">
+                  <span>{Math.round(progress)}%</span>
+                  <svg
+                    width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                    strokeLinecap="round" strokeLinejoin="round"
+                    className={`transition-transform sm:hidden ${stepNavExpanded ? "rotate-180" : ""}`}
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </span>
+              </button>
+              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-black/10 sm:h-2">
                 <div className="h-full rounded-full bg-[#5852FF] transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
               </div>
-              <nav className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
+
+              {/* Mobile: compact horizontal scroll strip of step dots, toggled open for full labels */}
+              <nav className="mt-3 flex gap-1.5 overflow-x-auto pb-1 sm:hidden">
+                {steps.map((step, index) => (
+                  <button key={step.title} type="button" onClick={() => goToStep(index)}
+                    aria-label={step.title}
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px] text-sm transition ${
+                      index === currentStep
+                        ? "bg-[#5852FF] text-white shadow-sm shadow-[#5852FF]/25"
+                        : "border border-black/10 bg-[#F9FAFB] text-black/50"
+                    }`}>
+                    {step.icon}
+                  </button>
+                ))}
+              </nav>
+              {stepNavExpanded && (
+                <nav className="mt-3 grid grid-cols-2 gap-2 sm:hidden">
+                  {steps.map((step, index) => (
+                    <button key={step.title} type="button" onClick={() => goToStep(index)}
+                      className={`rounded-[8px] border px-3 py-2 text-left text-xs font-semibold transition ${
+                        index === currentStep
+                          ? "border-[#5852FF] bg-[#5852FF] text-white shadow-sm shadow-[#5852FF]/25"
+                          : "border-black/10 bg-[#F9FAFB] text-black/70"
+                      }`}>
+                      <span className="mb-1 flex h-6 w-6 items-center justify-center rounded-[6px] bg-white/20 text-sm">{step.icon}</span>
+                      {step.title}
+                      {index === 2 && <span className="mt-1 block text-[10px] font-normal opacity-60">opcional</span>}
+                    </button>
+                  ))}
+                </nav>
+              )}
+
+              {/* Desktop / tablet: full grid, always visible */}
+              <nav className="mt-5 hidden grid-cols-2 gap-2 sm:grid sm:grid-cols-4 lg:grid-cols-7">
                 {steps.map((step, index) => (
                   <button key={step.title} type="button" onClick={() => goToStep(index)}
                     className={`rounded-[8px] border px-3 py-2 text-left text-xs font-semibold transition hover:-translate-y-0.5 ${
@@ -913,12 +992,12 @@ export default function CalculatorPage() {
             </div>
 
             {/* Main content */}
-            <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-              <div className="rounded-[8px] border border-black/10 bg-white p-5 shadow-xl shadow-black/5 transition-all duration-300 sm:p-7">
-                <div className="mb-6 flex flex-col gap-2">
-                  <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#FF4E26]">{current.eyebrow}</p>
-                  <h2 className="flex items-center gap-3 text-2xl font-semibold text-black sm:text-3xl">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-[8px] bg-[#5852FF]/10 text-xl text-[#5852FF]">{current.icon}</span>
+            <section className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+              <div className="rounded-[8px] border border-black/10 bg-white p-4 shadow-xl shadow-black/5 transition-all duration-300 sm:p-7">
+                <div className="mb-5 flex flex-col gap-2 sm:mb-6">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#FF4E26] sm:text-sm">{current.eyebrow}</p>
+                  <h2 className="flex items-center gap-3 text-xl font-semibold text-black sm:text-2xl lg:text-3xl">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-[#5852FF]/10 text-lg text-[#5852FF] sm:h-11 sm:w-11 sm:text-xl">{current.icon}</span>
                     <span>{current.title}</span>
                     {currentStep === 2 && (
                       <span className="rounded-full border border-black/10 bg-[#F9FAFB] px-3 py-1 text-xs font-semibold text-black/50">opcional</span>
@@ -1079,7 +1158,7 @@ export default function CalculatorPage() {
                 )}
 
                 {/* ── Step 6: Result ── */}
-                {currentStep === 6 && <ResultView values={values} currency={currency} onGoToMarketplace={() => setActiveTab("marketplace")} />}
+                {currentStep === 6 && <ResultView values={values} currency={currency} onGoToMarketplace={() => switchTab("marketplace")} />}
 
                 {showError && (
                   <div className="mt-6 rounded-[8px] border border-[#FF4E26]/30 bg-[#FF4E26]/10 px-4 py-3 text-sm font-medium text-[#8f3900]">
@@ -1095,13 +1174,13 @@ export default function CalculatorPage() {
                   {currentStep < steps.length - 1 ? (
                     <button type="button" onClick={goNext} className="rounded-[8px] bg-[#5852FF] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#4741e8]">Proxima etapa</button>
                   ) : (
-                    <button type="button" onClick={() => setCurrentStep(0)} className="rounded-[8px] bg-[#FF4E26] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#953b00]">Revisar cálculo</button>
+                    <button type="button" onClick={() => goToStep(0)} className="rounded-[8px] bg-[#FF4E26] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#953b00]">Revisar cálculo</button>
                   )}
                 </div>
               </div>
 
-              {/* Live summary sidebar */}
-              <aside className="h-fit rounded-[8px] border border-black/10 bg-white p-5 shadow-xl shadow-black/5 lg:sticky lg:top-6">
+              {/* Live summary sidebar — collapsible on mobile */}
+              <MobileCollapsibleSummary>
                 <h3 className="text-base font-semibold text-black">Resumo ao vivo</h3>
                 <p className="mt-1 text-sm text-black/60">Os valores são recalculados <strong>em tempo real</strong> a cada alteração.</p>
                 <div className="mt-5 space-y-3">
@@ -1117,7 +1196,7 @@ export default function CalculatorPage() {
                   <strong className="mt-1 block text-2xl">{fmt(values.custoTotal)}</strong>
                 </div>
                 {values.custoTotal > 0 && (
-                  <button type="button" onClick={() => setActiveTab("marketplace")}
+                  <button type="button" onClick={() => switchTab("marketplace")}
                     className="mt-3 flex w-full items-center justify-center gap-2 rounded-[8px] border border-[#5852FF]/30 px-4 py-2.5 text-sm font-semibold text-[#5852FF] transition hover:bg-[#5852FF] hover:text-white">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
@@ -1125,22 +1204,22 @@ export default function CalculatorPage() {
                     Calcular no Marketplace
                   </button>
                 )}
-              </aside>
+              </MobileCollapsibleSummary>
             </section>
           </>
         )}
 
         {/* ── MARKETPLACE TAB ── */}
         {activeTab === "marketplace" && (
-          <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
-            <div className="flex flex-col gap-5">
+          <section className="grid gap-4 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+            <div className="flex flex-col gap-4 sm:gap-5">
 
               {/* Custo de produção (read-only, from Pro Calculator) */}
-              <div className="rounded-[8px] border border-black/10 bg-white p-5 shadow-sm sm:p-7">
+              <div className="rounded-[8px] border border-black/10 bg-white p-4 shadow-sm sm:p-7">
                 <div className="flex flex-col gap-2">
-                  <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#FF4E26]">Custo de Produção</p>
-                  <h2 className="flex items-center gap-3 text-2xl font-semibold text-black">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-[8px] bg-[#5852FF]/10 text-xl text-[#5852FF]">◐</span>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#FF4E26] sm:text-sm">Custo de Produção</p>
+                  <h2 className="flex items-center gap-3 text-xl font-semibold text-black sm:text-2xl">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-[#5852FF]/10 text-lg text-[#5852FF] sm:h-11 sm:w-11 sm:text-xl">◐</span>
                     Base de custo
                   </h2>
                 </div>
@@ -1166,7 +1245,7 @@ export default function CalculatorPage() {
                     <p className="mt-1 text-sm text-black/60">
                       Complete a aba <strong>Calculadora</strong> para obter o custo de produção antes de calcular o preço para marketplace.
                     </p>
-                    <button type="button" onClick={() => setActiveTab("calculator")}
+                    <button type="button" onClick={() => switchTab("calculator")}
                       className="mt-3 rounded-[8px] bg-[#5852FF] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#4741e8]">
                       Ir para a Calculadora
                     </button>
@@ -1183,11 +1262,11 @@ export default function CalculatorPage() {
 
               {/* Marketplace selector */}
               {values.custoTotal > 0 && (
-                <div className="rounded-[8px] border border-black/10 bg-white p-5 shadow-sm sm:p-7">
+                <div className="rounded-[8px] border border-black/10 bg-white p-4 shadow-sm sm:p-7">
                   <div className="flex flex-col gap-2">
-                    <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#FF4E26]">Marketplace</p>
-                    <h2 className="flex items-center gap-3 text-2xl font-semibold text-black">
-                      <span className="flex h-11 w-11 items-center justify-center rounded-[8px] bg-[#5852FF]/10 text-xl text-[#5852FF]">🏪</span>
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#FF4E26] sm:text-sm">Marketplace</p>
+                    <h2 className="flex items-center gap-3 text-xl font-semibold text-black sm:text-2xl">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-[#5852FF]/10 text-lg text-[#5852FF] sm:h-11 sm:w-11 sm:text-xl">🏪</span>
                       Selecione a plataforma
                     </h2>
                     <p className="max-w-2xl text-sm leading-6 text-black/65">
@@ -1283,7 +1362,7 @@ export default function CalculatorPage() {
             {/* Marketplace result sidebar */}
             <aside className="flex flex-col gap-4 lg:sticky lg:top-6 lg:self-start">
               {marketplaceResult ? (
-                <div className="rounded-[8px] border border-black/10 bg-white p-5 shadow-xl shadow-black/5">
+                <div className="rounded-[8px] border border-black/10 bg-white p-4 shadow-xl shadow-black/5 sm:p-5">
                   <h2 className="text-base font-semibold text-black">Resultado Marketplace</h2>
                   <p className="mt-1 text-xs text-black/50">Cálculo em tempo real com as taxas da plataforma selecionada.</p>
                   {marketplaceResult.comissaoLabel && (
@@ -1331,7 +1410,7 @@ export default function CalculatorPage() {
                   </div>
                 </div>
               ) : (
-                <div className="rounded-[8px] border border-black/10 bg-white p-5 shadow-sm">
+                <div className="rounded-[8px] border border-black/10 bg-white p-4 shadow-sm sm:p-5">
                   <h2 className="text-base font-semibold text-black">Resultado</h2>
                   <p className="mt-3 text-sm text-black/45">
                     {values.custoTotal <= 0
@@ -1350,7 +1429,7 @@ export default function CalculatorPage() {
               )}
 
               {marketplace && !isCustom && (
-                <div className="rounded-[8px] border border-black/10 bg-white p-5 shadow-sm">
+                <div className="rounded-[8px] border border-black/10 bg-white p-4 shadow-sm sm:p-5">
                   <p className="text-xs font-bold uppercase tracking-wider text-black/40">Sobre o marketplace</p>
                   <div className="mt-3 space-y-2 text-xs text-black/60">
                     <div className="flex justify-between"><span>País</span><strong className="text-black">{marketplace.pais}</strong></div>
@@ -1372,6 +1451,32 @@ export default function CalculatorPage() {
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
+
+function MobileCollapsibleSummary({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <aside className="h-fit rounded-[8px] border border-black/10 bg-white shadow-xl shadow-black/5 lg:sticky lg:top-6 lg:p-5">
+      {/* Mobile: collapsed toggle bar. Desktop: no toggle, always expanded. */}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left lg:hidden"
+      >
+        <span className="text-sm font-semibold text-black">Resumo ao vivo</span>
+        <svg
+          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+          strokeLinecap="round" strokeLinejoin="round"
+          className={`transition-transform ${open ? "rotate-180" : ""}`}
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+      <div className={`${open ? "block" : "hidden"} px-4 pb-4 lg:block lg:px-0 lg:pb-0`}>
+        {children}
+      </div>
+    </aside>
+  );
+}
 
 function FieldLabel({ label, hint, required }: { label: string; hint?: string; required?: boolean }) {
   return (
