@@ -1,12 +1,16 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import printersData from "../../public/impressoras.json";
 import rawMarketData from "../../public/marketplaces.json";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { formatCurrencyInput } from "@/utils/currency";
+import { domToPng } from 'modern-screenshot';
+// NOTE: "Baixar como imagem" (quote export) uses html2canvas, loaded dynamically
+// inside QuoteModal so it never touches the server bundle. Install it once with:
+//   npm install html2canvas
 
 // ─── Types — Professional Calculator ─────────────────────────────────────────
 
@@ -199,7 +203,7 @@ const steps: Step[] = [
     description: (
       <>
         Defina quanto a impressora precisa recuperar por hora para manter sua operação{" "}
-        <em>saudável</em>. 
+        <em>saudável</em>.
       </>
     ),
     icon: "◷",
@@ -274,6 +278,11 @@ const formatCurrencyValue = (value: number, currency: Currency) => {
   const { locale, code } = CURRENCY_CONFIG[currency];
   return new Intl.NumberFormat(locale, { style: "currency", currency: code }).format(value || 0);
 };
+
+// Turns a plain number into the comma-decimal editable string format used
+// throughout this file's currency inputs (e.g. 1234.5 -> "1234,50").
+const numberToEditableString = (value: number) =>
+  (Number.isFinite(value) ? value : 0).toFixed(2).replace(".", ",");
 
 const pct = (v: number) => `${v}%`;
 
@@ -512,6 +521,35 @@ const defaultManualTaxes = (): ManualTaxes => ({
   taxaAnuncio: "", mensalidade: "", outrasTaxas: "", frete: "", impostos: "",
 });
 
+// ─── Quote (Orçamento) modal types ────────────────────────────────────────────
+
+type QuoteItemKey =
+  | "material" | "energia" | "maquina" | "acabamento" | "embalagem" | "impostos" | "subtotal" | "total";
+
+type QuoteItem = {
+  key: QuoteItemKey;
+  label: string;
+  amountStr: string;
+  included: boolean;
+};
+
+type CalculatorValues = {
+  custoMaterial: number; custoEnergia: number; custoMáquina: number; custoAcabamento: number;
+  custoEmbalagem: number; custoImpostos: number; subtotal: number; custoTotal: number;
+  preçoEconomico: number; preçoProfissional: number; preçoPremium: number;
+};
+
+const buildDefaultQuoteItems = (values: CalculatorValues): QuoteItem[] => [
+  { key: "material", label: "Material", amountStr: numberToEditableString(values.custoMaterial), included: values.custoMaterial > 0 },
+  { key: "energia", label: "Energia", amountStr: numberToEditableString(values.custoEnergia), included: values.custoEnergia > 0 },
+  { key: "maquina", label: "Tempo de Máquina", amountStr: numberToEditableString(values.custoMáquina), included: values.custoMáquina > 0 },
+  { key: "acabamento", label: "Acabamento", amountStr: numberToEditableString(values.custoAcabamento), included: values.custoAcabamento > 0 },
+  { key: "embalagem", label: "Embalagem", amountStr: numberToEditableString(values.custoEmbalagem), included: values.custoEmbalagem > 0 },
+  { key: "impostos", label: "Impostos", amountStr: numberToEditableString(values.custoImpostos), included: values.custoImpostos > 0 },
+  { key: "subtotal", label: "Subtotal", amountStr: numberToEditableString(values.subtotal), included: false },
+  { key: "total", label: "Custo Total", amountStr: numberToEditableString(values.custoTotal), included: true },
+];
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function CalculatorPage() {
@@ -554,6 +592,9 @@ export default function CalculatorPage() {
 
   // ── Mobile UI ──
   const [stepNavExpanded, setStepNavExpanded] = useState(false);
+
+  // ── Orçamento (quote) modal ──
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   // ─── Cache ────────────────────────────────────────────────────────────────
 
@@ -879,11 +920,10 @@ export default function CalculatorPage() {
           <button
             type="button"
             onClick={() => switchTab("calculator")}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-[6px] px-3 py-2 text-sm font-semibold transition sm:flex-none sm:px-5 sm:py-2.5 ${
-              activeTab === "calculator"
+            className={`flex flex-1 items-center justify-center gap-2 rounded-[6px] px-3 py-2 text-sm font-semibold transition sm:flex-none sm:px-5 sm:py-2.5 ${activeTab === "calculator"
                 ? "bg-[#5852FF] text-white shadow-sm"
                 : "text-black/55 hover:text-[#5852FF]"
-            }`}
+              }`}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="4" y="2" width="16" height="20" rx="2" /><line x1="8" y1="6" x2="16" y2="6" /><line x1="8" y1="10" x2="16" y2="10" /><line x1="8" y1="14" x2="12" y2="14" />
@@ -893,11 +933,10 @@ export default function CalculatorPage() {
           <button
             type="button"
             onClick={() => switchTab("marketplace")}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-[6px] px-3 py-2 text-sm font-semibold transition sm:flex-none sm:px-5 sm:py-2.5 ${
-              activeTab === "marketplace"
+            className={`flex flex-1 items-center justify-center gap-2 rounded-[6px] px-3 py-2 text-sm font-semibold transition sm:flex-none sm:px-5 sm:py-2.5 ${activeTab === "marketplace"
                 ? "bg-[#5852FF] text-white shadow-sm"
                 : "text-black/55 hover:text-[#5852FF]"
-            }`}
+              }`}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
@@ -948,11 +987,10 @@ export default function CalculatorPage() {
                 {steps.map((step, index) => (
                   <button key={step.title} type="button" onClick={() => goToStep(index)}
                     aria-label={step.title}
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px] text-sm transition ${
-                      index === currentStep
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px] text-sm transition ${index === currentStep
                         ? "bg-[#5852FF] text-white shadow-sm shadow-[#5852FF]/25"
                         : "border border-black/10 bg-[#F9FAFB] text-black/50"
-                    }`}>
+                      }`}>
                     {step.icon}
                   </button>
                 ))}
@@ -961,11 +999,10 @@ export default function CalculatorPage() {
                 <nav className="mt-3 grid grid-cols-2 gap-2 sm:hidden">
                   {steps.map((step, index) => (
                     <button key={step.title} type="button" onClick={() => goToStep(index)}
-                      className={`rounded-[8px] border px-3 py-2 text-left text-xs font-semibold transition ${
-                        index === currentStep
+                      className={`rounded-[8px] border px-3 py-2 text-left text-xs font-semibold transition ${index === currentStep
                           ? "border-[#5852FF] bg-[#5852FF] text-white shadow-sm shadow-[#5852FF]/25"
                           : "border-black/10 bg-[#F9FAFB] text-black/70"
-                      }`}>
+                        }`}>
                       <span className="mb-1 flex h-6 w-6 items-center justify-center rounded-[6px] bg-white/20 text-sm">{step.icon}</span>
                       {step.title}
                       {index === 2 && <span className="mt-1 block text-[10px] font-normal opacity-60">opcional</span>}
@@ -978,11 +1015,10 @@ export default function CalculatorPage() {
               <nav className="mt-5 hidden grid-cols-2 gap-2 sm:grid sm:grid-cols-4 lg:grid-cols-7">
                 {steps.map((step, index) => (
                   <button key={step.title} type="button" onClick={() => goToStep(index)}
-                    className={`rounded-[8px] border px-3 py-2 text-left text-xs font-semibold transition hover:-translate-y-0.5 ${
-                      index === currentStep
+                    className={`rounded-[8px] border px-3 py-2 text-left text-xs font-semibold transition hover:-translate-y-0.5 ${index === currentStep
                         ? "border-[#5852FF] bg-[#5852FF] text-white shadow-lg shadow-[#5852FF]/25"
                         : "border-black/10 bg-[#F9FAFB] text-black/70 hover:border-[#5852FF]/50 hover:bg-white hover:text-[#5852FF]"
-                    }`}>
+                      }`}>
                     <span className="mb-1 flex h-7 w-7 items-center justify-center rounded-[6px] bg-white/20 text-sm">{step.icon}</span>
                     {step.title}
                     {index === 2 && <span className="mt-1 block text-[10px] font-normal opacity-60">opcional</span>}
@@ -1092,7 +1128,7 @@ export default function CalculatorPage() {
                 {/* ── Step 2: Machine (optional) ── */}
                 {currentStep === 2 && (
                   <div className="flex flex-col gap-5">
-                    
+
                     <div className="grid rounded-[8px] border border-black/10 bg-[#F9FAFB] p-1 sm:w-fit sm:grid-cols-2">
                       {(["manual", "automatic"] as MachineMode[]).map((mode) => (
                         <button key={mode} type="button" onClick={() => setMachineMode(mode)}
@@ -1174,7 +1210,7 @@ export default function CalculatorPage() {
                   {currentStep < steps.length - 1 ? (
                     <button type="button" onClick={goNext} className="rounded-[8px] bg-[#5852FF] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#4741e8]">Proxima etapa</button>
                   ) : (
-                    <button type="button" onClick={() => goToStep(0)} className="rounded-[8px] bg-[#FF4E26] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#953b00]">Revisar cálculo</button>
+                    <button type="button" onClick={() => setIsQuoteModalOpen(true)} className="rounded-[8px] bg-[#FF4E26] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#953b00]">Gerar Orçamento</button>
                   )}
                 </div>
               </div>
@@ -1446,6 +1482,14 @@ export default function CalculatorPage() {
         )}
       </section>
       <Footer />
+
+      {/* ── Orçamento (quote) modal ── */}
+      <QuoteModal
+        open={isQuoteModalOpen}
+        onClose={() => setIsQuoteModalOpen(false)}
+        values={values}
+        currency={currency}
+      />
     </main>
   );
 }
@@ -1475,6 +1519,229 @@ function MobileCollapsibleSummary({ children }: { children: ReactNode }) {
         {children}
       </div>
     </aside>
+  );
+}
+
+// ─── Orçamento (quote) modal ───────────────────────────────────────────────────
+
+function QuoteModal({ open, onClose, values, currency }: {
+  open: boolean;
+  onClose: () => void;
+  values: CalculatorValues;
+  currency: Currency;
+}) {
+  const fmt = (v: number) => formatCurrencyValue(v, currency);
+  const { symbol } = CURRENCY_CONFIG[currency];
+
+  const [quoteTitle, setQuoteTitle] = useState("Orçamento");
+  const [items, setItems] = useState<QuoteItem[]>(() => buildDefaultQuoteItems(values));
+  const [finalPriceStr, setFinalPriceStr] = useState(() => numberToEditableString(values.preçoProfissional));
+  const [copyFeedback, setCopyFeedback] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  // Re-sync the modal's editable fields to the latest calculated values
+  // only at the moment it's opened — not on every keystroke elsewhere.
+  useEffect(() => {
+    if (open) {
+      setItems(buildDefaultQuoteItems(values));
+      setFinalPriceStr(numberToEditableString(values.preçoProfissional));
+      setCopyFeedback(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  const toggleItem = (key: QuoteItemKey) =>
+    setItems((prev) => prev.map((it) => (it.key === key ? { ...it, included: !it.included } : it)));
+
+  const updateItemAmount = (key: QuoteItemKey, raw: string) =>
+    setItems((prev) => prev.map((it) => (it.key === key ? { ...it, amountStr: raw.replace(/[^\d.,]/g, "") } : it)));
+
+  const includedItems = items.filter((it) => it.included);
+  const finalPriceValue = toCurrencyNumber(finalPriceStr);
+
+  const copySummary = async () => {
+    const lines = [
+      quoteTitle || "Orçamento",
+      "",
+      ...includedItems.map((it) => `${it.label}: ${fmt(toCurrencyNumber(it.amountStr))}`),
+      "",
+      `Preço final: ${fmt(finalPriceValue)}`,
+    ];
+    try {
+      await navigator.clipboard.writeText(lines.join("\n"));
+      setCopyFeedback(true);
+      setTimeout(() => setCopyFeedback(false), 2000);
+    } catch { /* clipboard unavailable — ignore */ }
+  };
+
+  // Renders the full preview card to a PNG, regardless of how much of it
+  // actually fits on screen — this is what solves the "print cortado" issue
+  // on small phones, since html2canvas captures the whole element, not just
+  // the visible viewport.
+  const downloadAsImage = async () => {
+    if (!previewRef.current) return;
+    setIsGeneratingImage(true);
+    try {
+      const dataUrl = await domToPng(previewRef.current, {
+        scale: 2,
+        backgroundColor: '#ffffff',
+      });
+
+      const link = document.createElement('a');
+      link.download = 'orcamento.png';
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Erro ao gerar imagem:", err);
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-6"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Gerar orçamento"
+    >
+      <div
+        className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-[8px] bg-white shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between gap-3 border-b border-black/10 px-4 py-3 sm:px-6 sm:py-4">
+          <div>
+            <h2 className="text-base font-semibold text-black sm:text-lg">Gerar orçamento</h2>
+            <p className="text-xs text-black/50 sm:text-sm">Escolha o que aparece, ajuste os valores e tire um print para o cliente.</p>
+          </div>
+          <button type="button" onClick={onClose} aria-label="Fechar"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] border border-black/10 text-black/50 transition hover:border-[#FF4E26]/40 hover:text-[#FF4E26]">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
+          <div className="grid gap-6 sm:grid-cols-2">
+            {/* ── Controls ── */}
+            <div className="flex flex-col gap-4 order-2 sm:order-1">
+              <TextField label="Título do orçamento" value={quoteTitle} onChange={setQuoteTitle} placeholder="Orçamento" />
+
+              <div>
+                <p className="mb-2 text-sm font-semibold text-black">Custos a mostrar</p>
+                <div className="flex flex-col gap-2">
+                  {items.map((item) => (
+                    <div key={item.key} className={`flex items-center gap-2 rounded-[8px] border p-2 transition ${item.included ? "border-[#5852FF]/25 bg-[#5852FF]/5" : "border-black/10 bg-[#F9FAFB]"}`}>
+                      <button type="button" onClick={() => toggleItem(item.key)} aria-pressed={item.included}
+                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[4px] border-2 transition ${item.included ? "border-[#5852FF] bg-[#5852FF]" : "border-black/25 bg-white"}`}>
+                        {item.included && (
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        )}
+                      </button>
+                      <span className="min-w-0 flex-1 truncate text-sm font-medium text-black">{item.label}</span>
+                      <span className="flex h-9 w-28 shrink-0 items-center rounded-[6px] border border-black/15 bg-white px-2">
+                        <span className="mr-1 text-xs font-semibold text-black/40">{symbol}</span>
+                        <input type="text" inputMode="decimal" value={item.amountStr}
+                          onChange={(e) => updateItemAmount(item.key, e.target.value)}
+                          disabled={!item.included}
+                          className="min-w-0 flex-1 bg-transparent text-sm text-black outline-none disabled:text-black/35" />
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-[8px] border border-[#FF4E26]/25 bg-[#FF4E26]/5 p-3">
+                <NumberField label="Preço final" hint="O valor que será destacado no orçamento enviado ao cliente." prefix={symbol} value={finalPriceStr} onChange={setFinalPriceStr} placeholder="0,00" isCurrencyField required />
+              </div>
+            </div>
+
+            {/* ── Preview (the part meant to be screenshotted) ── */}
+            <div className="order-1 sm:order-2">
+              <p className="mb-2 text-sm font-semibold text-black">Pré-visualização</p>
+              <div ref={previewRef} className="rounded-[8px] border-2 border-black/10 bg-white p-5 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#FF4E26]">3D Print · Orçamento</p>
+                <h3 className="mt-1 text-xl font-semibold text-black">{quoteTitle || "Orçamento"}</h3>
+                <div className="mt-4 space-y-2.5">
+                  {includedItems.length === 0 ? (
+                    <p className="text-sm text-black/40">Nenhum custo selecionado.</p>
+                  ) : (
+                    includedItems.map((item) => (
+                      <div key={item.key} className="flex items-center justify-between gap-4 border-b border-black/10 pb-2.5 text-sm last:border-b-0 last:pb-0">
+                        <span className="text-black/65">{item.label}</span>
+                        <strong className="text-black">{fmt(toCurrencyNumber(item.amountStr))}</strong>
+                      </div>
+                    ))
+                  )}
+                </div>
+                <div className="mt-4 rounded-[8px] bg-black px-4 py-4 text-white">
+                  <span className="text-xs text-white/60">Preço final</span>
+                  <strong className="mt-1 block text-3xl font-black">{fmt(finalPriceValue)}</strong>
+                </div>
+              </div>
+              <p className="mt-3 flex items-start gap-2 text-xs leading-5 text-black/45">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0">
+                  <rect x="2" y="8" width="20" height="12" rx="2" /><circle cx="12" cy="14" r="3" /><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                </svg>
+                Em telas pequenas o print pode cortar informações — use <strong className="font-semibold text-black/60">"Baixar como imagem"</strong> abaixo para gerar o orçamento completo em PNG, mesmo que ele não caiba todo na tela.
+              </p>
+              {imageError && (
+                <p className="mt-2 rounded-[8px] border border-[#FF4E26]/25 bg-[#FF4E26]/5 px-3 py-2 text-xs text-[#8f3900]">
+                  Não foi possível gerar a imagem agora. Tente novamente ou use o print da tela.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex flex-col gap-3 border-t border-black/10 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-4">
+          <button type="button" onClick={onClose}
+            className="w-full rounded-[8px] border border-black/15 px-5 py-2.5 text-sm font-semibold text-black transition hover:border-[#5852FF] hover:text-[#5852FF] sm:w-auto">
+            Fechar
+          </button>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <button type="button" onClick={copySummary}
+              className="flex w-full items-center justify-center gap-2 rounded-[8px] border border-[#5852FF]/30 px-5 py-2.5 text-sm font-semibold text-[#5852FF] transition hover:bg-[#5852FF] hover:text-white sm:w-auto">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+              {copyFeedback ? "Copiado!" : "Copiar resumo em texto"}
+            </button>
+            <button type="button" onClick={downloadAsImage} disabled={isGeneratingImage}
+              className="flex w-full items-center justify-center gap-2 rounded-[8px] bg-[#5852FF] px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#4741e8] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto">
+              {isGeneratingImage ? (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="animate-spin">
+                  <path d="M21 12a9 9 0 1 1-9-9" />
+                </svg>
+              ) : (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              )}
+              {isGeneratingImage ? "Gerando imagem..." : "Baixar como imagem"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
