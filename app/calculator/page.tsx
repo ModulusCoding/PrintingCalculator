@@ -1624,8 +1624,7 @@ function QuoteModal({ open, onClose, values, currency }: {
         {/* Header */}
         <div className="flex items-center justify-between gap-3 border-b border-black/10 px-4 py-3 sm:px-6 sm:py-4">
           <div>
-            <h2 className="text-base font-semibold text-black sm:text-lg">Gerar orçamento</h2>
-            <p className="text-xs text-black/50 sm:text-sm">Escolha o que aparece, ajuste os valores e tire um print para o cliente.</p>
+            <h2 className="text-base font-semibold text-black sm:text-lg">Gerar orçamento</h2> <p className="text-xs text-black/50 sm:text-sm">Escolha o que aparece, ajuste os valores e envie para <span className="font-bold">seu</span> cliente.</p>
           </div>
           <button type="button" onClick={onClose} aria-label="Fechar"
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] border border-black/10 text-black/50 transition hover:border-[#FF4E26]/40 hover:text-[#FF4E26]">
@@ -1696,12 +1695,7 @@ function QuoteModal({ open, onClose, values, currency }: {
                   <strong className="mt-1 block text-3xl font-black">{fmt(finalPriceValue)}</strong>
                 </div>
               </div>
-              <p className="mt-3 flex items-start gap-2 text-xs leading-5 text-black/45">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0">
-                  <rect x="2" y="8" width="20" height="12" rx="2" /><circle cx="12" cy="14" r="3" /><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                </svg>
-                Em telas pequenas o print pode cortar informações — use <strong className="font-semibold text-black/60">"Baixar como imagem"</strong> abaixo para gerar o orçamento completo em PNG, mesmo que ele não caiba todo na tela.
-              </p>
+              
               {imageError && (
                 <p className="mt-2 rounded-[8px] border border-[#FF4E26]/25 bg-[#FF4E26]/5 px-3 py-2 text-xs text-[#8f3900]">
                   Não foi possível gerar a imagem agora. Tente novamente ou use o print da tela.
