@@ -567,7 +567,7 @@ export default function CalculatorPage() {
   const [printingHours, setPrintingHours] = useState("");
   const [printingMinutes, setPrintingMinutes] = useState("");
   const [kwhValue, setKwhValue] = useState("0,000");
-  const [machineMode, setMachineMode] = useState<MachineMode>("manual");
+  const [machineMode, setMachineMode] = useState<MachineMode>("automatic");
   const [machineHourValue, setMachineHourValue] = useState("");
   const [printerValue, setPrinterValue] = useState("0,000");
   const [printerLifeHours, setPrinterLifeHours] = useState("");
