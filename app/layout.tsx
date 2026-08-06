@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
-
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 export const metadata: Metadata = {
   title: "Modulus 3D Calculator",
   description:
@@ -25,6 +26,8 @@ export default function RootLayout({
       
         <body className="min-h-full flex flex-col">
           <LanguageProvider>{children}</LanguageProvider>
+          <Analytics />
+          <SpeedInsights />
         </body>
       </html>
     </>

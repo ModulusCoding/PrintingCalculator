@@ -524,7 +524,7 @@ const defaultManualTaxes = (): ManualTaxes => ({
 // ─── Quote (Orçamento) modal types ────────────────────────────────────────────
 
 type QuoteItemKey =
-  | "material" | "energia" | "maquina" | "acabamento" | "embalagem" | "impostos" | "subtotal" | "total";
+  | "material" | "energia" | "maquina" | "acabamento" | "embalagem" | "impostos" | "total";
 
 type QuoteItem = {
   key: QuoteItemKey;
@@ -546,7 +546,6 @@ const buildDefaultQuoteItems = (values: CalculatorValues): QuoteItem[] => [
   { key: "acabamento", label: "Acabamento", amountStr: numberToEditableString(values.custoAcabamento), included: values.custoAcabamento > 0 },
   { key: "embalagem", label: "Embalagem", amountStr: numberToEditableString(values.custoEmbalagem), included: values.custoEmbalagem > 0 },
   { key: "impostos", label: "Impostos", amountStr: numberToEditableString(values.custoImpostos), included: values.custoImpostos > 0 },
-  { key: "subtotal", label: "Subtotal", amountStr: numberToEditableString(values.subtotal), included: false },
   { key: "total", label: "Custo Total", amountStr: numberToEditableString(values.custoTotal), included: true },
 ];
 
@@ -1533,6 +1532,13 @@ function QuoteModal({ open, onClose, values, currency }: {
   const fmt = (v: number) => formatCurrencyValue(v, currency);
   const { symbol } = CURRENCY_CONFIG[currency];
 
+  // Data de hoje, formatada para exibição no orçamento (e usada tanto na
+  // pré-visualização/imagem exportada quanto no resumo em texto copiado).
+  const todayLabel = useMemo(
+    () => new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }),
+    [],
+  );
+
   const [quoteTitle, setQuoteTitle] = useState("Orçamento");
   const [items, setItems] = useState<QuoteItem[]>(() => buildDefaultQuoteItems(values));
   const [finalPriceStr, setFinalPriceStr] = useState(() => numberToEditableString(values.preçoProfissional));
@@ -1577,6 +1583,7 @@ function QuoteModal({ open, onClose, values, currency }: {
       ...includedItems.map((it) => `${it.label}: ${fmt(toCurrencyNumber(it.amountStr))}`),
       "",
       `Preço final: ${fmt(finalPriceValue)}`,
+      `Data: ${todayLabel}`,
     ];
     try {
       await navigator.clipboard.writeText(lines.join("\n"));
@@ -1693,6 +1700,7 @@ function QuoteModal({ open, onClose, values, currency }: {
                 <div className="mt-4 rounded-[8px] bg-black px-4 py-4 text-white">
                   <span className="text-xs text-white/60">Preço final</span>
                   <strong className="mt-1 block text-3xl font-black">{fmt(finalPriceValue)}</strong>
+                  <span className="mt-2 block text-[11px] text-white/40">{todayLabel}</span>
                 </div>
               </div>
               
