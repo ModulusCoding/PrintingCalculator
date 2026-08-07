@@ -517,8 +517,6 @@ const defaultColorMaterials = (): ColorMaterial[] => [
 
 const defaultPackaging = (): PackagingItem[] => [
   { id: 1, name: "", value: "" },
-  { id: 2, name: "", value: "" },
-  { id: 3, name: "", value: "" },
 ];
 
 const emptyColorMaterial = (id: number): ColorMaterial => ({
@@ -1266,12 +1264,12 @@ return [
     {fmt(values.custoTotal)}
   </strong>
 
-  {/* <img
-    src="/logo.svg"
+   <img
+    src="/logo_preta.svg"
     alt=""
     aria-hidden="true"
-    className="pointer-events-none absolute right-4 bottom-3 w-40 opacity-100"
-  />*/}
+    className="pointer-events-none absolute right-4 bottom-0 top-0 w-40 opacity-100"
+  />
 </div>
                 {values.custoTotal > 0 && (
                   <button type="button" onClick={() => switchTab("marketplace")}
@@ -1719,6 +1717,7 @@ function QuoteModal({ open, onClose, values, currency }: {
 
               <div className="rounded-[8px] border border-[#FF4E26]/25 bg-[#FF4E26]/5 p-3">
                 <NumberField label="Preço final" hint="O valor que será destacado no orçamento enviado ao cliente." prefix={symbol} value={finalPriceStr} onChange={setFinalPriceStr} placeholder="0,00" isCurrencyField required />
+              
               </div>
             </div>
 
@@ -1740,10 +1739,16 @@ function QuoteModal({ open, onClose, values, currency }: {
                     ))
                   )}
                 </div>
-                <div className="mt-4 rounded-[8px] bg-black px-4 py-4 text-white">
+                <div className="relative overflow-hidden rounded-[12px] bg-black text-white px-5 py-4">
                   <span className="text-xs text-white/60">Preço final</span>
                   <strong className="mt-1 block text-3xl font-black">{fmt(finalPriceValue)}</strong>
                   <span className="mt-2 block text-[11px] text-white/40">{todayLabel}</span>
+                  <img
+                    src="/logo_preta.svg"
+                    alt=""
+                    aria-hidden="true"
+                    className="pointer-events-none absolute right-2 inset-y-0 w-32 object-contain object-right"
+                  />
                 </div>
               </div>
               
