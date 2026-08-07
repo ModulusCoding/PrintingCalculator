@@ -1266,12 +1266,12 @@ return [
     {fmt(values.custoTotal)}
   </strong>
 
-  <img
+  {/* <img
     src="/logo.svg"
     alt=""
     aria-hidden="true"
     className="pointer-events-none absolute right-4 bottom-3 w-40 opacity-100"
-  />
+  />*/}
 </div>
                 {values.custoTotal > 0 && (
                   <button type="button" onClick={() => switchTab("marketplace")}
