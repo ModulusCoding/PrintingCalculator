@@ -1161,7 +1161,7 @@ return [
                       {(["manual", "automatic"] as MachineMode[]).map((mode) => (
                         <button key={mode} type="button" onClick={() => setMachineMode(mode)}
                           className={`rounded-[6px] px-4 py-2 text-sm font-semibold transition ${machineMode === mode ? "bg-[#5852FF] text-white shadow-sm" : "text-black/65 hover:text-[#5852FF]"}`}>
-                          {mode === "manual" ? "Manual" : "Automático"}
+                          {mode === "manual" ? "Geral" : "Detalhado"}
                         </button>
                       ))}
                     </div>
