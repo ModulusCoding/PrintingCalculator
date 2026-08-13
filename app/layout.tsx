@@ -4,12 +4,10 @@ import { LanguageProvider } from "@/context/LanguageContext";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-
-
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ||
-      "https://printing-calculator-lovat.vercel.app" || "http://localhost:3000"
+      "https://printing-calculator-lovat.vercel.app"
   ),
 
   title: {
@@ -47,6 +45,7 @@ export const metadata: Metadata = {
     follow: true,
   },
 };
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -56,11 +55,13 @@ export default function RootLayout({
     <html lang="pt-BR" className="h-full antialiased">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
+
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+
         <link
           href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"
           rel="stylesheet"
