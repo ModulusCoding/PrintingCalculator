@@ -230,7 +230,7 @@ export default function Home() {
                 <div className="mt-5 grid gap-3">
                   {[
                     { label: "Material", value: "R$ 18,40", width: "w-7/12", pct: "29%" },
-                    { label: "Maquina", value: "R$ 22,00", width: "w-9/12", pct: "35%" },
+                    { label: "Máquina", value: "R$ 22,00", width: "w-9/12", pct: "35%" },
                     { label: "Acabamento", value: "R$ 14,50", width: "w-5/12", pct: "23%" },
                     { label: "Taxas", value: "R$ 9,80", width: "w-4/12", pct: "13%" },
                   ].map(({ label, value, width, pct }) => (
