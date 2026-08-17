@@ -6,6 +6,12 @@
   --background: #f9fafb;
   --foreground: #000000;
   --global-font: "Space Grotesk", sans-serif;
+
+  /* Identidade oficial Modulus */
+  --modulus-primary: #2b00ff;
+  --modulus-dark: #152336;
+  --modulus-light: #a6b4ff;
+  --modulus-accent: #ff4e26;
 }
 
 @theme inline {
@@ -13,6 +19,28 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--global-font);
   --font-mono: "Courier New", Courier, monospace;
+  --color-modulus-primary: var(--modulus-primary);
+  --color-modulus-dark: var(--modulus-dark);
+  --color-modulus-light: var(--modulus-light);
+  --color-modulus-accent: var(--modulus-accent);
+}
+
+@keyframes modulus-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -14px, 0);
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 body {

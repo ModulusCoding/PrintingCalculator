@@ -51,7 +51,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-[6px] px-3.5 py-2 text-sm font-semibold text-black/60 transition hover:bg-[#5852FF]/10 hover:text-[#5852FF]"
+                className="rounded-[6px] px-3.5 py-2 text-sm font-semibold text-black/60 transition hover:bg-[var(--modulus-primary)]/10 hover:text-[var(--modulus-primary)]"
               >
                 {link.label}
               </Link>
@@ -61,7 +61,7 @@ export default function Header() {
           <button
             type="button"
             onClick={() => setIsModalOpen(true)}
-            className="rounded-[8px] bg-[#5852FF] px-4 py-2.5 text-sm font-bold text-white shadow-md shadow-[#5852FF]/20 transition hover:-translate-y-0.5 hover:bg-[#4741e8] sm:px-5"
+            className="rounded-[8px] bg-[var(--modulus-primary)] px-4 py-2.5 text-sm font-bold text-white shadow-md shadow-[var(--modulus-primary)]/20 transition hover:-translate-y-0.5 hover:bg-[var(--modulus-primary)] sm:px-5"
           >
             Calculadoras
           </button>
@@ -103,7 +103,7 @@ export default function Header() {
               {calculators.map((calculator) => (
                 <article
                   key={calculator.href}
-                  className="group rounded-[12px] border border-black/10 bg-[#F9FAFB] p-5 shadow-sm transition hover:-translate-y-1 hover:border-[#5852FF]/20 hover:shadow-md"
+                  className="group rounded-[12px] border border-black/10 bg-[#F9FAFB] p-5 shadow-sm transition hover:-translate-y-1 hover:border-[var(--modulus-primary)]/20 hover:shadow-md"
                 >
                   <span className="text-4xl">{calculator.icon}</span>
                   <h3 className="mt-5 text-xl font-bold">{calculator.title}</h3>
@@ -113,7 +113,7 @@ export default function Header() {
                   <Link
                     href={calculator.href}
                     onClick={() => setIsModalOpen(false)}
-                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-[8px] bg-[#5852FF] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#4741e8]"
+                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-[8px] bg-[var(--modulus-primary)] px-5 py-3 text-sm font-bold text-white transition hover:bg-[var(--modulus-primary)]"
                   >
                     Abrir calculadora
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
