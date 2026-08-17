@@ -1739,15 +1739,26 @@ function QuoteModal({ open, onClose, values, currency }: {
                     ))
                   )}
                 </div>
-                <div className="relative overflow-hidden rounded-[12px] bg-black text-white px-5 py-4">
-                  <span className="text-xs text-white/60">Preço final</span>
-                  <strong className="mt-1 block text-3xl font-black">{fmt(finalPriceValue)}</strong>
-                  <span className="mt-2 block text-[11px] text-white/40">{todayLabel}</span>
+                <div className="relative mt-4 overflow-hidden rounded-[12px] bg-black px-5 py-4 text-white">
+                  <div className="relative z-10">
+                    <span className="text-xs text-white/60">
+                      Preço final
+                    </span>
+
+                    <strong className="mt-1 block text-3xl font-black">
+                      {fmt(finalPriceValue)}
+                    </strong>
+
+                    <span className="mt-2 block text-[11px] text-white/40">
+                      {todayLabel}
+                    </span>
+                  </div>
+
                   <img
                     src="/logo_preta.svg"
                     alt=""
                     aria-hidden="true"
-                    className="pointer-events-none absolute right-2 inset-y-0 w-32 object-contain object-right"
+                    className="pointer-events-none absolute right-2 inset-y-0 z-0 w-32 object-contain object-right"
                   />
                 </div>
               </div>
