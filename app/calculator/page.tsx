@@ -1256,19 +1256,21 @@ return [
                   <SummaryRow label="Impostos" value={fmt(values.custoImpostos)} />
                 </div>
                 <div className="relative mt-5 h-36 overflow-hidden rounded-[12px] bg-black px-5 py-4 text-white">
-  <span className="text-sm font-medium text-white/65">
-    Custo total
-  </span>
+  <div className="relative z-10 pr-28">
+    <span className="text-sm font-medium text-white/65">
+      Custo total
+    </span>
 
-  <strong className="mt-1 block text-2xl font-semibold">
-    {fmt(values.custoTotal)}
-  </strong>
+    <strong className="mt-1 block text-2xl font-semibold leading-tight">
+      {fmt(values.custoTotal)}
+    </strong>
+  </div>
 
-   <img
+  <img
     src="/logo_preta.svg"
     alt=""
     aria-hidden="true"
-    className="pointer-events-none absolute right-4 bottom-0 top-0 w-40 opacity-100"
+    className="pointer-events-none absolute right-4 inset-y-0 z-0 w-40 object-contain object-right"
   />
 </div>
                 {values.custoTotal > 0 && (
@@ -1739,15 +1741,26 @@ function QuoteModal({ open, onClose, values, currency }: {
                     ))
                   )}
                 </div>
-                <div className="relative overflow-hidden rounded-[12px] bg-black text-white px-5 py-4">
-                  <span className="text-xs text-white/60">Preço final</span>
-                  <strong className="mt-1 block text-3xl font-black">{fmt(finalPriceValue)}</strong>
-                  <span className="mt-2 block text-[11px] text-white/40">{todayLabel}</span>
+                <div className="relative mt-4 overflow-hidden rounded-[12px] bg-black px-5 py-4 text-white">
+                  <div className="relative z-10">
+                    <span className="text-xs text-white/60">
+                      Preço final
+                    </span>
+
+                    <strong className="mt-1 block text-3xl font-black">
+                      {fmt(finalPriceValue)}
+                    </strong>
+
+                    <span className="mt-2 block text-[11px] text-white/40">
+                      {todayLabel}
+                    </span>
+                  </div>
+
                   <img
                     src="/logo_preta.svg"
                     alt=""
                     aria-hidden="true"
-                    className="pointer-events-none absolute right-2 inset-y-0 w-32 object-contain object-right"
+                    className="pointer-events-none absolute right-2 inset-y-0 z-0 w-32 object-contain object-right"
                   />
                 </div>
               </div>
