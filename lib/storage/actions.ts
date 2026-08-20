@@ -3,14 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { rateLimitImageUpload } from "@/lib/rate-limit";
 import { headers } from "next/headers";
-
-const ALLOWED_MIME_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-  "image/svg+xml",
-];
+import { processImageToWebP, generateSafeFilePath } from "@/lib/image/process";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -65,28 +58,21 @@ export async function uploadImageAction(formData: FormData, bucket: "catalogs" |
     return { error: "Nenhum arquivo enviado." };
   }
 
-  if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-    return {
-      error: "Tipo de arquivo não permitido. Apenas JPEG, PNG, WEBP, GIF e SVG são aceitos.",
-    };
-  }
-
   if (file.size > MAX_FILE_SIZE) {
     return { error: "O tamanho do arquivo excede o limite máximo de 5MB." };
   }
 
-  // Generate safe sanitized filename
-  const extension = file.name.split(".").pop()?.toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
-  const uniqueId = crypto.randomUUID();
-  const filePath = `${uniqueId}.${extension}`;
+  const processResult = await processImageToWebP(file);
+  if ("error" in processResult) {
+    return { error: processResult.error };
+  }
 
-  const arrayBuffer = await file.arrayBuffer();
-  const buffer = Buffer.from(arrayBuffer);
+  const filePath = generateSafeFilePath(file.name, processResult.extension);
 
   const { error: uploadError } = await supabase.storage
     .from(bucket)
-    .upload(filePath, buffer, {
-      contentType: file.type,
+    .upload(filePath, processResult.buffer, {
+      contentType: processResult.contentType,
       cacheControl: "3600",
       upsert: false,
     });
