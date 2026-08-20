@@ -80,7 +80,7 @@ export default function Modulus404(): JSX.Element {
                 className="flex justify-between items-center w-full px-6 h-16 sticky  z-50 border-b"
                 style={{ borderColor: MODULUS_COLORS.outlineVariant, backgroundColor: MODULUS_COLORS.surface }}
             >
-                <img src="./logo_Horizontal.png" alt="Modulus" className="h-10 mt-4 mb-4" />
+                <img src="/logo_Horizontal.svg" alt="Modulus" className="h-10 mt-4 mb-4" />
             </header>
 
             <main className="flex-grow flex items-center justify-center p-4 md:p-10 modulus-mesh-bg relative">
