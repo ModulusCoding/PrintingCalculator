@@ -92,8 +92,6 @@ export async function getCatalogById(id: string) {
             name,
             slug,
             image_url,
-            category,
-            format,
             price,
             active
           )
