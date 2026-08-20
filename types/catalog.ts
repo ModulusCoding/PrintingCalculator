@@ -1,3 +1,34 @@
+export interface CatalogProductView {
+  id: string;
+  index: string;
+  name: string;
+  category: string;
+  format: string;
+  detail?: string | null;
+  description?: string | null;
+  photo: string;
+  photoSecondary?: string | null;
+  photoAlt?: string | null;
+  photoSecondaryAlt?: string | null;
+  photoNote?: string | null;
+  price?: number | null;
+  displayOrder?: number;
+}
+
+export interface CatalogView {
+  id: string;
+  slug: string;
+  title: string;
+  eyebrow?: string | null;
+  heroCopy?: string | null;
+  heroStrongText?: string | null;
+  manifestoLabel?: string | null;
+  manifestoTitle?: string | null;
+  manifestoFormula?: string | null;
+  manifestoDescription?: string | null;
+  products: CatalogProductView[];
+}
+
 export interface Catalog {
   id: string;
   name: string;

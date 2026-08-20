@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
-import Journey from "./components/landing/Journey";
+import CinematicJourney from "./components/landing/CinematicJourney";
 import WorldsSplit from "./components/landing/WorldsSplit";
 import Positioning from "./components/landing/Positioning";
 import FinalCta from "./components/landing/FinalCta";
@@ -76,7 +76,7 @@ export default function Home() {
       </div>
 
       {/* ── JORNADA: 01 a 05 (descoberta → manufatura digital) ── */}
-      <Journey />
+      <CinematicJourney />
 
       {/* ── DOIS MUNDOS: criar / viver ── */}
       <WorldsSplit onOpenCalculators={() => setIsModalOpen(true)} />

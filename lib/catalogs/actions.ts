@@ -83,7 +83,22 @@ export async function getCatalogById(id: string) {
 
     const { data, error } = await supabase
       .from("catalogs")
-      .select("*")
+      .select(`
+        *,
+        catalog_products (
+          display_order,
+          product:products (
+            id,
+            name,
+            slug,
+            image_url,
+            category,
+            format,
+            price,
+            active
+          )
+        )
+      `)
       .eq("id", id)
       .single();
 
@@ -91,7 +106,12 @@ export async function getCatalogById(id: string) {
       return { catalog: null, error: "Catálogo não encontrado." };
     }
 
-    return { catalog: data, error: null };
+    const orderedProducts = (data.catalog_products || [])
+      .sort((a: { display_order: number | null }, b: { display_order: number | null }) => (a.display_order || 0) - (b.display_order || 0))
+      .map((cp: { product: { id: string; name: string; slug: string; image_url?: string | null; category?: string | null; format?: string | null; price?: number | null; active?: boolean } | null }) => cp.product)
+      .filter(Boolean);
+
+    return { catalog: { ...data, orderedProducts }, error: null };
   } catch (err) {
     console.error("Error fetching catalog by ID:", err);
     return { catalog: null, error: "Erro ao buscar detalhes do catálogo." };
@@ -285,4 +305,42 @@ export async function deleteCatalogAction(id: string) {
   revalidatePath("/admin/catalogs");
 
   return { success: true };
+}
+
+export async function reorderCatalogProductsAction(
+  catalogId: string,
+  orderedProductIds: string[]
+) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { error: "Não autorizado." };
+    }
+
+    for (let index = 0; index < orderedProductIds.length; index++) {
+      const productId = orderedProductIds[index];
+      const { error } = await supabase
+        .from("catalog_products")
+        .update({ display_order: index })
+        .eq("catalog_id", catalogId)
+        .eq("product_id", productId);
+
+      if (error) {
+        console.error("Error reordering catalog product:", error);
+        return { error: "Erro ao salvar a nova ordenação dos produtos." };
+      }
+    }
+
+    revalidatePath("/admin/catalogs");
+    revalidatePath(`/admin/catalogs/${catalogId}`);
+
+    return { success: true };
+  } catch (err) {
+    console.error("Unexpected error reordering products:", err);
+    return { error: "Erro inesperado ao reordenar produtos." };
+  }
 }

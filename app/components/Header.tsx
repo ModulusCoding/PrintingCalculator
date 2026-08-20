@@ -42,7 +42,7 @@ export default function Header() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 rounded-[10px] border border-black/10 bg-white/85 px-4 py-3 shadow-sm">
           <Link href="/" className="flex min-w-0 items-center gap-2">
            <div>
-            <img className="h-12" src="../logo_Horizontal.svg" alt="Logo Modulus" ></img>
+            <img className="h-12" src="/logo_Horizontal.svg" alt="Logo Modulus" ></img>
             </div>
           </Link>
 

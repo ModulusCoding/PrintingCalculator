@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { uploadImageAction } from "@/lib/storage/actions";
+import { uploadImageAction, deleteImageAction } from "@/lib/storage/actions";
 import { Upload, Loader2, Trash2 } from "lucide-react";
 
 interface ImageUploadProps {
@@ -11,6 +11,7 @@ interface ImageUploadProps {
   onChange: (url: string) => void;
   label: string;
   aspectRatio?: "square" | "banner";
+  onDelete?: () => void;
 }
 
 export function ImageUpload({
@@ -19,8 +20,10 @@ export function ImageUpload({
   onChange,
   label,
   aspectRatio = "square",
+  onDelete,
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,6 +44,37 @@ export function ImageUpload({
       setError("Erro inesperado ao fazer upload.");
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!value) return;
+    setDeleting(true);
+    setError(null);
+    try {
+      // Extract file path from public URL
+      // Format: https://<project>.supabase.co/storage/v1/object/public/<bucket>/<filepath>
+      const url = new URL(value);
+      const pathParts = url.pathname.split("/");
+      const bucketIndex = pathParts.indexOf("public");
+      if (bucketIndex >= 0 && pathParts.length > bucketIndex + 1) {
+        const filePath = pathParts.slice(bucketIndex + 2).join("/"); // skip bucket name
+        const result = await deleteImageAction(bucket, filePath);
+        if (result.error) {
+          setError(result.error);
+        } else {
+          onChange("");
+          onDelete?.();
+        }
+      } else {
+        // Fallback: just clear the value without storage deletion
+        onChange("");
+        onDelete?.();
+      }
+    } catch {
+      setError("Erro ao excluir a imagem.");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -69,12 +103,14 @@ export function ImageUpload({
             <div className="flex items-center gap-1">
               {uploading ? (
                 <Loader2 className="h-4 w-4 animate-spin text-slate-500 dark:text-slate-400" />
+              ) : deleting ? (
+                <Loader2 className="h-4 w-4 animate-spin text-red-500" />
               ) : (
                 <button
                   type="button"
-                  onClick={() => onChange("")}
+                  onClick={handleDelete}
                   className="p-1 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors"
-                  title="Remover"
+                  title="Remover do Storage"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

@@ -14,6 +14,34 @@ const ALLOWED_MIME_TYPES = [
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
+export async function deleteImageAction(
+  bucket: "catalogs" | "products",
+  filePath: string
+) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { error: "Não autorizado." };
+    }
+
+    const { error } = await supabase.storage.from(bucket).remove([filePath]);
+
+    if (error) {
+      console.error("Storage delete error:", error);
+      return { error: "Erro ao excluir a imagem do Storage." };
+    }
+
+    return { success: true };
+  } catch (err) {
+    console.error("Unexpected error deleting image:", err);
+    return { error: "Erro inesperado ao excluir imagem." };
+  }
+}
+
 export async function uploadImageAction(formData: FormData, bucket: "catalogs" | "products") {
   const headerList = await headers();
   const ip = headerList.get("x-forwarded-for") || "127.0.0.1";

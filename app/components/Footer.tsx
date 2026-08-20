@@ -10,7 +10,7 @@ const Footer = () => {
             {/* Brand */}
             <div>
               <Link href="/" className="flex items-center gap-2">
-                <div><img className="h-12" src="../logo_Horizontal.svg" alt="Logo Modulus" /></div>
+                <div><img className="h-12" src="/logo_Horizontal.svg" alt="Logo Modulus" /></div>
               </Link>
               <p className="mt-4 max-w-xs text-sm leading-6 text-black/50">
                 Precificacao inteligente para quem fabrica com seriedade. Calcule, decida, venda.
