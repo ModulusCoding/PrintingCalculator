@@ -3,6 +3,8 @@ import { Plus, Edit, Package, CheckCircle2, XCircle, Tag } from "lucide-react";
 import { getProducts } from "@/lib/products/actions";
 import { DeleteProductButton } from "@/components/admin/DeleteProductButton";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProductsPage() {
   const { products, error } = await getProducts();
 
