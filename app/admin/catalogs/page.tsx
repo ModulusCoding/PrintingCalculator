@@ -4,6 +4,8 @@ import { getCatalogs } from "@/lib/catalogs/actions";
 import { ShareLinkButton } from "@/components/admin/ShareLinkButton";
 import { DeleteCatalogButton } from "@/components/admin/DeleteCatalogButton";
 
+export const dynamic = "force-dynamic";
+
 export default async function CatalogsPage() {
   const { catalogs, error } = await getCatalogs();
 
