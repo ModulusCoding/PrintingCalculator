@@ -2,6 +2,8 @@ import Link from "next/link";
 import { FolderKanban, Package, CheckCircle2, Plus } from "lucide-react";
 import { getDashboardStats } from "@/lib/catalogs/actions";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
   const stats = await getDashboardStats();
   const cards = [
