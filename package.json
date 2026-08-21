@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "vercel-build": "npm install --os=linux --cpu=x64 sharp && next build",
+    "vercel-build": "npm config set allow-scripts true && npm install --os=linux --cpu=x64 sharp && next build",
     "start": "next start",
     "lint": "eslint"
   },
