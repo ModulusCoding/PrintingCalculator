@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "vercel-build": "npm config set allow-scripts true && npm install --os=linux --cpu=x64 sharp && next build",
+    "vercel-build": "npm rebuild sharp --platform=linux --arch=x64 --libc=glibc && next build",
     "start": "next start",
     "lint": "eslint"
   },
@@ -27,6 +27,9 @@
     "react-dom": "19.2.4",
     "sharp": "^0.35.3",
     "zod": "^4.4.3"
+  },
+  "optionalDependencies": {
+    "@img/sharp-linux-x64": "^0.35.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
