@@ -44,3 +44,71 @@ export const productSchema = z.object({
   active: z.boolean().default(true),
   catalog_ids: z.array(z.string().uuid("ID de catálogo inválido.")).optional().default([]),
 });
+
+export const closedSaleSchema = z.object({
+  cliente_nome: z
+    .string()
+    .min(2, "O nome do cliente deve ter pelo menos 2 caracteres.")
+    .max(255, "O nome do cliente deve ter no máximo 255 caracteres.")
+    .trim(),
+  cliente_telefone: z
+    .string()
+    .regex(/^\d{10,15}$/, "O telefone deve conter apenas números entre 10 e 15 dígitos.")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
+  produto: z
+    .string()
+    .min(2, "O nome do produto deve ter pelo menos 2 caracteres.")
+    .max(255, "O nome do produto deve ter no máximo 255 caracteres.")
+    .trim(),
+  tipo_produto: z.enum(
+    [
+      "Produto padrão",
+      "Produto personalizado",
+      "Produto personalizado esotérico",
+      "Encomenda",
+    ],
+    { error: "Tipo de produto inválido." }
+  ),
+  preco_venda: z
+    .number({ error: "Preço de venda deve ser um número válido." })
+    .finite("Preço de venda deve ser um número finito.")
+    .min(0, "O preço de venda não pode ser negativo.")
+    .max(10000000, "O preço de venda excede o limite máximo permitido."),
+  custo: z
+    .number({ error: "Custo deve ser um número válido." })
+    .finite("Custo deve ser um número finito.")
+    .min(0, "O custo não pode ser negativo.")
+    .max(10000000, "O custo excede o limite máximo permitido."),
+  data_fechamento: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Data de fechamento inválida (formato AAAA-MM-DD).")
+    .refine((value) => {
+      const [year, month, day] = value.split("-").map(Number);
+      const date = new Date(Date.UTC(year, month - 1, day));
+      return (
+        date.getUTCFullYear() === year &&
+        date.getUTCMonth() === month - 1 &&
+        date.getUTCDate() === day
+      );
+    }, "Data de fechamento inválida."),
+  canal_abordagem: z.enum(
+    ["Instagram", "WhatsApp", "Boca a boca", "Site", "Evento", "Outro"],
+    { error: "Canal de abordagem inválido." }
+  ),
+  canal_fechamento: z.enum(
+    ["WhatsApp", "Instagram", "Presencial", "Site", "Outro"],
+    { error: "Canal de fechamento inválido." }
+  ),
+  forma_pagamento: z.enum(
+    ["PIX", "Cartão", "Dinheiro", "Transferência", "Outro"],
+    { error: "Forma de pagamento inválida." }
+  ),
+  detalhes: z
+    .string()
+    .max(2000, "Os detalhes devem ter no máximo 2000 caracteres.")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
+});
