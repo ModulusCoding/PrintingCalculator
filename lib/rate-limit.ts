@@ -95,6 +95,21 @@ export function rateLimitProductDelete(ip: string, userId?: string) {
   return rateLimit({ key: k, max: 30, windowMs: 5 * 60 * 1000 });
 }
 
+export function rateLimitSaleCreate(ip: string, userId?: string) {
+  const k = `sale:create:${userId ?? ""}:${ip}`;
+  return rateLimit({ key: k, max: 60, windowMs: 5 * 60 * 1000 });
+}
+
+export function rateLimitSaleUpdate(ip: string, userId?: string) {
+  const k = `sale:update:${userId ?? ""}:${ip}`;
+  return rateLimit({ key: k, max: 60, windowMs: 5 * 60 * 1000 });
+}
+
+export function rateLimitSaleDelete(ip: string, userId?: string) {
+  const k = `sale:delete:${userId ?? ""}:${ip}`;
+  return rateLimit({ key: k, max: 30, windowMs: 5 * 60 * 1000 });
+}
+
 export function rateLimitImageUpload(ip: string, userId?: string) {
   const k = `upload:${userId ?? ""}:${ip}`;
   return rateLimit({ key: k, max: 30, windowMs: 5 * 60 * 1000 });

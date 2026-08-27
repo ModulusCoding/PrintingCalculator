@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   FolderKanban,
   Package,
+  TrendingUp,
   LogOut,
   ExternalLink,
   Calculator,
@@ -23,6 +24,7 @@ const navItems = [
   { name: "Visão Geral", href: "/admin", icon: LayoutDashboard, exact: true },
   { name: "Catálogos", href: "/admin/catalogs", icon: FolderKanban, exact: false },
   { name: "Produtos", href: "/admin/products", icon: Package, exact: false },
+  { name: "Vendas", href: "/admin/sales", icon: TrendingUp, exact: false },
 ];
 
 interface SidebarContentProps {
