@@ -1,7 +1,7 @@
 "use client";
 
 import { X, Edit, Trash2 } from "lucide-react";
-import { ClosedSale } from "@/types/sales";
+import { ClosedSale, STATUS_CONFIG } from "@/types/sales";
 import { formatCurrency } from "@/utils/currency";
 import { formatPhone } from "@/utils/phone";
 
@@ -29,6 +29,9 @@ export function SaleDetailModal({
     return dateStr;
   };
 
+  const statusInfo = STATUS_CONFIG[sale.status] || STATUS_CONFIG.em_conversao;
+  const displayIdStr = sale.display_id ? `#${sale.display_id}` : sale.id.slice(0, 8);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
@@ -43,9 +46,14 @@ export function SaleDetailModal({
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
-          <h2 id="sale-detail-title" className="text-xl font-bold text-slate-900 dark:text-white">
-            Detalhes da Venda
-          </h2>
+          <div>
+            <span className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400">
+              {displayIdStr}
+            </span>
+            <h2 id="sale-detail-title" className="text-xl font-bold text-slate-900 dark:text-white">
+              Detalhes do Pedido
+            </h2>
+          </div>
           <button
             onClick={onClose}
             className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
@@ -58,17 +66,31 @@ export function SaleDetailModal({
         {/* Content */}
         <div className="p-6 space-y-5 max-h-[70vh] overflow-y-auto">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Status */}
+            <div className="space-y-2 sm:col-span-2 pb-2 border-b border-slate-100 dark:border-slate-800">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                Status do Pedido
+              </label>
+              <div>
+                <span
+                  className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${statusInfo.badgeClass}`}
+                >
+                  {statusInfo.label}
+                </span>
+              </div>
+            </div>
+
             {/* Cliente */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            <div className="space-y-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Cliente
               </label>
-              <p className="text-slate-900 dark:text-white">{sale.cliente_nome}</p>
+              <p className="text-slate-900 dark:text-white font-medium">{sale.cliente_nome}</p>
             </div>
 
             {/* Telefone */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            <div className="space-y-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Telefone
               </label>
               <p className="text-slate-900 dark:text-white">
@@ -80,63 +102,29 @@ export function SaleDetailModal({
 
             {/* Produto */}
             <div className="space-y-1 sm:col-span-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Produto
               </label>
-              <p className="text-slate-900 dark:text-white">{sale.produto}</p>
+              <p className="text-slate-900 dark:text-white font-medium">{sale.produto}</p>
             </div>
 
             {/* Tipo de Produto */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Tipo de Produto
               </label>
-              <span
-                className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-400 border border-violet-100 dark:border-violet-900"
-              >
-                {sale.tipo_produto}
-              </span>
-            </div>
-
-            {/* Preço de Venda */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Preço de Venda
-              </label>
-              <p className="text-lg font-bold text-slate-900 dark:text-white">
-                {formatCurrency(sale.preco_venda)}
-              </p>
-            </div>
-
-            {/* Custo */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Custo
-              </label>
-              <p className="text-slate-900 dark:text-white">
-                {formatCurrency(sale.custo)}
-              </p>
-            </div>
-
-            {/* Lucro */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Lucro
-              </label>
-              <p
-                className={`text-lg font-bold ${
-                  sale.lucro >= 0
-                    ? "text-emerald-600 dark:text-emerald-400"
-                    : "text-red-600 dark:text-red-400"
-                }`}
-              >
-                {formatCurrency(sale.lucro)}
-              </p>
+              <div>
+                <span
+                  className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-400 border border-violet-100 dark:border-violet-900"
+                >
+                  {sale.tipo_produto}
+                </span>
+              </div>
             </div>
 
             {/* Data de Fechamento */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            <div className="space-y-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Data de Fechamento
               </label>
               <p className="text-slate-900 dark:text-white">
@@ -144,49 +132,93 @@ export function SaleDetailModal({
               </p>
             </div>
 
+            {/* Preço de Venda */}
+            <div className="space-y-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                Preço de Venda
+              </label>
+              <p className="text-lg font-bold text-slate-900 dark:text-white">
+                {sale.preco_venda !== null ? formatCurrency(sale.preco_venda) : "—"}
+              </p>
+            </div>
+
+            {/* Custo */}
+            <div className="space-y-1">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                Custo
+              </label>
+              <p className="text-slate-900 dark:text-white">
+                {sale.custo !== null ? formatCurrency(sale.custo) : "—"}
+              </p>
+            </div>
+
+            {/* Lucro */}
+            <div className="space-y-1 sm:col-span-2 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                Lucro
+              </label>
+              <p
+                className={`text-lg font-bold ${
+                  sale.lucro === null
+                    ? "text-slate-400"
+                    : sale.lucro >= 0
+                    ? "text-emerald-600 dark:text-emerald-400"
+                    : "text-red-600 dark:text-red-400"
+                }`}
+              >
+                {sale.lucro !== null ? formatCurrency(sale.lucro) : "—"}
+              </p>
+            </div>
+
             {/* Canal de Abordagem */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Canal de Abordagem
               </label>
-              <span
-                className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-900"
-              >
-                {sale.canal_abordagem}
-              </span>
+              <div>
+                <span
+                  className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-900"
+                >
+                  {sale.canal_abordagem}
+                </span>
+              </div>
             </div>
 
             {/* Canal de Fechamento */}
             <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Canal de Fechamento
               </label>
-              <span
-                className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900"
-              >
-                {sale.canal_fechamento}
-              </span>
+              <div>
+                <span
+                  className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900"
+                >
+                  {sale.canal_fechamento}
+                </span>
+              </div>
             </div>
 
             {/* Forma de Pagamento */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+            <div className="space-y-2 sm:col-span-2">
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Forma de Pagamento
               </label>
-              <span
-                className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900"
-              >
-                {sale.forma_pagamento}
-              </span>
+              <div>
+                <span
+                  className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900"
+                >
+                  {sale.forma_pagamento}
+                </span>
+              </div>
             </div>
 
             {/* Detalhes */}
             {sale.detalhes && (
               <div className="space-y-1 sm:col-span-2">
-                <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   Detalhes
                 </label>
-                <p className="text-slate-900 dark:text-white whitespace-pre-wrap">
+                <p className="text-slate-900 dark:text-white whitespace-pre-wrap text-sm">
                   {sale.detalhes}
                 </p>
               </div>
