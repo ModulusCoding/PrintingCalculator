@@ -12,9 +12,11 @@ import { revalidatePath } from "next/cache";
 
 export interface SalesFilterOptions {
   search?: string;
+  cliente?: string;
   tipo_produto?: string;
   canal_abordagem?: string;
   canal_fechamento?: string;
+  status?: string | string[];
   sort?: "recent" | "oldest" | "highest_value" | "lowest_value";
 }
 
@@ -40,6 +42,18 @@ export async function getSales(filters?: SalesFilterOptions) {
     if (filters?.canal_fechamento) {
       query = query.eq("canal_fechamento", filters.canal_fechamento);
     }
+    if (filters?.status) {
+      if (Array.isArray(filters.status) && filters.status.length > 0) {
+        query = query.in("status", filters.status);
+      } else if (typeof filters.status === "string" && filters.status.trim() !== "") {
+        query = query.eq("status", filters.status);
+      }
+    }
+
+    if (filters?.cliente && filters.cliente.trim() !== "") {
+      const term = `%${filters.cliente.trim()}%`;
+      query = query.ilike("cliente_nome", term);
+    }
 
     if (filters?.search && filters.search.trim() !== "") {
       const term = `%${filters.search.trim()}%`;
@@ -51,10 +65,10 @@ export async function getSales(filters?: SalesFilterOptions) {
         query = query.order("data_fechamento", { ascending: true }).order("created_at", { ascending: true });
         break;
       case "highest_value":
-        query = query.order("preco_venda", { ascending: false });
+        query = query.order("preco_venda", { ascending: false, nullsFirst: false });
         break;
       case "lowest_value":
-        query = query.order("preco_venda", { ascending: true });
+        query = query.order("preco_venda", { ascending: true, nullsFirst: false });
         break;
       case "recent":
       default:
@@ -69,13 +83,15 @@ export async function getSales(filters?: SalesFilterOptions) {
     }
 
     const sales = (data || []).map((sale) => {
-      const preco = Number(sale.preco_venda);
-      const custo = Number(sale.custo);
+      const preco = sale.preco_venda !== null && sale.preco_venda !== undefined ? Number(sale.preco_venda) : null;
+      const custo = sale.custo !== null && sale.custo !== undefined ? Number(sale.custo) : null;
+      const lucro = preco !== null && custo !== null ? preco - custo : null;
       return {
         ...sale,
         preco_venda: preco,
         custo: custo,
-        lucro: preco - custo,
+        lucro: lucro,
+        status: sale.status || "em_conversao",
       };
     });
 
@@ -106,15 +122,17 @@ export async function getSaleById(id: string) {
       return { sale: null, error: "Registro de venda não encontrado." };
     }
 
-    const preco = Number(data.preco_venda);
-    const custo = Number(data.custo);
+    const preco = data.preco_venda !== null && data.preco_venda !== undefined ? Number(data.preco_venda) : null;
+    const custo = data.custo !== null && data.custo !== undefined ? Number(data.custo) : null;
+    const lucro = preco !== null && custo !== null ? preco - custo : null;
 
     return {
       sale: {
         ...data,
         preco_venda: preco,
         custo: custo,
-        lucro: preco - custo,
+        lucro: lucro,
+        status: data.status || "em_conversao",
       },
       error: null,
     };
@@ -174,8 +192,9 @@ export async function createSaleAction(payload: unknown) {
       cliente_telefone: data.cliente_telefone || null,
       produto: data.produto,
       tipo_produto: data.tipo_produto,
-      preco_venda: data.preco_venda,
-      custo: data.custo,
+      preco_venda: data.preco_venda ?? null,
+      custo: data.custo ?? null,
+      status: data.status || "em_conversao",
       data_fechamento: data.data_fechamento,
       canal_abordagem: data.canal_abordagem,
       canal_fechamento: data.canal_fechamento,
@@ -186,7 +205,7 @@ export async function createSaleAction(payload: unknown) {
     .single();
 
   if (error || !sale) {
-    return { error: "Erro ao registrar a venda." };
+    return { error: "Erro ao registrar o pedido." };
   }
 
   refreshSalesPaths();
@@ -211,8 +230,9 @@ export async function updateSaleAction(id: string, payload: unknown) {
       cliente_telefone: data.cliente_telefone || null,
       produto: data.produto,
       tipo_produto: data.tipo_produto,
-      preco_venda: data.preco_venda,
-      custo: data.custo,
+      preco_venda: data.preco_venda ?? null,
+      custo: data.custo ?? null,
+      status: data.status || "em_conversao",
       data_fechamento: data.data_fechamento,
       canal_abordagem: data.canal_abordagem,
       canal_fechamento: data.canal_fechamento,
@@ -224,7 +244,7 @@ export async function updateSaleAction(id: string, payload: unknown) {
     .single();
 
   if (error || !sale) {
-    return { error: "Erro ao atualizar o registro de venda." };
+    return { error: "Erro ao atualizar o registro do pedido." };
   }
 
   refreshSalesPaths();

@@ -75,12 +75,28 @@ export const closedSaleSchema = z.object({
     .number({ error: "Preço de venda deve ser um número válido." })
     .finite("Preço de venda deve ser um número finito.")
     .min(0, "O preço de venda não pode ser negativo.")
-    .max(10000000, "O preço de venda excede o limite máximo permitido."),
+    .max(10000000, "O preço de venda excede o limite máximo permitido.")
+    .optional()
+    .nullable(),
   custo: z
     .number({ error: "Custo deve ser um número válido." })
     .finite("Custo deve ser um número finito.")
     .min(0, "O custo não pode ser negativo.")
-    .max(10000000, "O custo excede o limite máximo permitido."),
+    .max(10000000, "O custo excede o limite máximo permitido.")
+    .optional()
+    .nullable(),
+  status: z.enum(
+    [
+      "em_conversao",
+      "orcado",
+      "pago",
+      "modelando",
+      "imprimindo",
+      "entregue",
+      "cancelado",
+    ],
+    { error: "Status de pedido inválido." }
+  ).default("em_conversao"),
   data_fechamento: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Data de fechamento inválida (formato AAAA-MM-DD).")

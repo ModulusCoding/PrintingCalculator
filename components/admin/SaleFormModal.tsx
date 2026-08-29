@@ -8,10 +8,13 @@ import {
   CANAL_ABORDAGEM_OPTIONS,
   CANAL_FECHAMENTO_OPTIONS,
   FORMA_PAGAMENTO_OPTIONS,
+  ORDER_STATUS_VALUES,
+  STATUS_CONFIG,
   TipoProduto,
   CanalAbordagem,
   CanalFechamento,
   FormaPagamento,
+  OrderStatus,
 } from "@/types/sales";
 import { createSaleAction, updateSaleAction } from "@/lib/sales/actions";
 import {
@@ -45,10 +48,17 @@ export function SaleFormModal({
     sale?.tipo_produto || "Produto padrão"
   );
   const [precoVenda, setPrecoVenda] = useState<string>(
-    sale ? formatCurrencyInput(String(Math.round(sale.preco_venda * 100))) : ""
+    sale && sale.preco_venda !== null
+      ? formatCurrencyInput(String(Math.round(sale.preco_venda * 100)))
+      : ""
   );
   const [custo, setCusto] = useState<string>(
-    sale ? formatCurrencyInput(String(Math.round(sale.custo * 100))) : ""
+    sale && sale.custo !== null
+      ? formatCurrencyInput(String(Math.round(sale.custo * 100)))
+      : ""
+  );
+  const [status, setStatus] = useState<OrderStatus>(
+    sale?.status || "em_conversao"
   );
   const [dataFechamento, setDataFechamento] = useState<string>(
     sale?.data_fechamento || new Date().toISOString().split("T")[0]
@@ -67,8 +77,11 @@ export function SaleFormModal({
   const [error, setError] = useState<string | null>(null);
 
   const calculatedProfit = useMemo(() => {
-    if (!precoVenda || !custo) return null;
-    return parseCurrencyInput(precoVenda) - parseCurrencyInput(custo);
+    if (!precoVenda.trim() || !custo.trim()) return null;
+    const pv = parseCurrencyInput(precoVenda);
+    const c = parseCurrencyInput(custo);
+    if (!Number.isFinite(pv) || !Number.isFinite(c)) return null;
+    return pv - c;
   }, [precoVenda, custo]);
 
   if (!isOpen) return null;
@@ -77,16 +90,28 @@ export function SaleFormModal({
     e.preventDefault();
     setError(null);
 
-    const pv = parseCurrencyInput(precoVenda);
-    const c = parseCurrencyInput(custo);
-
-    if (!precoVenda || !Number.isFinite(pv) || pv < 0) {
-      setError("Por favor, informe um preço de venda válido (maior ou igual a zero).");
-      return;
+    let pv: number | null = null;
+    if (precoVenda.trim() !== "") {
+      const parsedPv = parseCurrencyInput(precoVenda);
+      if (!Number.isFinite(parsedPv) || parsedPv < 0) {
+        setError("Por favor, informe um preço de venda válido (maior ou igual a zero).");
+        return;
+      }
+      pv = parsedPv;
     }
 
-    if (!custo || !Number.isFinite(c) || c < 0) {
-      setError("Por favor, informe um custo válido (maior ou igual a zero).");
+    let c: number | null = null;
+    if (custo.trim() !== "") {
+      const parsedCusto = parseCurrencyInput(custo);
+      if (!Number.isFinite(parsedCusto) || parsedCusto < 0) {
+        setError("Por favor, informe um custo válido (maior ou igual a zero).");
+        return;
+      }
+      c = parsedCusto;
+    }
+
+    if (!ORDER_STATUS_VALUES.includes(status)) {
+      setError("Por favor, selecione um status válido.");
       return;
     }
 
@@ -97,6 +122,7 @@ export function SaleFormModal({
       tipo_produto: tipoProduto,
       preco_venda: pv,
       custo: c,
+      status: status,
       data_fechamento: dataFechamento,
       canal_abordagem: canalAbordagem,
       canal_fechamento: canalFechamento,
@@ -133,7 +159,7 @@ export function SaleFormModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-800">
           <h2 id="sale-form-title" className="text-xl font-bold text-slate-900 dark:text-white">
-            {sale ? "Editar Venda" : "Registrar Venda Fechada"}
+            {sale ? "Editar Pedido" : "Registrar Pedido"}
           </h2>
           <button
             onClick={onClose}
@@ -155,6 +181,25 @@ export function SaleFormModal({
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Status do Pedido */}
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Status do Pedido *
+                </label>
+                <select
+                  required
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as OrderStatus)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm"
+                >
+                  {ORDER_STATUS_VALUES.map((val) => (
+                    <option key={val} value={val}>
+                      {STATUS_CONFIG[val].label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {/* Nome do Cliente */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
@@ -240,17 +285,16 @@ export function SaleFormModal({
               {/* Preço de Venda */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Preço de Venda (R$) *
+                  Preço de Venda (R$)
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-4 flex items-center text-sm text-slate-500 dark:text-slate-400 pointer-events-none">R$</span>
                   <input
                     type="text"
                     inputMode="numeric"
-                    required
                     value={precoVenda}
                     onChange={(e) => setPrecoVenda(formatCurrencyInput(e.target.value))}
-                    placeholder="0,00"
+                    placeholder="Opcional"
                     className="w-full pl-12 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-mono"
                   />
                 </div>
@@ -259,17 +303,16 @@ export function SaleFormModal({
               {/* Custo */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Custo (R$) *
+                  Custo (R$)
                 </label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-4 flex items-center text-sm text-slate-500 dark:text-slate-400 pointer-events-none">R$</span>
                   <input
                     type="text"
                     inputMode="numeric"
-                    required
                     value={custo}
                     onChange={(e) => setCusto(formatCurrencyInput(e.target.value))}
-                    placeholder="0,00"
+                    placeholder="Opcional"
                     className="w-full pl-12 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-mono"
                   />
                 </div>
@@ -402,7 +445,7 @@ export function SaleFormModal({
               ) : (
                 <>
                   <Save className="h-4 w-4" />
-                  {sale ? "Salvar Alterações" : "Registrar Venda"}
+                  {sale ? "Salvar Alterações" : "Registrar Pedido"}
                 </>
               )}
             </button>
