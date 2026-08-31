@@ -7,6 +7,7 @@ import { createProductAction, updateProductAction } from "@/lib/products/actions
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Loader2, ArrowLeft, Save, AlertCircle, CheckSquare, Square } from "lucide-react";
 import Link from "next/link";
+import { formatCurrencyInput, parseCurrencyInput } from "@/utils/currency";
 
 interface ProductFormProps {
   product?: Product;
@@ -21,7 +22,9 @@ export function ProductForm({ product, availableCatalogs }: ProductFormProps) {
   const [slug, setSlug] = useState(product?.slug || "");
   const [isSlugAuto, setIsSlugAuto] = useState(!product);
   const [description, setDescription] = useState(product?.description || "");
-  const [price, setPrice] = useState<string>(product ? String(product.price) : "");
+  const [price, setPrice] = useState<string>(
+    product && product.price != null ? formatCurrencyInput(String(product.price * 100)) : ""
+  );
   const [imageUrl, setImageUrl] = useState(product?.image_url || "");
   const [active, setActive] = useState(product ? product.active : true);
   const [selectedCatalogs, setSelectedCatalogs] = useState<string[]>(
@@ -59,10 +62,13 @@ export function ProductForm({ product, availableCatalogs }: ProductFormProps) {
     e.preventDefault();
     setError(null);
 
-    const parsedPrice = parseFloat(price.replace(",", "."));
-    if (isNaN(parsedPrice) || parsedPrice < 0) {
-      setError("Por favor, informe um preço válido maior ou igual a zero.");
-      return;
+    let parsedPrice: number | null = null;
+    if (price.trim() !== "") {
+      parsedPrice = parseCurrencyInput(price);
+      if (isNaN(parsedPrice) || parsedPrice < 0) {
+        setError("Por favor, informe um preço válido maior ou igual a zero.");
+        return;
+      }
     }
 
     const payload = {
@@ -154,18 +160,19 @@ export function ProductForm({ product, availableCatalogs }: ProductFormProps) {
           {/* Preço */}
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Preço (R$) *
+              Preço (R$)
             </label>
             <input
-              type="number"
-              step="0.01"
-              min="0"
-              required
+              type="text"
+              inputMode="numeric"
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              placeholder="49.90"
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-mono"
+              onChange={(e) => setPrice(formatCurrencyInput(e.target.value))}
+              placeholder="Opcional - ex: R$ 49,90"
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-mono text-right"
             />
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              Deixe em branco para &quot;Sob consulta&quot;. Digite apenas números (ex: 4990 = R$ 49,90).
+            </p>
           </div>
 
           {/* Ativo */}

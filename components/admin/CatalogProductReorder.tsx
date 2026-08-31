@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { reorderCatalogProductsAction } from "@/lib/catalogs/actions";
-import { GripVertical, Check, AlertCircle, Loader2, ArrowUp, ArrowDown } from "lucide-react";
+import { GripVertical, Check, AlertCircle, Loader2, ArrowUp, ArrowDown, Plus, Package } from "lucide-react";
+import { AddProductsModal } from "@/components/admin/AddProductsModal";
 
 export interface ReorderableProduct {
   id: string;
@@ -27,6 +28,7 @@ export function CatalogProductReorder({
   const [isPending, startTransition] = useTransition();
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
@@ -112,12 +114,22 @@ export function CatalogProductReorder({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleSaveOrder}
-          disabled={isPending}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 font-semibold text-xs transition-colors shadow-md shadow-blue-600/20 disabled:opacity-50 shrink-0 self-start sm:self-auto"
-        >
+        <div className="flex items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold text-xs transition-colors"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Adicionar produtos
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSaveOrder}
+              disabled={isPending}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 font-semibold text-xs transition-colors shadow-md shadow-blue-600/20 disabled:opacity-50 shrink-0 self-start sm:self-auto"
+            >
           {isPending ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -218,6 +230,13 @@ export function CatalogProductReorder({
           );
         })}
       </div>
+    </div>
+
+      <AddProductsModal
+        catalogId={catalogId}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

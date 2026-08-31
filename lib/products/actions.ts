@@ -17,7 +17,7 @@ export async function getProducts() {
     const supabase = await createClient();
     const { data, error } = await supabase.from("products").select("*, catalog_products(catalog_id)").order("created_at", { ascending: false });
     if (error) return { products: [], error: "Erro ao carregar os produtos." };
-    return { products: (data || []).map((item) => ({ ...item, price: Number(item.price), catalog_ids: item.catalog_products.map((cp: { catalog_id: string }) => cp.catalog_id), catalog_count: item.catalog_products.length })), error: null };
+    return { products: (data || []).map((item) => ({ ...item, price: item.price == null ? null : Number(item.price), catalog_ids: item.catalog_products.map((cp: { catalog_id: string }) => cp.catalog_id), catalog_count: item.catalog_products.length })), error: null };
   } catch { return { products: [], error: "Erro inesperado ao buscar produtos." }; }
 }
 
@@ -25,7 +25,7 @@ export async function getProductById(id: string) {
   const supabase = await createClient();
   const { data, error } = await supabase.from("products").select("*, catalog_products(catalog_id)").eq("id", id).single();
   if (error || !data) return { product: null, error: "Produto não encontrado." };
-  return { product: { ...data, price: Number(data.price), catalog_ids: data.catalog_products.map((cp: { catalog_id: string }) => cp.catalog_id) }, error: null };
+  return { product: { ...data, price: data.price == null ? null : Number(data.price), catalog_ids: data.catalog_products.map((cp: { catalog_id: string }) => cp.catalog_id) }, error: null };
 }
 
 async function getAuthorizedContext(type: "create" | "update" | "delete") {

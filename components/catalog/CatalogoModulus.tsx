@@ -221,37 +221,31 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
                 data-category={product.category}
                 data-format={product.format}
               >
-                <a className="product-link" href="#contato" aria-label={`Consultar ${product.name}`}>
-                  <div className="product-visual">
-                    <span className="product-index">{product.index}</span>
-                    <img className="product-photo" src={product.photo} alt={product.photoAlt || product.name} loading="lazy" />
-                    {product.photoSecondary && (
-                      <img
-                        className="product-photo product-photo-secondary"
-                        src={product.photoSecondary}
-                        alt={product.photoSecondaryAlt || product.name}
-                        loading="lazy"
-                      />
-                    )}
-                    {product.photoNote && <span className="photo-note">{product.photoNote}</span>}
-                    <span className="quick-button" aria-hidden="true">
-                      ↗
-                    </span>
+                <div className="product-visual">
+                  <span className="product-index">{product.index}</span>
+                  <img className="product-photo" src={product.photo} alt={product.photoAlt || product.name} loading="lazy" />
+                  {product.photoSecondary && (
+                    <img
+                      className="product-photo product-photo-secondary"
+                      src={product.photoSecondary}
+                      alt={product.photoSecondaryAlt || product.name}
+                      loading="lazy"
+                    />
+                  )}
+                  {product.photoNote && <span className="photo-note">{product.photoNote}</span>}
+                </div>
+                <div className="product-meta">
+                  <div>
+                    <h2 className="product-name">{product.name}</h2>
+                    {product.detail && <p className="product-detail">{product.detail}</p>}
+                    {product.description && <p className="product-description">{product.description}</p>}
                   </div>
-                  <div className="product-meta">
-                    <div>
-                      <h2 className="product-name">{product.name}</h2>
-                      {product.detail && <p className="product-detail">{product.detail}</p>}
-                      {product.description && <p className="product-description">{product.description}</p>}
-                      <span className="product-cta">Consultar produto</span>
-                    </div>
-                    <p className="product-price">
-                      {product.price != null
-                        ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(product.price)
-                        : "Sob consulta"}
-                    </p>
-                  </div>
-                </a>
+                  <p className="product-price">
+                    {product.price != null
+                      ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(product.price)
+                      : "Sob consulta"}
+                  </p>
+                </div>
               </article>
             ))}
           </div>

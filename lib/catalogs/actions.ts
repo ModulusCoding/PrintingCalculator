@@ -342,3 +342,129 @@ export async function reorderCatalogProductsAction(
     return { error: "Erro inesperado ao reordenar produtos." };
   }
 }
+
+export async function getProductsForCatalogModal() {
+  try {
+    const supabase = await createClient();
+
+    const { data: products, error } = await supabase
+      .from("products")
+      .select("id, name, slug, price, image_url, active")
+      .eq("active", true)
+      .order("name");
+
+    if (error) {
+      console.error("Error fetching products for catalog modal:", error);
+      return { products: [], error: "Erro ao carregar produtos." };
+    }
+
+    const formattedProducts = (products || []).map((p) => ({
+      ...p,
+      price: p.price == null ? null : Number(p.price),
+    }));
+
+    return { products: formattedProducts, error: null };
+  } catch (err) {
+    console.error("Unexpected error fetching products for catalog modal:", err);
+    return { products: [], error: "Erro inesperado ao buscar produtos." };
+  }
+}
+
+export async function getCatalogProducts(catalogId: string) {
+  try {
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from("catalog_products")
+      .select("product_id, display_order")
+      .eq("catalog_id", catalogId);
+
+    if (error) {
+      console.error("Error fetching catalog products:", error);
+      return { productIds: [], error: "Erro ao carregar produtos do catálogo." };
+    }
+
+    const productIds = (data || []).map((item) => item.product_id);
+
+    return { productIds, error: null };
+  } catch (err) {
+    console.error("Unexpected error fetching catalog products:", err);
+    return { productIds: [], error: "Erro inesperado ao buscar produtos do catálogo." };
+  }
+}
+
+export async function syncCatalogProductsAction(catalogId: string, productIds: string[]) {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { error: "Não autorizado." };
+    }
+
+    // Get current product IDs in the catalog
+    const { data: currentRelations, error: fetchError } = await supabase
+      .from("catalog_products")
+      .select("product_id, display_order")
+      .eq("catalog_id", catalogId);
+
+    if (fetchError) {
+      console.error("Error fetching current catalog products:", fetchError);
+      return { error: "Erro ao buscar produtos atuais do catálogo." };
+    }
+
+    const currentProductIds = new Set((currentRelations || []).map((r) => r.product_id));
+    const newProductIds = new Set(productIds);
+
+    // Determine products to add and remove
+    const toAdd = productIds.filter((id) => !currentProductIds.has(id));
+    const toRemove = Array.from(currentProductIds).filter((id) => !newProductIds.has(id));
+
+    // Remove unchecked products
+    if (toRemove.length > 0) {
+      const { error: deleteError } = await supabase
+        .from("catalog_products")
+        .delete()
+        .eq("catalog_id", catalogId)
+        .in("product_id", toRemove);
+
+      if (deleteError) {
+        console.error("Error removing catalog products:", deleteError);
+        return { error: "Erro ao remover produtos do catálogo." };
+      }
+    }
+
+    // Add new products with display_order
+    if (toAdd.length > 0) {
+      // Get the max display_order to continue from there
+      const maxOrder = currentRelations.length > 0
+        ? Math.max(...currentRelations.map((r) => r.display_order))
+        : -1;
+
+      const inserts = toAdd.map((productId, index) => ({
+        catalog_id: catalogId,
+        product_id: productId,
+        display_order: maxOrder + 1 + index,
+      }));
+
+      const { error: insertError } = await supabase
+        .from("catalog_products")
+        .insert(inserts);
+
+      if (insertError) {
+        console.error("Error adding catalog products:", insertError);
+        return { error: "Erro ao adicionar produtos ao catálogo." };
+      }
+    }
+
+    revalidatePath("/admin/catalogs");
+    revalidatePath(`/admin/catalogs/${catalogId}`);
+
+    return { success: true };
+  } catch (err) {
+    console.error("Unexpected error syncing catalog products:", err);
+    return { error: "Erro inesperado ao sincronizar produtos do catálogo." };
+  }
+}
