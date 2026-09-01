@@ -2,10 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Product } from "@/types/product";
+import type { Product } from "@/types/product";
 import { createProductAction, updateProductAction } from "@/lib/products/actions";
 import { ImageUpload } from "@/components/admin/ImageUpload";
-import { Loader2, ArrowLeft, Save, AlertCircle, CheckSquare, Square } from "lucide-react";
+import { Loader2, ArrowLeft, Save, AlertCircle, CheckSquare, Square, GripVertical, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { formatCurrencyInput, parseCurrencyInput } from "@/utils/currency";
 
@@ -13,6 +13,8 @@ interface ProductFormProps {
   product?: Product;
   availableCatalogs: { id: string; name: string }[];
 }
+
+const MAX_IMAGES = 3;
 
 export function ProductForm({ product, availableCatalogs }: ProductFormProps) {
   const router = useRouter();
@@ -25,7 +27,9 @@ export function ProductForm({ product, availableCatalogs }: ProductFormProps) {
   const [price, setPrice] = useState<string>(
     product && product.price != null ? formatCurrencyInput(String(product.price * 100)) : ""
   );
-  const [imageUrl, setImageUrl] = useState(product?.image_url || "");
+  const [images, setImages] = useState<string[]>(
+    product?.images?.map((img) => img.url) || (product?.image_url ? [product.image_url] : [])
+  );
   const [active, setActive] = useState(product ? product.active : true);
   const [selectedCatalogs, setSelectedCatalogs] = useState<string[]>(
     product?.catalog_ids || []
@@ -58,6 +62,32 @@ export function ProductForm({ product, availableCatalogs }: ProductFormProps) {
     );
   };
 
+  const addImage = (url: string) => {
+    if (images.length >= MAX_IMAGES) {
+      setError(`Limite máximo de ${MAX_IMAGES} imagens atingido.`);
+      return;
+    }
+    setImages((prev) => [...prev, url]);
+    setError(null);
+  };
+
+  const removeImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const replaceImage = (index: number, url: string) => {
+    setImages((prev) => prev.map((img, i) => (i === index ? url : img)));
+  };
+
+  const moveImage = (fromIndex: number, toIndex: number) => {
+    setImages((prev) => {
+      const newImages = [...prev];
+      const [moved] = newImages.splice(fromIndex, 1);
+      newImages.splice(toIndex, 0, moved);
+      return newImages;
+    });
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -76,7 +106,8 @@ export function ProductForm({ product, availableCatalogs }: ProductFormProps) {
       slug,
       description,
       price: parsedPrice,
-      image_url: imageUrl,
+      image_url: images[0] || "",
+      images,
       active,
       catalog_ids: selectedCatalogs,
     };
@@ -171,7 +202,7 @@ export function ProductForm({ product, availableCatalogs }: ProductFormProps) {
               className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm font-mono text-right"
             />
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              Deixe em branco para &quot;Sob consulta&quot;. Digite apenas números (ex: 4990 = R$ 49,90).
+              Deixe em branco para &ldquo;Sob consulta&rdquo;. Digite apenas números (ex: 4990 = R$ 49,90).
             </p>
           </div>
 
@@ -252,15 +283,90 @@ export function ProductForm({ product, availableCatalogs }: ProductFormProps) {
           )}
         </div>
 
-        {/* Imagem do Produto */}
+        {/* Imagens do Produto */}
         <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
-          <ImageUpload
-            bucket="products"
-            label="Foto Principal do Produto"
-            value={imageUrl}
-            onChange={setImageUrl}
-            aspectRatio="square"
-          />
+          <div className="flex items-center justify-between mb-4">
+            <label className="block text-sm font-semibold text-slate-900 dark:text-white">
+              Imagens do Produto
+            </label>
+            {images.length < MAX_IMAGES && (
+              <span className="text-xs text-slate-500 dark:text-slate-400">
+                {images.length}/{MAX_IMAGES} imagens
+              </span>
+            )}
+          </div>
+
+          {images.map((imageUrl, idx) => (
+            <div
+              key={imageUrl + idx}
+              className="relative border border-slate-200 dark:border-slate-700 rounded-xl p-3 space-y-3 bg-slate-50/50 dark:bg-slate-800/50"
+            >
+              <div className="flex items-start gap-3">
+                <button
+                  type="button"
+                  onClick={() => moveImage(idx, idx - 1)}
+                  disabled={idx === 0}
+                  className="p-1 rounded-lg text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shrink-0 mt-1"
+                  aria-label={idx === 0 ? "Primeira imagem" : "Mover para cima"}
+                  title={idx === 0 ? "Primeira imagem" : "Mover para cima"}
+                >
+                  <ChevronUp className="h-4 w-4" />
+                </button>
+
+                <ImageUpload
+                  bucket="products"
+                  label={`Imagem ${idx + 1}${idx === 0 ? " (Principal)" : ""}`}
+                  value={imageUrl}
+                  onChange={(url) => replaceImage(idx, url)}
+                  aspectRatio="square"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => moveImage(idx, idx + 1)}
+                  disabled={idx === images.length - 1}
+                  className="p-1 rounded-lg text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shrink-0 mt-1"
+                  aria-label={idx === images.length - 1 ? "Última imagem" : "Mover para baixo"}
+                  title={idx === images.length - 1 ? "Última imagem" : "Mover para baixo"}
+                >
+                  <ChevronDown className="h-4 w-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => removeImage(idx)}
+                  className="p-1 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors shrink-0 mt-1 ml-auto"
+                  aria-label={`Remover imagem ${idx + 1}`}
+                  title="Remover esta imagem"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                <GripVertical className="h-3 w-3" />
+                <span>
+                  {idx === 0 ? "Principal" : `Imagem ${idx + 1}`}
+                </span>
+              </div>
+            </div>
+          ))}
+
+          {images.length < MAX_IMAGES && (
+            <ImageUpload
+              bucket="products"
+              label={`Adicionar Imagem ${images.length + 1}`}
+              value=""
+              onChange={addImage}
+              aspectRatio="square"
+            />
+          )}
+
+          {images.length >= MAX_IMAGES && (
+            <p className="text-xs text-slate-500 dark:text-slate-400 text-center py-2">
+              Limite máximo de {MAX_IMAGES} imagens por produto atingido.
+            </p>
+          )}
         </div>
       </div>
 

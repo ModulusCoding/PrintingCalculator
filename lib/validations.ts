@@ -43,6 +43,11 @@ export const productSchema = z.object({
     .optional()
     .nullable(),
   image_url: z.string().url("URL de imagem inválida.").optional().nullable().or(z.literal("")),
+  images: z
+    .array(z.string().url("URL de imagem inválida."))
+    .max(3, "O produto pode ter no máximo 3 imagens.")
+    .optional()
+    .default([]),
   active: z.boolean().default(true),
   catalog_ids: z.array(z.string().uuid("ID de catálogo inválido.")).optional().default([]),
 });

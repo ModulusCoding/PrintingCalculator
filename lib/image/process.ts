@@ -3,7 +3,7 @@ import sharp from "sharp";
 const ALLOWED_INPUT_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_DIMENSION = 1600;
-const WEBP_QUALITY = 82;
+const WEBP_QUALITY = 85;
 
 export type AllowedInputMimeType = (typeof ALLOWED_INPUT_MIME_TYPES)[number];
 

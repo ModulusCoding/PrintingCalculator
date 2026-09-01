@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CatalogView } from "@/types/catalog";
+import { ProductCarousel } from "./ProductCarousel";
 
 type Category = "Todos" | string;
 type Format = string;
@@ -223,15 +224,11 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
               >
                 <div className="product-visual">
                   <span className="product-index">{product.index}</span>
-                  <img className="product-photo" src={product.photo} alt={product.photoAlt || product.name} loading="lazy" />
-                  {product.photoSecondary && (
-                    <img
-                      className="product-photo product-photo-secondary"
-                      src={product.photoSecondary}
-                      alt={product.photoSecondaryAlt || product.name}
-                      loading="lazy"
-                    />
-                  )}
+                  <ProductCarousel
+                    images={product.images && product.images.length > 0 ? product.images : [product.photo]}
+                    productName={product.name}
+                    productId={product.id || product.index}
+                  />
                   {product.photoNote && <span className="photo-note">{product.photoNote}</span>}
                 </div>
                 <div className="product-meta">

@@ -82,7 +82,9 @@ export default async function ProductsPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4 hidden md:table-cell text-sm font-medium tabular-nums">
-                    R$ {product.price.toFixed(2).replace(".", ",")}
+                    {product.price != null
+                      ? `R$ ${product.price.toFixed(2).replace(".", ",")}`
+                      : "Sob consulta"}
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-wrap gap-1.5">
