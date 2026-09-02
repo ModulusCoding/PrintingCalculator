@@ -76,9 +76,13 @@ export function ProductCarousel({ images, productName, productId }: ProductCarou
 
   return (
     <div className="product-carousel" data-product-id={productId} ref={carouselRef} tabIndex={0}>
-      <div className="product-carousel-track" ref={trackRef}>
+      <div
+        className="product-carousel-track"
+        ref={trackRef}
+        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+      >
         {images.map((src, index) => (
-          <div key={src} className="product-carousel-slide">
+          <div key={`${src}-${index}`} className="product-carousel-slide">
             {loadedIndices.has(index) ? (
               <Image
                 src={src}

@@ -3,6 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CatalogView } from "@/types/catalog";
 import { ProductCarousel } from "./ProductCarousel";
+import { CartProvider, useCart } from "@/context/CartContext";
+import { CartDrawer } from "./CartDrawer";
+import { ShoppingCart, Plus } from "lucide-react";
 
 type Category = "Todos" | string;
 type Format = string;
@@ -12,7 +15,7 @@ export interface CatalogoModulusProps {
   catalog: CatalogView;
 }
 
-export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
+function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
   const [activeCategory, setActiveCategory] = useState<Category>("Todos");
   const [query, setQuery] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("featured");
@@ -20,14 +23,17 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
   const [formatFilters, setFormatFilters] = useState<string[]>([]);
   const [panelOpen, setPanelOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const [year, setYear] = useState<number | null>(() => new Date().getFullYear());
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const closeFiltersRef = useRef<HTMLButtonElement>(null);
 
+  const { totalItems, isHydrated, addItem } = useCart();
+
   useEffect(() => {
-    document.body.classList.toggle("panel-open", panelOpen || searchOpen);
-  }, [panelOpen, searchOpen]);
+    document.body.classList.toggle("panel-open", panelOpen || searchOpen || cartOpen);
+  }, [panelOpen, searchOpen, cartOpen]);
 
   useEffect(() => {
     if (panelOpen) closeFiltersRef.current?.focus();
@@ -45,6 +51,7 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
       if (e.key === "Escape") {
         setPanelOpen(false);
         setSearchOpen(false);
+        setCartOpen(false);
       }
     }
     document.addEventListener("keydown", onKeyDown);
@@ -53,7 +60,6 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
 
   const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
 
-  // Categorias e Formatos derivados dinamicamente dos produtos deste catálogo específico
   const categories: Category[] = useMemo(() => {
     const unique = Array.from(
       new Set(
@@ -75,8 +81,6 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
     );
   }, [catalog.products]);
 
-  // Se a categoria ativa atual não existir mais no catálogo (ex: troca de catálogo/props), reseta para "Todos"
-  // Usamos useMemo para calcular a categoria ativa válida em vez de useEffect com setState
   const validatedActiveCategory = useMemo(() => {
     if (activeCategory === "Todos") return "Todos";
     if (categories.includes(activeCategory)) return activeCategory;
@@ -101,7 +105,6 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
     if (sortMode === "name") {
       return [...visibleProducts].sort((a, b) => (a.name || "").localeCompare(b.name || "", "pt-BR"));
     }
-    // "featured" preserva a ordem definida (ex: displayOrder)
     return [...visibleProducts].sort((a, b) => {
       const orderA = a.displayOrder ?? 0;
       const orderB = b.displayOrder ?? 0;
@@ -131,6 +134,11 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
     }
   }
 
+  function handleAddToCart(productId: string) {
+    addItem(productId);
+    setCartOpen(true);
+  }
+
   return (
     <>
       <header className="site-header">
@@ -145,6 +153,18 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
         <div className="header-actions">
           <button className="icon-button" aria-label="Abrir busca" onClick={() => setSearchOpen(true)}>
             <span className="search-icon" aria-hidden="true" />
+          </button>
+          <button
+            className="cart-button"
+            aria-label={totalItems > 0 ? `Abrir carrinho (${totalItems} itens)` : "Abrir carrinho (vazio)"}
+            onClick={() => setCartOpen(true)}
+          >
+            <ShoppingCart className="h-5 w-5" aria-hidden="true" />
+            {isHydrated && totalItems > 0 && (
+              <span className="cart-badge" aria-live="polite">
+                {totalItems}
+              </span>
+            )}
           </button>
           <button
             className="menu-button"
@@ -237,11 +257,22 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
                     {product.detail && <p className="product-detail">{product.detail}</p>}
                     {product.description && <p className="product-description">{product.description}</p>}
                   </div>
-                  <p className="product-price">
-                    {product.price != null
-                      ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(product.price)
-                      : "Sob consulta"}
-                  </p>
+                  <div className="product-price-row">
+                    <p className="product-price">
+                      {product.price != null
+                        ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(product.price)
+                        : "Sob consulta"}
+                    </p>
+                    <button
+                      type="button"
+                      className="add-to-cart-btn"
+                      onClick={() => handleAddToCart(product.id)}
+                      aria-label={`Adicionar ${product.name} ao carrinho`}
+                    >
+                      <Plus className="h-4 w-4" aria-hidden="true" />
+                      <span>Adicionar</span>
+                    </button>
+                  </div>
                 </div>
               </article>
             ))}
@@ -295,7 +326,11 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
         </div>
       </footer>
 
-      <div className={`overlay${panelOpen ? " visible" : ""}`} onClick={() => setPanelOpen(false)} />
+      <div className={`overlay${panelOpen || searchOpen || cartOpen ? " visible" : ""}`} onClick={() => {
+        setPanelOpen(false);
+        setSearchOpen(false);
+        setCartOpen(false);
+      }} />
 
       <aside
         className={`filter-panel${panelOpen ? " open" : ""}`}
@@ -390,6 +425,17 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
           />
         </div>
       </div>
+
+      <CartDrawer
+        isOpen={cartOpen}
+        onClose={() => setCartOpen(false)}
+        products={catalog.products.map((p) => ({
+          id: p.id,
+          name: p.name,
+          photo: p.photo,
+          price: p.price,
+        }))}
+      />
 
       <style jsx global>{`
         :root {
@@ -497,7 +543,8 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
           gap: 10px;
         }
         .icon-button,
-        .menu-button {
+        .menu-button,
+        .cart-button {
           width: 42px;
           height: 42px;
           display: grid;
@@ -508,11 +555,34 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
           background: transparent;
           cursor: pointer;
           transition: background 0.2s, color 0.2s, border-color 0.2s;
+          position: relative;
         }
-        .icon-button:hover {
+        .icon-button:hover,
+        .cart-button:hover {
           color: white;
           background: var(--ink);
           border-color: var(--ink);
+        }
+        .cart-button:focus-visible {
+          outline: 2px solid var(--orange);
+          outline-offset: 2px;
+        }
+        .cart-badge {
+          position: absolute;
+          top: -2px;
+          right: -2px;
+          min-width: 18px;
+          height: 18px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 5px;
+          border-radius: 999px;
+          background: var(--electric);
+          color: white;
+          font-size: 11px;
+          font-weight: 600;
+          line-height: 1;
         }
         .search-icon {
           width: 15px;
@@ -699,9 +769,6 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
             transform: none;
           }
         }
-        .product-link {
-          display: block;
-        }
         .product-visual {
           position: relative;
           aspect-ratio: 4 / 5;
@@ -817,14 +884,36 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
           font-size: 14px;
           white-space: nowrap;
         }
-        .product-cta {
-          display: inline-block;
-          margin-top: 14px;
-          padding-bottom: 3px;
-          border-bottom: 1px solid currentColor;
-          color: var(--electric);
-          font-size: 13px;
+        .product-price-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+        }
+        .add-to-cart-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          min-height: 36px;
+          padding: 0 14px;
+          border: 1px solid var(--ink);
+          border-radius: 999px;
+          background: transparent;
+          color: var(--ink);
+          font-size: 12px;
           font-weight: 600;
+          cursor: pointer;
+          transition: 0.2s var(--ease);
+          white-space: nowrap;
+        }
+        .add-to-cart-btn:hover {
+          color: white;
+          background: var(--electric);
+          border-color: var(--electric);
+        }
+        .add-to-cart-btn:focus-visible {
+          outline: 2px solid var(--orange);
+          outline-offset: 2px;
         }
         .empty-state {
           display: none;
@@ -910,7 +999,7 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
         .footer-brand img {
           display: block;
           width: min(620px, 65vw);
-          height: auto;
+          height: auto.
         }
         .footer-meta {
           text-align: right;
@@ -1197,5 +1286,13 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
         }
       `}</style>
     </>
+  );
+}
+
+export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
+  return (
+    <CartProvider catalogSlug={catalog.slug}>
+      <CatalogoModulusInner catalog={catalog} />
+    </CartProvider>
   );
 }
