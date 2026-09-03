@@ -2,6 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CatalogView } from "@/types/catalog";
+import { ProductCarousel } from "./ProductCarousel";
+import { CartProvider, useCart } from "@/context/CartContext";
+import { CartDrawer } from "./CartDrawer";
+import { ShoppingCart, ShoppingCartPlus } from "lucide-react";
 
 type Category = "Todos" | string;
 type Format = string;
@@ -11,7 +15,7 @@ export interface CatalogoModulusProps {
   catalog: CatalogView;
 }
 
-export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
+function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
   const [activeCategory, setActiveCategory] = useState<Category>("Todos");
   const [query, setQuery] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("featured");
@@ -19,14 +23,17 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
   const [formatFilters, setFormatFilters] = useState<string[]>([]);
   const [panelOpen, setPanelOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [year, setYear] = useState<number | null>(() => new Date().getFullYear());
+  const [cartOpen, setCartOpen] = useState(false);
+  const year = useMemo(() => new Date().getFullYear(), []);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const closeFiltersRef = useRef<HTMLButtonElement>(null);
 
+  const { totalItems, isHydrated, addItem } = useCart();
+
   useEffect(() => {
-    document.body.classList.toggle("panel-open", panelOpen || searchOpen);
-  }, [panelOpen, searchOpen]);
+    document.body.classList.toggle("panel-open", panelOpen || searchOpen || cartOpen);
+  }, [panelOpen, searchOpen, cartOpen]);
 
   useEffect(() => {
     if (panelOpen) closeFiltersRef.current?.focus();
@@ -44,6 +51,7 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
       if (e.key === "Escape") {
         setPanelOpen(false);
         setSearchOpen(false);
+        setCartOpen(false);
       }
     }
     document.addEventListener("keydown", onKeyDown);
@@ -52,7 +60,6 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
 
   const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
 
-  // Categorias e Formatos derivados dinamicamente dos produtos deste catálogo específico
   const categories: Category[] = useMemo(() => {
     const unique = Array.from(
       new Set(
@@ -74,8 +81,6 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
     );
   }, [catalog.products]);
 
-  // Se a categoria ativa atual não existir mais no catálogo (ex: troca de catálogo/props), reseta para "Todos"
-  // Usamos useMemo para calcular a categoria ativa válida em vez de useEffect com setState
   const validatedActiveCategory = useMemo(() => {
     if (activeCategory === "Todos") return "Todos";
     if (categories.includes(activeCategory)) return activeCategory;
@@ -100,7 +105,6 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
     if (sortMode === "name") {
       return [...visibleProducts].sort((a, b) => (a.name || "").localeCompare(b.name || "", "pt-BR"));
     }
-    // "featured" preserva a ordem definida (ex: displayOrder)
     return [...visibleProducts].sort((a, b) => {
       const orderA = a.displayOrder ?? 0;
       const orderB = b.displayOrder ?? 0;
@@ -123,11 +127,27 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
     setFormatFilters([]);
   }
 
+  function handleResetAll() {
+    setQuery("");
+    setActiveCategory("Todos");
+    setCategoryFilters([]);
+    setFormatFilters([]);
+  }
+
+  const hasActiveFilters = useMemo(() => {
+    return Boolean(normalizedQuery || validatedActiveCategory !== "Todos" || categoryFilters.length || formatFilters.length);
+  }, [normalizedQuery, validatedActiveCategory, categoryFilters.length, formatFilters.length]);
+
   function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       setSearchOpen(false);
       document.querySelector("#catalogo")?.scrollIntoView();
     }
+  }
+
+  function handleAddToCart(productId: string) {
+    addItem(productId);
+    setCartOpen(true);
   }
 
   return (
@@ -146,6 +166,18 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
             <span className="search-icon" aria-hidden="true" />
           </button>
           <button
+            className="cart-button"
+            aria-label={totalItems > 0 ? `Abrir carrinho (${totalItems} itens)` : "Abrir carrinho (vazio)"}
+            onClick={() => setCartOpen(true)}
+          >
+            <ShoppingCart className="h-5 w-5" aria-hidden="true" />
+            {isHydrated && totalItems > 0 && (
+              <span className="cart-badge" aria-live="polite">
+                {totalItems}
+              </span>
+            )}
+          </button>
+          <button
             className="menu-button"
             aria-label="Abrir menu"
             onClick={() => document.querySelector("#catalogo")?.scrollIntoView()}
@@ -157,19 +189,71 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
 
       <main id="top">
         <section className="hero" aria-labelledby="pageTitle">
-          <div>
-            {catalog.eyebrow && <p className="eyebrow">{catalog.eyebrow}</p>}
-            <h1 id="pageTitle">{catalog.title}</h1>
-          </div>
-          {(catalog.heroStrongText || catalog.heroCopy) && (
-            <p className="hero-copy">
-              {catalog.heroStrongText && <strong>{catalog.heroStrongText} </strong>}
-              {catalog.heroCopy}
-            </p>
-          )}
-        </section>
+  <div className="hero-title">
+    {catalog.eyebrow && <p className="eyebrow">{catalog.eyebrow}</p>}
+
+    <h1 id="pageTitle">
+      {catalog.title}
+    </h1>
+  </div>
+
+  {(catalog.heroStrongText || catalog.heroCopy) && (
+    <p className="hero-copy">
+      {catalog.heroStrongText && (
+        <strong>{catalog.heroStrongText} </strong>
+      )}
+      {catalog.heroCopy}
+    </p>
+  )}
+</section>  
 
         <section className="catalogue" id="catalogo" aria-label="Produtos">
+          <div className="catalog-search-filter-bar" role="search" aria-label="Pesquisa e filtros">
+            <label className="catalog-search-wrap" htmlFor="catalogSearchInput">
+              <span className="catalog-search-icon" aria-hidden="true">⌕</span>
+              <input
+                id="catalogSearchInput"
+                type="search"
+                placeholder="Pesquisar produtos..."
+                autoComplete="off"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                aria-label="Pesquisar produtos por nome"
+              />
+              {query && (
+                <button
+                  type="button"
+                  className="catalog-search-clear"
+                  aria-label="Limpar pesquisa"
+                  onClick={() => setQuery("")}
+                >
+                  ×
+                </button>
+              )}
+            </label>
+            <div className="catalog-filter-row">
+              <label className="catalog-filter-select-wrap" htmlFor="catalogCategoryFilter">
+                <select
+                  id="catalogCategoryFilter"
+                  value={validatedActiveCategory}
+                  onChange={(e) => setActiveCategory(e.target.value)}
+                  aria-label="Filtrar por categoria"
+                >
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {hasActiveFilters && (
+                <button type="button" className="catalog-clear-filters-btn" onClick={handleResetAll}>
+                  Limpar filtros
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="toolbar">
             <div className="categories" role="tablist" aria-label="Categorias de produto">
               {categories.map((category) => (
@@ -221,45 +305,57 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
                 data-category={product.category}
                 data-format={product.format}
               >
-                <a className="product-link" href="#contato" aria-label={`Consultar ${product.name}`}>
-                  <div className="product-visual">
-                    <span className="product-index">{product.index}</span>
-                    <img className="product-photo" src={product.photo} alt={product.photoAlt || product.name} loading="lazy" />
-                    {product.photoSecondary && (
-                      <img
-                        className="product-photo product-photo-secondary"
-                        src={product.photoSecondary}
-                        alt={product.photoSecondaryAlt || product.name}
-                        loading="lazy"
-                      />
-                    )}
-                    {product.photoNote && <span className="photo-note">{product.photoNote}</span>}
-                    <span className="quick-button" aria-hidden="true">
-                      ↗
-                    </span>
+                <div className="product-visual">
+                  <span className="product-index">{product.index}</span>
+                  <ProductCarousel
+                    images={product.images && product.images.length > 0 ? product.images : [product.photo]}
+                    productName={product.name}
+                    productId={product.id || product.index}
+                  />
+                  {product.photoNote && <span className="photo-note">{product.photoNote}</span>}
+                </div>
+                <div className="product-meta">
+                  <div>
+                    <h2 className="product-name">{product.name}</h2>
+                    {product.detail && <p className="product-detail">{product.detail}</p>}
+                    {product.description && <p className="product-description">{product.description}</p>}
                   </div>
-                  <div className="product-meta">
-                    <div>
-                      <h2 className="product-name">{product.name}</h2>
-                      {product.detail && <p className="product-detail">{product.detail}</p>}
-                      {product.description && <p className="product-description">{product.description}</p>}
-                      <span className="product-cta">Consultar produto</span>
-                    </div>
+                  <div className="product-price-row">
                     <p className="product-price">
                       {product.price != null
                         ? new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(product.price)
                         : "Sob consulta"}
                     </p>
+                    <button
+                      type="button"
+                      className="add-to-cart-btn"
+                      onClick={() => handleAddToCart(product.id)}
+                      aria-label={`Adicionar ${product.name} ao carrinho`}
+                    >
+                      
+                      <ShoppingCartPlus className="h-4 w-4" aria-hidden="true" />
+                      <span>Adicionar</span>
+                    </button>
                   </div>
-                </a>
+                </div>
               </article>
             ))}
           </div>
 
           <div className={`empty-state${sortedProducts.length === 0 ? " visible" : ""}`}>
             <div>
-              <h2>Nenhum objeto por aqui.</h2>
-              <p>Tente remover um filtro ou buscar outro termo.</p>
+              <h2>Nenhum produto encontrado.</h2>
+              <p>Tente pesquisar por outro nome ou remover os filtros.</p>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  className="empty-state-clear"
+                  onClick={handleResetAll}
+                  style={{ marginTop: "18px", minHeight: "44px", padding: "0 18px", borderRadius: "999px", border: "1px solid var(--ink)", background: "white", cursor: "pointer" }}
+                >
+                  Limpar filtros
+                </button>
+              )}
             </div>
           </div>
         </section>
@@ -299,12 +395,36 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
           <img src={`/modulus-logo-footer.svg`} alt="Modulus" />
         </div>
         <div className="footer-meta">
-          Objetos inteligentes para problemas reais.
+          Objetos inteligêntes para problemas <strong>reais</strong>.
           <br />© {year ?? ""} Modulus
         </div>
+        <div className="mt-2 flex gap-2 justify-end-safe">
+                {[
+                  { label: "TikTok", href: "https://www.tiktok.com/@modulus.studios?_r=1&_t=zs-95u3cwvuqep", path: "M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.72a8.18 8.18 0 0 0 4.78 1.52V6.79a4.85 4.85 0 0 1-1.01-.1z" },
+                  { label: "Instagram", href: "https://www.instagram.com/modulus.studios?igsh=Zno4cTY2cG51aXR0&utm_source=qr", path: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" },
+                  { label: "WhatsApp", href: "https://wa.me/5511912000753?text=%E2%98%BA%EF%B8%8E%20%20%E1%90%B8%20%20Bem-vindo%20%C3%A0%20%20%2AM%E1%B4%8F%E1%B4%85%E1%B4%9C%CA%9F%E1%B4%9C%EA%9C%B1%2A%20%20%21%20%20%2A%E2%9F%AF%2A%0A%20%20%E2%80%A2%20Tudo%20come%C3%A7a%20com%20sua%20ideia%0A%20%20%E2%80%A2%20Voc%C3%AA%20pensa%2C%20n%C3%B3s%20fazemos%0A%E2%86%92%20Sem%20custo%2C%20me%20conte%20como%20vamos%20dar%20vida%20a%20seu%20projeto%3A", path: "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" },
+                ].map(({ label, href, path }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="flex h-9 w-9 items-center justify-center rounded-[8px] border border-gray-700 text-black/40 transition hover:border-[var(--modulus-accent)]/30 hover:bg-[var(--modulus-accent)]/50 hover:text-[var(--modulus-primary)]"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d={path} />
+                    </svg>
+                  </a>
+                ))}
+              </div>
       </footer>
-
-      <div className={`overlay${panelOpen ? " visible" : ""}`} onClick={() => setPanelOpen(false)} />
+      
+      <div className={`overlay${panelOpen || searchOpen || cartOpen ? " visible" : ""}`} onClick={() => {
+        setPanelOpen(false);
+        setSearchOpen(false);
+        setCartOpen(false);
+      }} />
 
       <aside
         className={`filter-panel${panelOpen ? " open" : ""}`}
@@ -400,811 +520,26 @@ export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
         </div>
       </div>
 
-      <style jsx global>{`
-        :root {
-          --electric: #2b00ff;
-          --ink: #152336;
-          --periwinkle: #a6b4ff;
-          --orange: #ff4e26;
-          --paper: #f7f7f4;
-          --white: #ffffff;
-          --line: rgba(21, 35, 54, 0.16);
-          --muted: #687383;
-          --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
+      <CartDrawer
+        isOpen={cartOpen}
+        onClose={() => setCartOpen(false)}
+        products={catalog.products.map((p) => ({
+          id: p.id,
+          name: p.name,
+          photo: p.photo,
+          price: p.price,
+        }))}
+      />
 
-        * {
-          box-sizing: border-box;
-        }
-        html {
-          scroll-behavior: smooth;
-        }
-        body {
-          margin: 0;
-          color: var(--ink);
-          background: var(--paper);
-          font-family: "Space Grotesk", Arial, sans-serif;
-          -webkit-font-smoothing: antialiased;
-        }
-        body.panel-open {
-          overflow: hidden;
-        }
-        button,
-        input,
-        select {
-          font: inherit;
-        }
-        button {
-          color: inherit;
-        }
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-        img {
-          display: block;
-          max-width: 100%;
-        }
-        ::selection {
-          color: var(--white);
-          background: var(--electric);
-        }
 
-        .site-header {
-          position: sticky;
-          z-index: 20;
-          top: 0;
-          height: 78px;
-          display: grid;
-          grid-template-columns: 1fr auto 1fr;
-          align-items: center;
-          padding: 0 32px;
-          background: rgba(247, 247, 244, 0.9);
-          border-bottom: 1px solid var(--line);
-          backdrop-filter: blur(16px);
-        }
-        .brand {
-          width: max-content;
-          display: inline-flex;
-          align-items: center;
-          height: 30px;
-        }
-        .brand img {
-          display: block;
-          width: 142px;
-          height: auto;
-        }
-        .main-nav {
-          display: flex;
-          align-items: center;
-          gap: 28px;
-          font-size: 14px;
-        }
-        .main-nav a {
-          position: relative;
-        }
-        .main-nav a::after {
-          content: "";
-          position: absolute;
-          right: 0;
-          bottom: -7px;
-          left: 0;
-          height: 1px;
-          background: var(--ink);
-          transform: scaleX(0);
-          transform-origin: left;
-          transition: transform 0.25s var(--ease);
-        }
-        .main-nav a:hover::after,
-        .main-nav a:focus-visible::after {
-          transform: scaleX(1);
-        }
-        .header-actions {
-          justify-self: end;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-        .icon-button,
-        .menu-button {
-          width: 42px;
-          height: 42px;
-          display: grid;
-          place-items: center;
-          padding: 0;
-          border: 1px solid var(--line);
-          border-radius: 50%;
-          background: transparent;
-          cursor: pointer;
-          transition: background 0.2s, color 0.2s, border-color 0.2s;
-        }
-        .icon-button:hover {
-          color: white;
-          background: var(--ink);
-          border-color: var(--ink);
-        }
-        .search-icon {
-          width: 15px;
-          height: 15px;
-          border: 1.8px solid currentColor;
-          border-radius: 50%;
-          position: relative;
-        }
-        .search-icon::after {
-          content: "";
-          width: 6px;
-          height: 1.8px;
-          background: currentColor;
-          position: absolute;
-          right: -5px;
-          bottom: -2px;
-          transform: rotate(45deg);
-        }
-        .menu-button {
-          display: none;
-        }
-
-        main {
-          overflow: hidden;
-        }
-        .hero {
-          min-height: 390px;
-          display: grid;
-          grid-template-columns: minmax(0, 1.6fr) minmax(240px, 0.4fr);
-          align-items: end;
-          gap: 40px;
-          padding: 78px 32px 52px;
-          border-bottom: 1px solid var(--line);
-        }
-        .eyebrow {
-          margin: 0 0 18px;
-          color: var(--electric);
-          font-size: 12px;
-          font-weight: 700;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-        }
-        h1 {
-          margin: 0;
-          font-size: clamp(72px, 11vw, 168px);
-          font-weight: 500;
-          line-height: 0.78;
-          letter-spacing: -0.085em;
-        }
-        .hero-copy {
-          max-width: 390px;
-          justify-self: end;
-          margin: 0 0 6px;
-          color: var(--muted);
-          font-size: clamp(15px, 1.4vw, 18px);
-          line-height: 1.45;
-        }
-        .hero-copy strong {
-          color: var(--ink);
-          font-weight: 500;
-        }
-
-        .catalogue {
-          padding: 0 32px 80px;
-        }
-        .toolbar {
-          position: relative;
-          display: grid;
-          grid-template-columns: minmax(0, 1fr) auto;
-          gap: 24px;
-          align-items: center;
-          min-height: 86px;
-          border-bottom: 1px solid var(--line);
-        }
-        .categories {
-          display: flex;
-          gap: 8px;
-          overflow-x: auto;
-          scrollbar-width: none;
-          padding-right: 24px;
-        }
-        .categories::-webkit-scrollbar {
-          display: none;
-        }
-        .category-chip {
-          flex: 0 0 auto;
-          padding: 10px 15px;
-          border: 1px solid transparent;
-          border-radius: 999px;
-          background: transparent;
-          cursor: pointer;
-          font-size: 14px;
-          transition: 0.2s var(--ease);
-        }
-        .category-chip:hover {
-          border-color: var(--line);
-        }
-        .category-chip.active {
-          color: white;
-          background: var(--ink);
-          border-color: var(--ink);
-        }
-        .filter-button {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          min-height: 44px;
-          padding: 0 17px;
-          border: 1px solid var(--ink);
-          border-radius: 999px;
-          background: transparent;
-          cursor: pointer;
-          transition: 0.2s var(--ease);
-        }
-        .filter-button:hover {
-          color: white;
-          background: var(--electric);
-          border-color: var(--electric);
-        }
-        .filter-lines,
-        .filter-lines::before,
-        .filter-lines::after {
-          width: 15px;
-          height: 1px;
-          background: currentColor;
-          display: block;
-          position: relative;
-        }
-        .filter-lines::before,
-        .filter-lines::after {
-          content: "";
-          position: absolute;
-          left: 0;
-        }
-        .filter-lines::before {
-          top: -5px;
-          width: 11px;
-        }
-        .filter-lines::after {
-          top: 5px;
-          width: 7px;
-        }
-        .result-line {
-          min-height: 74px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          color: var(--muted);
-          font-size: 13px;
-        }
-        .result-line strong {
-          color: var(--ink);
-          font-weight: 500;
-        }
-        .sort-inline {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-        .sort-inline select {
-          color: var(--ink);
-          border: 0;
-          background: transparent;
-          outline: none;
-          cursor: pointer;
-        }
-
-        .product-grid {
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 44px 16px;
-        }
-        .product-card {
-          min-width: 0;
-          animation: reveal 0.5s both;
-        }
-        @keyframes reveal {
-          from {
-            opacity: 0;
-            transform: translateY(14px);
-          }
-          to {
-            opacity: 1;
-            transform: none;
-          }
-        }
-        .product-link {
-          display: block;
-        }
-        .product-visual {
-          position: relative;
-          aspect-ratio: 4 / 5;
-          overflow: hidden;
-          background: #eaebe8;
-        }
-        .product-visual::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(140deg, transparent 55%, rgba(255, 255, 255, 0.42));
-          pointer-events: none;
-        }
-        .product-photo {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.65s var(--ease), opacity 0.45s var(--ease);
-        }
-        .product-photo-secondary {
-          opacity: 0;
-        }
-        .product-card:hover .product-photo-secondary,
-        .product-link:focus-visible .product-photo-secondary {
-          opacity: 1;
-        }
-        .product-card:hover .product-photo:not(.product-photo-secondary),
-        .product-link:focus-visible .product-photo:not(.product-photo-secondary) {
-          transform: scale(1.025);
-        }
-        .product-card:hover .product-photo-secondary,
-        .product-link:focus-visible .product-photo-secondary {
-          transform: scale(1.025);
-        }
-        .photo-note {
-          position: absolute;
-          z-index: 3;
-          right: 16px;
-          top: 16px;
-          padding: 7px 10px;
-          border-radius: 999px;
-          color: var(--ink);
-          background: rgba(255, 255, 255, 0.82);
-          backdrop-filter: blur(8px);
-          font-size: 10px;
-          letter-spacing: 0.04em;
-          transition: opacity 0.25s;
-        }
-        .product-card:hover .photo-note {
-          opacity: 0;
-        }
-        .product-index {
-          position: absolute;
-          top: 18px;
-          left: 18px;
-          z-index: 2;
-          font-size: 11px;
-          letter-spacing: 0.08em;
-        }
-        .quick-button {
-          position: absolute;
-          z-index: 3;
-          right: 16px;
-          bottom: 16px;
-          width: 44px;
-          height: 44px;
-          display: grid;
-          place-items: center;
-          border: 0;
-          border-radius: 50%;
-          color: white;
-          background: var(--electric);
-          font-size: 22px;
-          cursor: pointer;
-          opacity: 0;
-          transform: translateY(8px);
-          transition: 0.25s var(--ease);
-        }
-        .product-card:hover .quick-button,
-        .product-link:focus-visible .quick-button {
-          opacity: 1;
-          transform: none;
-        }
-        .product-meta {
-          display: grid;
-          grid-template-columns: 1fr auto;
-          gap: 10px;
-          padding-top: 16px;
-        }
-        .product-name {
-          margin: 0;
-          font-size: 17px;
-          font-weight: 500;
-          letter-spacing: -0.025em;
-        }
-        .product-detail {
-          margin: 5px 0 0;
-          color: var(--muted);
-          font-size: 13px;
-        }
-        .product-description {
-          max-width: 38ch;
-          min-height: 3.8em;
-          margin: 12px 0 0;
-          color: var(--muted);
-          font-size: 13px;
-          line-height: 1.45;
-        }
-        .product-price {
-          margin: 1px 0 0;
-          font-size: 14px;
-          white-space: nowrap;
-        }
-        .product-cta {
-          display: inline-block;
-          margin-top: 14px;
-          padding-bottom: 3px;
-          border-bottom: 1px solid currentColor;
-          color: var(--electric);
-          font-size: 13px;
-          font-weight: 600;
-        }
-        .empty-state {
-          display: none;
-          place-items: center;
-          min-height: 360px;
-          text-align: center;
-          border-top: 1px solid var(--line);
-        }
-        .empty-state.visible {
-          display: grid;
-        }
-        .empty-state h2 {
-          margin: 0 0 10px;
-          font-size: 32px;
-          letter-spacing: -0.05em;
-        }
-        .empty-state p {
-          margin: 0;
-          color: var(--muted);
-        }
-
-        .manifesto {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          min-height: 420px;
-          color: white;
-          background: var(--electric);
-        }
-        .manifesto-copy {
-          padding: 56px 32px;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-        }
-        .manifesto-label {
-          font-size: 12px;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-        }
-        .manifesto h2 {
-          max-width: 700px;
-          margin: 72px 0 0;
-          font-size: clamp(42px, 6vw, 88px);
-          font-weight: 500;
-          line-height: 0.96;
-          letter-spacing: -0.065em;
-        }
-        .manifesto-art {
-          position: relative;
-          overflow: hidden;
-          background: var(--periwinkle);
-        }
-        .manifesto-art::before {
-          content: "E = σ / ε";
-          position: absolute;
-          right: -3vw;
-          bottom: -4vw;
-          color: var(--electric);
-          font-size: clamp(88px, 14vw, 220px);
-          font-weight: 600;
-          letter-spacing: -0.08em;
-          white-space: nowrap;
-        }
-        .manifesto-art::after {
-          content: "RIGIDEZ · RESISTÊNCIA · PROPÓSITO";
-          position: absolute;
-          top: 28px;
-          left: 28px;
-          color: var(--ink);
-          font-size: 11px;
-          letter-spacing: 0.12em;
-        }
-
-        footer {
-          display: grid;
-          grid-template-columns: 1fr auto;
-          gap: 30px;
-          align-items: end;
-          padding: 48px 32px;
-          background: var(--ink);
-          color: white;
-        }
-        .footer-brand img {
-          display: block;
-          width: min(620px, 65vw);
-          height: auto;
-        }
-        .footer-meta {
-          text-align: right;
-          color: #aeb7c3;
-          font-size: 12px;
-          line-height: 1.7;
-        }
-
-        .overlay {
-          position: fixed;
-          z-index: 29;
-          inset: 0;
-          background: rgba(21, 35, 54, 0.45);
-          opacity: 0;
-          pointer-events: none;
-          transition: opacity 0.3s;
-        }
-        .overlay.visible {
-          opacity: 1;
-          pointer-events: auto;
-        }
-        .filter-panel {
-          position: fixed;
-          z-index: 30;
-          top: 0;
-          right: 0;
-          width: min(430px, 100%);
-          height: 100dvh;
-          display: flex;
-          flex-direction: column;
-          padding: 28px;
-          background: var(--white);
-          transform: translateX(100%);
-          transition: transform 0.4s var(--ease);
-        }
-        .filter-panel.open {
-          transform: none;
-        }
-        .panel-head {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding-bottom: 25px;
-          border-bottom: 1px solid var(--line);
-        }
-        .panel-head h2 {
-          margin: 0;
-          font-size: 26px;
-          letter-spacing: -0.04em;
-        }
-        .close-button {
-          width: 38px;
-          height: 38px;
-          border: 1px solid var(--line);
-          border-radius: 50%;
-          background: transparent;
-          cursor: pointer;
-          font-size: 22px;
-        }
-        .filter-group {
-          padding: 28px 0;
-          border-bottom: 1px solid var(--line);
-        }
-        .filter-group h3 {
-          margin: 0 0 16px;
-          font-size: 13px;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-        }
-        .check-list {
-          display: grid;
-          gap: 13px;
-        }
-        .check-list label {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          cursor: pointer;
-        }
-        .check-list input {
-          accent-color: var(--electric);
-          width: 17px;
-          height: 17px;
-        }
-        .panel-actions {
-          margin-top: auto;
-          display: grid;
-          grid-template-columns: 1fr 1.4fr;
-          gap: 10px;
-          padding-top: 24px;
-        }
-        .panel-actions button {
-          min-height: 50px;
-          border: 1px solid var(--ink);
-          border-radius: 3px;
-          cursor: pointer;
-        }
-        .clear-button {
-          background: white;
-        }
-        .apply-button {
-          color: white;
-          background: var(--electric);
-          border-color: var(--electric) !important;
-        }
-
-        .search-layer {
-          position: fixed;
-          z-index: 40;
-          inset: 0;
-          padding: 30px 32px;
-          background: var(--paper);
-          transform: translateY(-100%);
-          transition: transform 0.4s var(--ease);
-        }
-        .search-layer.open {
-          transform: none;
-        }
-        .search-top {
-          display: flex;
-          justify-content: flex-end;
-        }
-        .search-wrap {
-          width: min(960px, 100%);
-          margin: 12vh auto 0;
-        }
-        .search-wrap label {
-          display: block;
-          margin-bottom: 22px;
-          color: var(--electric);
-          font-size: 12px;
-          font-weight: 700;
-          letter-spacing: 0.13em;
-          text-transform: uppercase;
-        }
-        .search-wrap input {
-          width: 100%;
-          padding: 0 0 20px;
-          color: var(--ink);
-          border: 0;
-          border-bottom: 2px solid var(--ink);
-          outline: none;
-          background: transparent;
-          font-size: clamp(36px, 7vw, 92px);
-          letter-spacing: -0.06em;
-        }
-        .search-wrap input::placeholder {
-          color: #b4bbc3;
-        }
-
-        :focus-visible {
-          outline: 2px solid var(--orange);
-          outline-offset: 3px;
-        }
-
-        @media (max-width: 900px) {
-          .site-header {
-            grid-template-columns: 1fr auto;
-            height: 68px;
-            padding: 0 20px;
-          }
-          .main-nav {
-            display: none;
-          }
-          .menu-button {
-            display: grid;
-          }
-          .hero {
-            min-height: 330px;
-            grid-template-columns: 1fr;
-            gap: 35px;
-            padding: 58px 20px 38px;
-          }
-          h1 {
-            font-size: clamp(68px, 17vw, 124px);
-          }
-          .hero-copy {
-            justify-self: start;
-          }
-          .catalogue {
-            padding: 0 20px 64px;
-          }
-          .product-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-          }
-          .manifesto {
-            grid-template-columns: 1fr;
-          }
-          .manifesto-art {
-            min-height: 300px;
-          }
-          footer {
-            padding: 40px 20px;
-          }
-        }
-
-        @media (max-width: 560px) {
-          .site-header {
-            padding: 0 16px;
-          }
-          .brand img {
-            width: 126px;
-          }
-          .header-actions {
-            gap: 7px;
-          }
-          .hero {
-            min-height: 310px;
-            padding: 48px 16px 32px;
-          }
-          h1 {
-            font-size: 20vw;
-            line-height: 0.84;
-          }
-          .hero-copy {
-            font-size: 15px;
-            max-width: 330px;
-          }
-          .catalogue {
-            padding: 0 16px 56px;
-          }
-          .toolbar {
-            min-height: 76px;
-            gap: 10px;
-          }
-          .filter-button {
-            width: 44px;
-            padding: 0;
-            justify-content: center;
-          }
-          .filter-button span:last-child {
-            display: none;
-          }
-          .result-line {
-            min-height: 62px;
-          }
-          .sort-inline span {
-            display: none;
-          }
-          .product-grid {
-            grid-template-columns: 1fr;
-            gap: 38px;
-          }
-          .product-visual {
-            aspect-ratio: 5 / 6;
-          }
-          .quick-button {
-            opacity: 1;
-            transform: none;
-          }
-          .manifesto-copy {
-            min-height: 330px;
-            padding: 40px 20px;
-          }
-          .manifesto h2 {
-            margin-top: 60px;
-          }
-          .manifesto-art {
-            min-height: 240px;
-          }
-          footer {
-            grid-template-columns: 1fr;
-            align-items: start;
-          }
-          .footer-meta {
-            text-align: left;
-          }
-          .filter-panel {
-            padding: 22px 18px;
-          }
-          .search-layer {
-            padding: 20px 16px;
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          *,
-          *::before,
-          *::after {
-            scroll-behavior: auto !important;
-            animation-duration: 0.01ms !important;
-            transition-duration: 0.01ms !important;
-          }
-        }
-      `}</style>
     </>
+  );
+}
+
+export default function CatalogoModulus({ catalog }: CatalogoModulusProps) {
+  return (
+    <CartProvider catalogSlug={catalog.slug}>
+      <CatalogoModulusInner catalog={catalog} />
+    </CartProvider>
   );
 }

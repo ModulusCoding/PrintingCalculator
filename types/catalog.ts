@@ -11,6 +11,7 @@ export interface CatalogProductView {
   photoAlt?: string | null;
   photoSecondaryAlt?: string | null;
   photoNote?: string | null;
+  images: string[];
   price?: number | null;
   displayOrder?: number;
 }

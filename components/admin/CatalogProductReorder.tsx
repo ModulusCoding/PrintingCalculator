@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { reorderCatalogProductsAction } from "@/lib/catalogs/actions";
-import { GripVertical, Check, AlertCircle, Loader2, ArrowUp, ArrowDown } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { getCatalogProducts, reorderCatalogProductsAction } from "@/lib/catalogs/actions";
+import { GripVertical, Check, AlertCircle, Loader2, ArrowUp, ArrowDown, Plus } from "lucide-react";
+import { AddProductsModal } from "@/components/admin/AddProductsModal";
 
 export interface ReorderableProduct {
   id: string;
@@ -22,11 +24,36 @@ export function CatalogProductReorder({
   catalogId,
   initialProducts,
 }: CatalogProductReorderProps) {
+  const router = useRouter();
   const [products, setProducts] = useState<ReorderableProduct[]>(initialProducts);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setProducts(initialProducts);
+  }, [initialProducts]);
+
+  const refreshProducts = async () => {
+    const res = await getCatalogProducts(catalogId);
+    if (res.productIds && !res.error) {
+      const ids = res.productIds as string[];
+      const currentIds = new Set(products.map((p) => p.id));
+      const newIds = new Set(ids);
+      const same =
+        ids.length === products.length &&
+        ids.every((id) => currentIds.has(id)) &&
+        products.every((p) => newIds.has(p.id));
+      if (!same) {
+        router.refresh();
+      }
+    } else {
+      router.refresh();
+    }
+  };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
@@ -92,11 +119,27 @@ export function CatalogProductReorder({
 
   if (!products.length) {
     return (
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 text-center">
-        <p className="text-sm text-slate-500 dark:text-slate-400">
-          Nenhum produto associado a este catálogo. Associe produtos editando-os na seção de Produtos.
-        </p>
-      </div>
+      <>
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 text-center space-y-4">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Nenhum produto associado a este catálogo.
+          </p>
+          <button
+            type="button"
+            onClick={() => setIsModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 font-semibold text-xs transition-colors"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Adicionar produtos
+          </button>
+        </div>
+        <AddProductsModal
+          catalogId={catalogId}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSaved={refreshProducts}
+        />
+      </>
     );
   }
 
@@ -112,12 +155,22 @@ export function CatalogProductReorder({
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleSaveOrder}
-          disabled={isPending}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 font-semibold text-xs transition-colors shadow-md shadow-blue-600/20 disabled:opacity-50 shrink-0 self-start sm:self-auto"
-        >
+        <div className="flex items-center gap-3 shrink-0">
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold text-xs transition-colors"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Adicionar produtos
+            </button>
+
+            <button
+              type="button"
+              onClick={handleSaveOrder}
+              disabled={isPending}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 font-semibold text-xs transition-colors shadow-md shadow-blue-600/20 disabled:opacity-50 shrink-0 self-start sm:self-auto"
+            >
           {isPending ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -218,6 +271,14 @@ export function CatalogProductReorder({
           );
         })}
       </div>
+    </div>
+
+      <AddProductsModal
+        catalogId={catalogId}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSaved={refreshProducts}
+      />
     </div>
   );
 }

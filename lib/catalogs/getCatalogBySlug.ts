@@ -38,7 +38,7 @@ export async function getCatalogBySlug(slug: string): Promise<CatalogView | null
         // 2. Busca a relação N:N (catalog_products) com ordenação por display_order
         const { data: catalogProducts, error: cpError } = await supabase
           .from("catalog_products")
-          .select("display_order, product:products(*)")
+          .select("display_order, product:products(*, product_images(id, url, display_order))")
           .eq("catalog_id", catalog.id)
           .order("display_order", { ascending: true });
 
@@ -49,6 +49,19 @@ export async function getCatalogBySlug(slug: string): Promise<CatalogView | null
             // Suporte quando o produto associado é um objeto populado pela query
             const rawProd = Array.isArray(item.product) ? item.product[0] : item.product;
             if (rawProd && rawProd.active !== false) {
+              const rawImages = rawProd.product_images || [];
+              const sortedDbImages = [...rawImages]
+                .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
+                .map((img) => img.url)
+                .filter(Boolean);
+
+              const imageList =
+                sortedDbImages.length > 0
+                  ? sortedDbImages
+                  : rawProd.image_url
+                  ? [rawProd.image_url]
+                  : ["/images/catalogo/mod-001-luminaria-shoji.webp"];
+
               products.push({
                 id: rawProd.id,
                 index: rawProd.slug ? `MOD—${rawProd.slug.slice(0, 3).toUpperCase()}` : "MOD—000",
@@ -57,11 +70,12 @@ export async function getCatalogBySlug(slug: string): Promise<CatalogView | null
                 format: "Unitário",
                 detail: "Impresso sob demanda",
                 description: rawProd.description,
-                photo: rawProd.image_url || "/images/catalogo/mod-001-luminaria-shoji.webp",
-                photoSecondary: null,
+                photo: imageList[0],
+                photoSecondary: imageList[1] || null,
                 photoAlt: rawProd.name,
-                photoSecondaryAlt: null,
+                photoSecondaryAlt: rawProd.name,
                 photoNote: null,
+                images: imageList,
                 price: rawProd.price ?? null,
                 displayOrder: item.display_order ?? 0,
               });
