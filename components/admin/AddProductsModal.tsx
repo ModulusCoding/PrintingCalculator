@@ -17,9 +17,10 @@ interface AddProductsModalProps {
   catalogId: string;
   isOpen: boolean;
   onClose: () => void;
+  onSaved?: () => void;
 }
 
-export function AddProductsModal({ catalogId, isOpen, onClose }: AddProductsModalProps) {
+export function AddProductsModal({ catalogId, isOpen, onClose, onSaved }: AddProductsModalProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -82,9 +83,10 @@ export function AddProductsModal({ catalogId, isOpen, onClose }: AddProductsModa
         setError(res.error);
       } else {
         setSuccess(true);
+        onSaved?.();
         setTimeout(() => {
           onClose();
-        }, 1500);
+        }, 800);
       }
     });
   };

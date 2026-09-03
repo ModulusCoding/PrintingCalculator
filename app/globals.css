@@ -56,3 +56,31 @@ html {
 * {
   box-sizing: border-box;
 }
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.8fr);
+  gap: 2rem;
+  align-items: end;
+}
+
+.hero-title {
+  min-width: 0;
+}
+
+.hero-title h1 {
+  margin: 0;
+  font-size: clamp(3rem, 6vw, 6rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+
+  /* Nunca deixa uma palavra grande estourar o container */
+  overflow-wrap: anywhere;
+  word-break: normal;
+
+  /* Ajuda o navegador a distribuir títulos com várias palavras */
+  text-wrap: balance;
+}
+
+.hero-copy {
+  min-width: 0;
+}

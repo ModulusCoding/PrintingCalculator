@@ -15,6 +15,11 @@ export function ProductCarousel({ images, productName, productId }: ProductCarou
   const carouselRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
+  const touchStartXRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+  const touchDeltaXRef = useRef<number>(0);
+  const touchDeltaYRef = useRef<number>(0);
+
   const goToPrev = useCallback(() => {
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   }, [images.length]);
@@ -26,6 +31,47 @@ export function ProductCarousel({ images, productName, productId }: ProductCarou
   const goToIndex = useCallback((index: number) => {
     setCurrentIndex(index);
   }, []);
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (images.length <= 1) return;
+    const touch = e.touches[0];
+    touchStartXRef.current = touch.clientX;
+    touchStartYRef.current = touch.clientY;
+    touchDeltaXRef.current = 0;
+    touchDeltaYRef.current = 0;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartXRef.current === null || touchStartYRef.current === null || images.length <= 1) return;
+    const touch = e.touches[0];
+    touchDeltaXRef.current = touch.clientX - touchStartXRef.current;
+    touchDeltaYRef.current = touch.clientY - touchStartYRef.current;
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartXRef.current === null || images.length <= 1) return;
+
+    const deltaX = touchDeltaXRef.current;
+    const deltaY = touchDeltaYRef.current;
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+
+    const minSwipeDistance = 40;
+
+    // Se o movimento for predominantemente horizontal e superior ao limite de ativação
+    if (absX > minSwipeDistance && absX > absY * 1.2) {
+      if (deltaX < 0) {
+        goToNext();
+      } else {
+        goToPrev();
+      }
+    }
+
+    touchStartXRef.current = null;
+    touchStartYRef.current = null;
+    touchDeltaXRef.current = 0;
+    touchDeltaYRef.current = 0;
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -75,7 +121,15 @@ export function ProductCarousel({ images, productName, productId }: ProductCarou
   }
 
   return (
-    <div className="product-carousel" data-product-id={productId} ref={carouselRef} tabIndex={0}>
+    <div
+      className="product-carousel"
+      data-product-id={productId}
+      ref={carouselRef}
+      tabIndex={0}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       <div
         className="product-carousel-track"
         ref={trackRef}
@@ -134,126 +188,7 @@ export function ProductCarousel({ images, productName, productId }: ProductCarou
         ))}
       </div>
 
-      <style jsx>{`
-        .product-carousel {
-          position: relative;
-          width: 100%;
-          aspect-ratio: 4 / 5;
-          overflow: hidden;
-          background: #eaebe8;
-          border-radius: inherit;
-        }
-        .product-carousel-track {
-          display: flex;
-          width: 100%;
-          height: 100%;
-          transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        .product-carousel-slide {
-          flex: 0 0 100%;
-          width: 100%;
-          height: 100%;
-          position: relative;
-        }
-        .product-carousel-slide > div,
-        .product-carousel-slide img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-        .product-carousel-placeholder {
-          width: 100%;
-          height: 100%;
-          background: #e8e8e5;
-        }
-        .product-carousel-btn {
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          z-index: 10;
-          width: 36px;
-          height: 36px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border: none;
-          border-radius: 50%;
-          background: rgba(255, 255, 255, 0.9);
-          color: #152336;
-          cursor: pointer;
-          opacity: 0;
-          transition: opacity 0.2s, background 0.2s, transform 0.2s;
-          backdrop-filter: blur(4px);
-        }
-        .product-carousel:hover .product-carousel-btn,
-        .product-carousel:focus-within .product-carousel-btn {
-          opacity: 1;
-        }
-        .product-carousel-btn:hover {
-          background: white;
-          transform: translateY(-50%) scale(1.05);
-        }
-        .product-carousel-btn:focus-visible {
-          opacity: 1;
-          outline: 2px solid #ff4e26;
-          outline-offset: 2px;
-        }
-        .product-carousel-btn-prev {
-          left: 10px;
-        }
-        .product-carousel-btn-next {
-          right: 10px;
-        }
-        .product-carousel-indicators {
-          position: absolute;
-          bottom: 12px;
-          left: 50%;
-          transform: translateX(-50%);
-          display: flex;
-          gap: 6px;
-          z-index: 10;
-          padding: 4px 8px;
-          background: rgba(255, 255, 255, 0.8);
-          border-radius: 999px;
-          backdrop-filter: blur(4px);
-        }
-        .product-carousel-indicator {
-          width: 7px;
-          height: 7px;
-          border-radius: 50%;
-          border: none;
-          background: rgba(21, 35, 54, 0.3);
-          cursor: pointer;
-          transition: background 0.2s, transform 0.2s;
-        }
-        .product-carousel-indicator:hover {
-          background: rgba(21, 35, 54, 0.6);
-          transform: scale(1.2);
-        }
-        .product-carousel-indicator.active {
-          background: #152336;
-        }
-        .product-carousel-indicator:focus-visible {
-          outline: 2px solid #ff4e26;
-          outline-offset: 2px;
-        }
 
-        @media (max-width: 560px) {
-          .product-carousel-btn {
-            opacity: 1;
-            width: 32px;
-            height: 32px;
-          }
-          .product-carousel-indicators {
-            bottom: 10px;
-            gap: 5px;
-          }
-          .product-carousel-indicator {
-            width: 6px;
-            height: 6px;
-          }
-        }
-      `}</style>
     </div>
   );
 }

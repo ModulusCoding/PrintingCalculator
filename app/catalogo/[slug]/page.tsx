@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CatalogoModulus from "@/components/catalog/CatalogoModulus";
 import { getCatalogBySlug } from "@/lib/catalogs/getCatalogBySlug";
+import "./catalog.css";
 
 interface CatalogPageProps {
   params: Promise<{
