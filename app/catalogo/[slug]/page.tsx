@@ -48,7 +48,7 @@ export async function generateMetadata({
       siteName: "Modulus 3D Calculator",
       images: [
         {
-          url: "/og-image.png",
+          url: "/opengraph-image.png",
           width: 1200,
           height: 630,
           alt: `${catalogName} | Modulus`,
@@ -64,7 +64,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: ["/og-image.png"],
+      images: ["/opengraph-image.png"],
     },
 
     robots: {
