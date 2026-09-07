@@ -46,6 +46,7 @@ export const ORDER_STATUS_VALUES = [
   "imprimindo",
   "entregue",
   "cancelado",
+  "carrinho_perdido",
 ] as const;
 
 export type OrderStatus = (typeof ORDER_STATUS_VALUES)[number];
@@ -83,6 +84,10 @@ export const STATUS_CONFIG: Record<OrderStatus, StatusConfig> = {
   cancelado: {
     label: "Cancelado",
     badgeClass: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/60 dark:text-red-300 dark:border-red-800",
+  },
+  carrinho_perdido: {
+    label: "Carrinho perdido",
+    badgeClass: "bg-zinc-100 text-zinc-700 border-zinc-300 dark:bg-zinc-900/70 dark:text-zinc-300 dark:border-zinc-700",
   },
 };
 

@@ -101,6 +101,7 @@ export const closedSaleSchema = z.object({
       "imprimindo",
       "entregue",
       "cancelado",
+      "carrinho_perdido",
     ],
     { error: "Status de pedido inválido." }
   ).default("em_conversao"),
