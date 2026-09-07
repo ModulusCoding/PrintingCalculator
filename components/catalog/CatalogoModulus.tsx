@@ -677,7 +677,7 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
     href={`https://wa.me/5511912000753?text=${whatsappMessage}`}
     target="_blank"
     rel="noopener noreferrer"
-    className="group inline-flex items-center gap-3 bg-white text-[#2b00ff] px-6 py-3 text-sm md:text-base font-bold tracking-tight hover:bg-[#ff4e26] hover:text-white transition-all duration-300"
+    className="group inline-flex items-center gap-3 bg-white !text-[#2b00ff] px-6 py-3 text-sm md:text-base font-bold tracking-tight hover:bg-[#ff4e26] hover:!text-white transition-all duration-300"
     whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
     whileTap={shouldReduceMotion ? {} : { scale: 0.98 }}
   >
@@ -755,7 +755,7 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
         </section>
 
         {/* Quebra branca limpa entre Um produto feito para você e Nosso princípio */}
-        <div className="catalog-exclusive-break bg-[#152336]" aria-hidden="true" />
+        <div className="catalog-exclusive-break !bg-[#152336]" aria-hidden="true" />
 
         {/* NOSSO PRINCÍPIO */}
         <motion.section
