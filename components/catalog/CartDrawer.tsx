@@ -81,9 +81,10 @@ export function CartDrawer({ isOpen, onClose, products }: CartDrawerProps) {
             aria-hidden="true"
           />
 
-          {/* Drawer Panel */}
+          {/* Drawer Panel — fundo sempre branco conforme solicitado */}
           <motion.aside
-            className="fixed top-0 right-0 z-[50] w-full sm:w-[430px] h-dvh flex flex-col bg-white dark:bg-slate-900 shadow-2xl border-l border-slate-200 dark:border-slate-800"
+            className="fixed top-0 right-0 z-[50] w-full sm:w-[430px] h-dvh flex flex-col bg-white !bg-white shadow-2xl border-l border-slate-200"
+            style={{ backgroundColor: '#FFFFFF' }}
             role="dialog"
             aria-modal="true"
             aria-label="Carrinho"
@@ -92,12 +93,12 @@ export function CartDrawer({ isOpen, onClose, products }: CartDrawerProps) {
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 350, damping: 32 }}
           >
-            <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-800 shrink-0">
-              <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+            <div className="flex items-center justify-between p-5 border-b border-slate-200 shrink-0" style={{ backgroundColor: '#FFFFFF' }}>
+              <h2 className="text-xl font-bold tracking-tight text-slate-900">
                 Carrinho
               </h2>
               <motion.button
-                className="p-2 rounded-full border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors"
+                className="p-2 rounded-full border border-slate-200 hover:bg-slate-100 text-slate-600 transition-colors"
                 onClick={onClose}
                 aria-label="Fechar carrinho"
                 whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
@@ -108,8 +109,8 @@ export function CartDrawer({ isOpen, onClose, products }: CartDrawerProps) {
             </div>
 
             {validItems.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-slate-500">
-                <p className="text-lg font-medium text-slate-900 dark:text-white mb-1">
+              <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-slate-500" style={{ backgroundColor: '#FFFFFF' }}>
+                <p className="text-lg font-medium text-slate-900 mb-1">
                   Seu carrinho está vazio
                 </p>
                 <p className="text-sm">Adicione produtos do catálogo</p>
@@ -118,6 +119,7 @@ export function CartDrawer({ isOpen, onClose, products }: CartDrawerProps) {
               <>
                 <motion.ul
                   className="flex-1 overflow-y-auto p-4 space-y-4"
+                  style={{ backgroundColor: '#FFFFFF' }}
                   role="list"
                   initial="hidden"
                   animate="show"
@@ -141,7 +143,7 @@ export function CartDrawer({ isOpen, onClose, products }: CartDrawerProps) {
                           }}
                           exit={{ opacity: 0, scale: 0.9 }}
                           transition={{ duration: 0.2 }}
-                          className="grid grid-cols-[72px_1fr_40px] gap-3 items-center p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50"
+                          className="grid grid-cols-[72px_1fr_40px] gap-3 items-center p-2.5 rounded-xl border border-slate-100 bg-slate-50/50"
                         >
                           <div className="w-[72px] h-[90px] rounded-lg overflow-hidden bg-slate-200 relative shrink-0">
                             <Image
@@ -155,11 +157,11 @@ export function CartDrawer({ isOpen, onClose, products }: CartDrawerProps) {
                           </div>
 
                           <div className="min-w-0 space-y-1">
-                            <h3 className="text-sm font-semibold text-slate-900 dark:text-white truncate">
+                            <h3 className="text-sm font-semibold text-slate-900 truncate">
                               {product.name}
                             </h3>
                             {product.price != null && (
-                              <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">
+                              <p className="text-xs font-semibold text-indigo-600">
                                 {new Intl.NumberFormat("pt-BR", {
                                   style: "currency",
                                   currency: "BRL",
@@ -170,7 +172,7 @@ export function CartDrawer({ isOpen, onClose, products }: CartDrawerProps) {
                             <div className="flex items-center gap-2 pt-1">
                               <button
                                 type="button"
-                                className="w-7 h-7 flex items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 disabled:opacity-40"
+                                className="w-7 h-7 flex items-center justify-center rounded-md border border-slate-200 bg-white text-slate-700 disabled:opacity-40"
                                 onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                                 aria-label={`Diminuir quantidade de ${product.name}`}
                                 disabled={item.quantity <= 1}
@@ -182,7 +184,7 @@ export function CartDrawer({ isOpen, onClose, products }: CartDrawerProps) {
                               </span>
                               <button
                                 type="button"
-                                className="w-7 h-7 flex items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                                className="w-7 h-7 flex items-center justify-center rounded-md border border-slate-200 bg-white text-slate-700"
                                 onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                                 aria-label={`Aumentar quantidade de ${product.name}`}
                               >
@@ -193,7 +195,7 @@ export function CartDrawer({ isOpen, onClose, products }: CartDrawerProps) {
 
                           <motion.button
                             type="button"
-                            className="w-9 h-9 flex items-center justify-center rounded-full border border-slate-200 dark:border-slate-800 text-slate-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors"
+                            className="w-9 h-9 flex items-center justify-center rounded-full border border-slate-200 text-slate-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 transition-colors"
                             onClick={() => removeItem(item.productId)}
                             aria-label={`Remover ${product.name} do carrinho`}
                             whileHover={shouldReduceMotion ? {} : { scale: 1.1 }}
@@ -207,10 +209,10 @@ export function CartDrawer({ isOpen, onClose, products }: CartDrawerProps) {
                   </AnimatePresence>
                 </motion.ul>
 
-                <div className="p-5 border-t border-slate-200 dark:border-slate-800 space-y-2.5 shrink-0">
+                <div className="p-5 border-t border-slate-200 space-y-2.5 shrink-0" style={{ backgroundColor: '#FFFFFF' }}>
                   <button
                     type="button"
-                    className="w-full py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 font-semibold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+                    className="w-full py-2.5 rounded-xl border border-slate-300 font-semibold text-xs text-slate-700 hover:bg-slate-100 transition-colors disabled:opacity-50"
                     onClick={clearCart}
                     disabled={validItems.length === 0}
                   >
@@ -219,7 +221,7 @@ export function CartDrawer({ isOpen, onClose, products }: CartDrawerProps) {
 
                   <motion.button
                     type="button"
-                    className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 disabled:opacity-50"
+                    className="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 !text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 disabled:opacity-50"
                     onClick={generateWhatsAppMessage}
                     disabled={validItems.length === 0}
                     whileHover={shouldReduceMotion ? {} : { scale: 1.02 }}
