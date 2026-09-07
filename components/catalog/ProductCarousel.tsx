@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Image from "next/image";
+import { motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ProductCarouselProps {
@@ -13,7 +14,7 @@ interface ProductCarouselProps {
 export function ProductCarousel({ images, productName, productId }: ProductCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   const touchStartXRef = useRef<number | null>(null);
   const touchStartYRef = useRef<number | null>(null);
@@ -56,9 +57,8 @@ export function ProductCarousel({ images, productName, productId }: ProductCarou
     const absX = Math.abs(deltaX);
     const absY = Math.abs(deltaY);
 
-    const minSwipeDistance = 40;
+    const minSwipeDistance = 35;
 
-    // Se o movimento for predominantemente horizontal e superior ao limite de ativação
     if (absX > minSwipeDistance && absX > absY * 1.2) {
       if (deltaX < 0) {
         goToNext();
@@ -104,14 +104,14 @@ export function ProductCarousel({ images, productName, productId }: ProductCarou
     const src = images[0] || "/images/catalogo/mod-001-luminaria-shoji.webp";
     return (
       <div className="product-carousel" data-product-id={productId}>
-        <div className="product-carousel-track" ref={trackRef}>
+        <div className="product-carousel-track">
           <div className="product-carousel-slide">
             <Image
               src={src}
               alt={productName}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover"
+              className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
               loading="lazy"
             />
           </div>
@@ -122,7 +122,7 @@ export function ProductCarousel({ images, productName, productId }: ProductCarou
 
   return (
     <div
-      className="product-carousel"
+      className="product-carousel select-none"
       data-product-id={productId}
       ref={carouselRef}
       tabIndex={0}
@@ -130,10 +130,14 @@ export function ProductCarousel({ images, productName, productId }: ProductCarou
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div
+      <motion.div
         className="product-carousel-track"
-        ref={trackRef}
-        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        animate={{ x: `-${currentIndex * 100}%` }}
+        transition={
+          shouldReduceMotion
+            ? { duration: 0 }
+            : { type: "spring", stiffness: 300, damping: 30 }
+        }
       >
         {images.map((src, index) => (
           <div key={`${src}-${index}`} className="product-carousel-slide">
@@ -143,7 +147,7 @@ export function ProductCarousel({ images, productName, productId }: ProductCarou
                 alt={`${productName} — imagem ${index + 1} de ${images.length}`}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="object-cover"
+                className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                 loading={index === 0 ? "eager" : "lazy"}
                 priority={index === 0}
               />
@@ -152,27 +156,29 @@ export function ProductCarousel({ images, productName, productId }: ProductCarou
             )}
           </div>
         ))}
-      </div>
+      </motion.div>
 
-      <button
+      <motion.button
         type="button"
         className="product-carousel-btn product-carousel-btn-prev"
         onClick={goToPrev}
         aria-label={`Imagem anterior de ${productName}`}
-        aria-controls={`carousel-${productId}`}
+        whileHover={shouldReduceMotion ? {} : { scale: 1.1 }}
+        whileTap={shouldReduceMotion ? {} : { scale: 0.9 }}
       >
         <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-      </button>
+      </motion.button>
 
-      <button
+      <motion.button
         type="button"
         className="product-carousel-btn product-carousel-btn-next"
         onClick={goToNext}
         aria-label={`Próxima imagem de ${productName}`}
-        aria-controls={`carousel-${productId}`}
+        whileHover={shouldReduceMotion ? {} : { scale: 1.1 }}
+        whileTap={shouldReduceMotion ? {} : { scale: 0.9 }}
       >
         <ChevronRight className="h-5 w-5" aria-hidden="true" />
-      </button>
+      </motion.button>
 
       <div className="product-carousel-indicators" role="tablist" aria-label="Selecionar imagem">
         {images.map((_, index) => (
@@ -187,8 +193,6 @@ export function ProductCarousel({ images, productName, productId }: ProductCarou
           />
         ))}
       </div>
-
-
     </div>
   );
 }
