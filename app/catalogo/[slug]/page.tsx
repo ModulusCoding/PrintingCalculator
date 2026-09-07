@@ -16,22 +16,33 @@ export async function generateMetadata({ params }: CatalogPageProps): Promise<Me
 
   if (!catalog) {
     return {
-      title: "Catálogo não encontrado | Modulus",
+      title: "Catálogo não encontrado | Catálogo de Produtos Modulus",
+      robots: { index: true, follow: true },
     };
   }
 
-  const description =
-    catalog.heroCopy ||
-    catalog.eyebrow ||
-    "Uma seleção de objetos úteis, duráveis e produzidos sob demanda pela Modulus.";
+  const catalogName = catalog.title?.trim() ? catalog.title.trim() : slug;
+  const title = `${catalogName} | Catálogo de Produtos Modulus`;
+  const description = `Confira os produtos do catálogo ${catalogName} da Modulus. Encontre peças impressas em 3D e criações feitas sob demanda.`;
 
   return {
-    title: `${catalog.title} | Modulus`,
-    description: description,
+    title,
+    description,
     openGraph: {
-      title: `${catalog.title} | Modulus`,
-      description: description,
+      title,
+      description,
       type: "website",
+      locale: "pt_BR",
+      siteName: "Modulus 3D Calculator",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
   };
 }
