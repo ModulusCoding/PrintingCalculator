@@ -404,7 +404,8 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               {catalog.heroCopy}
             </motion.p>
           )}
-
+ 
+ 
           {/* CTA PEÇA EXCLUSIVA */}
           <motion.div className="exclusive-piece-cta" variants={itemVariants}>
             <div className="exclusive-piece-content">
