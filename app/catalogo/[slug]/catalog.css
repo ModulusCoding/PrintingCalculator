@@ -291,8 +291,11 @@ main {
   padding: 0 20px;
   border: 1px solid var(--ink);
   border-radius: 999px;
-  background: transparent;
-  color: var(--ink);
+
+    color: white;
+      background: var(--electric);
+      border-color: var(--electric);
+
   font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
@@ -303,8 +306,8 @@ main {
 
 .exclusive-piece-btn:hover {
   color: white;
-  background: var(--electric);
-  border-color: var(--electric);
+  background: var(--orange);
+  border-color: var(--orange);
 }
 
 .exclusive-piece-btn:focus-visible {
