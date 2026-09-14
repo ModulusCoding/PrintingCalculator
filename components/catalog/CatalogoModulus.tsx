@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import {
   motion,
   AnimatePresence,
@@ -34,6 +35,41 @@ interface FlyingItem {
 }
 
 function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const initialFiltros = useMemo(() => {
+    const raw = searchParams.get("filtros");
+    if (!raw) return [] as string[];
+    return raw.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
+  }, [searchParams]);
+  const [filterSlugs, setFilterSlugs] = useState<string[]>(initialFiltros);
+  useEffect(() => {
+    setFilterSlugs(initialFiltros);
+  }, [initialFiltros]);
+
+  const updateFilterUrl = useCallback((next: string[]) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (next.length === 0) params.delete("filtros");
+    else params.set("filtros", next.join(","));
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }, [searchParams, router, pathname]);
+
+  const toggleFilterSlug = useCallback((slug: string) => {
+    const normalized = slug.toLowerCase();
+    setFilterSlugs((prev) => {
+      const next = prev.includes(normalized) ? prev.filter((s) => s !== normalized) : [...prev, normalized];
+      updateFilterUrl(next);
+      return next;
+    });
+  }, [updateFilterUrl]);
+
+  const clearFilterSlugs = useCallback(() => {
+    setFilterSlugs([]);
+    updateFilterUrl([]);
+  }, [updateFilterUrl]);
+
   const [activeCategory, setActiveCategory] = useState<Category>("Todos");
   const [query, setQuery] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("featured");
@@ -132,13 +168,14 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
       const tabOK = validatedActiveCategory === "Todos" || product.category === validatedActiveCategory;
       const categoryOK = !categoryFilters.length || categoryFilters.includes(product.category);
       const formatOK = !formatFilters.length || formatFilters.includes(product.format);
+      const filterOK = !filterSlugs.length || (product.filterSlugs || []).some((s) => filterSlugs.includes(s.toLowerCase()));
       const haystack = `${product.name ?? ""} ${product.detail ?? ""} ${product.description ?? ""}`.toLocaleLowerCase(
         "pt-BR"
       );
       const textOK = !normalizedQuery || haystack.includes(normalizedQuery);
-      return tabOK && categoryOK && formatOK && textOK;
+      return tabOK && categoryOK && formatOK && filterOK && textOK;
     });
-  }, [catalog.products, validatedActiveCategory, categoryFilters, formatFilters, normalizedQuery]);
+  }, [catalog.products, validatedActiveCategory, categoryFilters, formatFilters, filterSlugs, normalizedQuery]);
 
   const sortedProducts = useMemo(() => {
     if (sortMode === "name") {
@@ -171,11 +208,12 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
     setActiveCategory("Todos");
     setCategoryFilters([]);
     setFormatFilters([]);
+    clearFilterSlugs();
   }
 
   const hasActiveFilters = useMemo(() => {
-    return Boolean(normalizedQuery || validatedActiveCategory !== "Todos" || categoryFilters.length || formatFilters.length);
-  }, [normalizedQuery, validatedActiveCategory, categoryFilters.length, formatFilters.length]);
+    return Boolean(normalizedQuery || validatedActiveCategory !== "Todos" || categoryFilters.length || formatFilters.length || filterSlugs.length);
+  }, [normalizedQuery, validatedActiveCategory, categoryFilters.length, formatFilters.length, filterSlugs.length]);
 
   function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
@@ -422,7 +460,7 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               whileHover={shouldReduceMotion ? {} : { scale: 1.03 }}
               whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}
             >
-              Criar uma peça exclusiva <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              Criar uma peça exclusiva <svg className="ml-2" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
               </svg>
             </motion.a>
@@ -516,6 +554,33 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               <span>Filtros</span>
             </motion.button>
           </div>
+
+          {catalog.filters && catalog.filters.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 py-3" role="group" aria-label="Filtros do catálogo">
+              <button
+                type="button"
+                onClick={clearFilterSlugs}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${filterSlugs.length === 0 ? "bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700"}`}
+                aria-pressed={filterSlugs.length === 0}
+              >
+                Todos
+              </button>
+              {catalog.filters.map((f) => {
+                const active = filterSlugs.includes(f.slug.toLowerCase());
+                return (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => toggleFilterSlug(f.slug)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${active ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700"}`}
+                    aria-pressed={active}
+                  >
+                    {f.name}
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           <div className="result-line">
             <span>

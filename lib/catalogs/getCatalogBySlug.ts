@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { CatalogView, CatalogProductView } from "@/types/catalog";
+import type { CatalogView, CatalogProductView, CatalogFilterView } from "@/types/catalog";
 import { TEMPORARY_CATALOG_MOCKS } from "./temporaryCatalogMocks";
 
 /**
@@ -46,7 +46,6 @@ export async function getCatalogBySlug(slug: string): Promise<CatalogView | null
 
         if (!cpError && catalogProducts) {
           for (const item of catalogProducts) {
-            // Suporte quando o produto associado é um objeto populado pela query
             const rawProd = Array.isArray(item.product) ? item.product[0] : item.product;
             if (rawProd && rawProd.active !== false) {
               const rawImages = rawProd.product_images || [];
@@ -83,6 +82,63 @@ export async function getCatalogBySlug(slug: string): Promise<CatalogView | null
           }
         }
 
+        let filters: CatalogFilterView[] = [];
+        let filterProductMap = new Map<string, { ids: string[]; slugs: string[] }>();
+        try {
+          const { data: filterRows } = await supabase
+            .from("catalog_filters")
+            .select("id, name, slug, description, display_order")
+            .eq("catalog_id", catalog.id)
+            .order("display_order", { ascending: true })
+            .order("created_at", { ascending: true });
+
+          if (filterRows && filterRows.length > 0) {
+            filters = filterRows.map((f: { id: string; name: string; slug: string; description: string | null; display_order: number | null }) => ({
+              id: f.id,
+              name: f.name,
+              slug: f.slug,
+              description: f.description,
+              displayOrder: f.display_order ?? 0,
+            }));
+
+            const filterIds = filters.map((f) => f.id);
+            const { data: assocRows } = await supabase
+              .from("catalog_filter_products")
+              .select("catalog_filter_id, product_id")
+              .in("catalog_filter_id", filterIds);
+
+            const slugById = new Map(filters.map((f) => [f.id, f.slug]));
+            for (const row of (assocRows || []) as { catalog_filter_id: string; product_id: string }[]) {
+              const entry = filterProductMap.get(row.product_id) || { ids: [], slugs: [] };
+              entry.ids.push(row.catalog_filter_id);
+              const slug = slugById.get(row.catalog_filter_id);
+              if (slug) entry.slugs.push(slug);
+              filterProductMap.set(row.product_id, entry);
+            }
+
+            for (const p of products) {
+              const mapped = filterProductMap.get(p.id);
+              if (mapped) {
+                p.filterIds = mapped.ids;
+                p.filterSlugs = mapped.slugs;
+              } else {
+                p.filterIds = [];
+                p.filterSlugs = [];
+              }
+            }
+          } else {
+            for (const p of products) {
+              p.filterIds = [];
+              p.filterSlugs = [];
+            }
+          }
+        } catch {
+          for (const p of products) {
+            p.filterIds = [];
+            p.filterSlugs = [];
+          }
+        }
+
         return {
           id: catalog.id,
           slug: catalog.slug,
@@ -95,6 +151,7 @@ export async function getCatalogBySlug(slug: string): Promise<CatalogView | null
           manifestoFormula: "E = σ / ε",
           manifestoDescription: "Módulo de elasticidade: E igual a sigma sobre epsilon",
           products,
+          filters,
         };
       }
     } catch {
