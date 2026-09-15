@@ -17,7 +17,6 @@ import { CartDrawer } from "./CartDrawer";
 import { ExclusiveProductAnimation } from "./ExclusiveProductAnimation";
 import { ShoppingCart, ShoppingCartPlus, Check, Sparkles } from "lucide-react";
 
-type Category = "Todos" | string;
 type Format = string;
 type SortMode = "featured" | "name";
 
@@ -44,33 +43,44 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
     return raw.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
   }, [searchParams]);
   const [filterSlugs, setFilterSlugs] = useState<string[]>(initialFiltros);
-  useEffect(() => {
-    setFilterSlugs(initialFiltros);
-  }, [initialFiltros]);
+  const isInternalUpdateRef = useRef(false);
 
-  const updateFilterUrl = useCallback((next: string[]) => {
+  useEffect(() => {
+    if (isInternalUpdateRef.current) {
+      isInternalUpdateRef.current = false;
+      return;
+    }
+    const next = initialFiltros.join(",");
+    const cur = filterSlugs.join(",");
+    if (next !== cur) setFilterSlugs(initialFiltros);
+  }, [initialFiltros, filterSlugs]);
+
+  useEffect(() => {
+    const currentFiltros = searchParams.get("filtros") || "";
+    const nextFiltros = filterSlugs.join(",");
+    if (currentFiltros === nextFiltros) return;
+
     const params = new URLSearchParams(searchParams.toString());
-    if (next.length === 0) params.delete("filtros");
-    else params.set("filtros", next.join(","));
+    if (filterSlugs.length === 0) params.delete("filtros");
+    else params.set("filtros", filterSlugs.join(","));
     const qs = params.toString();
-    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
-  }, [searchParams, router, pathname]);
+    const url = qs ? `${pathname}?${qs}` : pathname;
+    router.replace(url, { scroll: false });
+  }, [filterSlugs, pathname, router, searchParams]);
 
   const toggleFilterSlug = useCallback((slug: string) => {
     const normalized = slug.toLowerCase();
-    setFilterSlugs((prev) => {
-      const next = prev.includes(normalized) ? prev.filter((s) => s !== normalized) : [...prev, normalized];
-      updateFilterUrl(next);
-      return next;
-    });
-  }, [updateFilterUrl]);
+    isInternalUpdateRef.current = true;
+    setFilterSlugs((prev) =>
+      prev.includes(normalized) ? prev.filter((s) => s !== normalized) : [...prev, normalized]
+    );
+  }, []);
 
   const clearFilterSlugs = useCallback(() => {
+    isInternalUpdateRef.current = true;
     setFilterSlugs([]);
-    updateFilterUrl([]);
-  }, [updateFilterUrl]);
+  }, []);
 
-  const [activeCategory, setActiveCategory] = useState<Category>("Todos");
   const [query, setQuery] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("featured");
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
@@ -135,15 +145,14 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
 
   const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
 
-  const categories: Category[] = useMemo(() => {
-    const unique = Array.from(
+  const categories = useMemo(() => {
+    return Array.from(
       new Set(
         (catalog.products || [])
           .map((product) => product.category)
           .filter((cat): cat is string => Boolean(cat && cat.trim()))
       )
     );
-    return ["Todos", ...unique];
   }, [catalog.products]);
 
   const formats: Format[] = useMemo(() => {
@@ -156,16 +165,9 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
     );
   }, [catalog.products]);
 
-  const validatedActiveCategory = useMemo(() => {
-    if (activeCategory === "Todos") return "Todos";
-    if (categories.includes(activeCategory)) return activeCategory;
-    return "Todos";
-  }, [activeCategory, categories]);
-
   const visibleProducts = useMemo(() => {
     const products = catalog.products || [];
     return products.filter((product) => {
-      const tabOK = validatedActiveCategory === "Todos" || product.category === validatedActiveCategory;
       const categoryOK = !categoryFilters.length || categoryFilters.includes(product.category);
       const formatOK = !formatFilters.length || formatFilters.includes(product.format);
       const filterOK = !filterSlugs.length || (product.filterSlugs || []).some((s) => filterSlugs.includes(s.toLowerCase()));
@@ -173,9 +175,9 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
         "pt-BR"
       );
       const textOK = !normalizedQuery || haystack.includes(normalizedQuery);
-      return tabOK && categoryOK && formatOK && filterOK && textOK;
+      return categoryOK && formatOK && filterOK && textOK;
     });
-  }, [catalog.products, validatedActiveCategory, categoryFilters, formatFilters, filterSlugs, normalizedQuery]);
+  }, [catalog.products, categoryFilters, formatFilters, filterSlugs, normalizedQuery]);
 
   const sortedProducts = useMemo(() => {
     if (sortMode === "name") {
@@ -201,19 +203,19 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
   function clearFilters() {
     setCategoryFilters([]);
     setFormatFilters([]);
+    clearFilterSlugs();
   }
 
   function handleResetAll() {
     setQuery("");
-    setActiveCategory("Todos");
     setCategoryFilters([]);
     setFormatFilters([]);
     clearFilterSlugs();
   }
 
   const hasActiveFilters = useMemo(() => {
-    return Boolean(normalizedQuery || validatedActiveCategory !== "Todos" || categoryFilters.length || formatFilters.length || filterSlugs.length);
-  }, [normalizedQuery, validatedActiveCategory, categoryFilters.length, formatFilters.length, filterSlugs.length]);
+    return Boolean(normalizedQuery || categoryFilters.length || formatFilters.length || filterSlugs.length);
+  }, [normalizedQuery, categoryFilters.length, formatFilters.length, filterSlugs.length]);
 
   function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
@@ -503,45 +505,11 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               )}
             </label>
 
-            <div className="catalog-filter-row">
-              <label className="catalog-filter-select-wrap" htmlFor="catalogCategoryFilter">
-                <select
-                  id="catalogCategoryFilter"
-                  value={validatedActiveCategory}
-                  onChange={(e) => setActiveCategory(e.target.value)}
-                  aria-label="Filtrar por categoria"
-                >
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {hasActiveFilters && (
-                <button type="button" className="catalog-clear-filters-btn" onClick={handleResetAll}>
-                  Limpar filtros
-                </button>
-              )}
-            </div>
-          </motion.div>
-
-          <div className="toolbar">
-            <div className="categories" role="tablist" aria-label="Categorias de produto">
-              {categories.map((category) => (
-                <motion.button
-                  key={category}
-                  className={`category-chip${validatedActiveCategory === category ? " active" : ""}`}
-                  role="tab"
-                  aria-selected={validatedActiveCategory === category}
-                  onClick={() => setActiveCategory(category)}
-                  whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
-                  whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
-                >
-                  {category}
-                </motion.button>
-              ))}
-            </div>
+            {hasActiveFilters && (
+              <button type="button" className="catalog-clear-filters-btn" onClick={handleResetAll}>
+                Limpar filtros
+              </button>
+            )}
             <motion.button
               className="filter-button"
               aria-haspopup="dialog"
@@ -553,34 +521,7 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               <span className="filter-lines" aria-hidden="true" />
               <span>Filtros</span>
             </motion.button>
-          </div>
-
-          {catalog.filters && catalog.filters.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 py-3" role="group" aria-label="Filtros do catálogo">
-              <button
-                type="button"
-                onClick={clearFilterSlugs}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${filterSlugs.length === 0 ? "bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-slate-900" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700"}`}
-                aria-pressed={filterSlugs.length === 0}
-              >
-                Todos
-              </button>
-              {catalog.filters.map((f) => {
-                const active = filterSlugs.includes(f.slug.toLowerCase());
-                return (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => toggleFilterSlug(f.slug)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${active ? "bg-blue-600 text-white border-blue-600" : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700"}`}
-                    aria-pressed={active}
-                  >
-                    {f.name}
-                  </button>
-                );
-              })}
-            </div>
-          )}
+          </motion.div>
 
           <div className="result-line">
             <span>
@@ -947,12 +888,29 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
             ×
           </button>
         </div>
+        {catalog.filters && catalog.filters.length > 0 && (
+          <div className="filter-group">
+            <h3>Filtros do catálogo</h3>
+            <div className="check-list">
+              {catalog.filters.map((f) => (
+                <label key={f.id}>
+                  <input
+                    type="checkbox"
+                    name="catalog-filter"
+                    value={f.slug}
+                    checked={filterSlugs.includes(f.slug.toLowerCase())}
+                    onChange={() => toggleFilterSlug(f.slug)}
+                  />{" "}
+                  {f.name}
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="filter-group">
           <h3>Categoria</h3>
           <div className="check-list">
-            {categories
-              .filter((c) => c !== "Todos")
-              .map((category) => (
+            {categories.map((category) => (
                 <label key={category}>
                   <input
                     type="checkbox"
@@ -966,7 +924,7 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               ))}
           </div>
         </div>
-        {formats.length > 0 && (
+        {/*formats.length > 0 && (
           <div className="filter-group">
             <h3>Formato</h3>
             <div className="check-list">
@@ -984,7 +942,7 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               ))}
             </div>
           </div>
-        )}
+        )*/}
         <div className="panel-actions">
           <button className="clear-button" onClick={clearFilters}>
             Limpar
