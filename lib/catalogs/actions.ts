@@ -343,19 +343,29 @@ export async function reorderCatalogProductsAction(
   }
 }
 
-export async function getProductsForCatalogModal() {
+export async function getProductsForCatalogModal(opts?: { search?: string; page?: number; pageSize?: number }) {
   try {
     const supabase = await createClient();
+    const page = Math.max(1, opts?.page ?? 1);
+    const pageSize = Math.min(50, Math.max(1, opts?.pageSize ?? 20));
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+    const search = opts?.search?.trim() || "";
 
-    const { data: products, error } = await supabase
+    let query = supabase
       .from("products")
-      .select("id, name, slug, price, image_url, active")
+      .select("id, name, slug, price, image_url, active", { count: "exact" })
       .eq("active", true)
-      .order("name");
+      .order("name", { ascending: true });
+
+    if (search) query = query.ilike("name", `%${search}%`);
+    query = query.range(from, to);
+
+    const { data: products, error, count } = await query;
 
     if (error) {
       console.error("Error fetching products for catalog modal:", error);
-      return { products: [], error: "Erro ao carregar produtos." };
+      return { products: [], total: 0, error: "Erro ao carregar produtos." };
     }
 
     const formattedProducts = (products || []).map((p) => ({
@@ -363,10 +373,17 @@ export async function getProductsForCatalogModal() {
       price: p.price == null ? null : Number(p.price),
     }));
 
-    return { products: formattedProducts, error: null };
+    return {
+      products: formattedProducts,
+      total: count ?? 0,
+      page,
+      pageSize,
+      totalPages: Math.ceil((count ?? 0) / pageSize),
+      error: null,
+    };
   } catch (err) {
     console.error("Unexpected error fetching products for catalog modal:", err);
-    return { products: [], error: "Erro inesperado ao buscar produtos." };
+    return { products: [], total: 0, error: "Erro inesperado ao buscar produtos." };
   }
 }
 

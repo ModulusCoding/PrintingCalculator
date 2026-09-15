@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import {
   motion,
   AnimatePresence,
@@ -16,7 +17,6 @@ import { CartDrawer } from "./CartDrawer";
 import { ExclusiveProductAnimation } from "./ExclusiveProductAnimation";
 import { ShoppingCart, ShoppingCartPlus, Check, Sparkles } from "lucide-react";
 
-type Category = "Todos" | string;
 type Format = string;
 type SortMode = "featured" | "name";
 
@@ -34,7 +34,53 @@ interface FlyingItem {
 }
 
 function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
-  const [activeCategory, setActiveCategory] = useState<Category>("Todos");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const initialFiltros = useMemo(() => {
+    const raw = searchParams.get("filtros");
+    if (!raw) return [] as string[];
+    return raw.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
+  }, [searchParams]);
+  const [filterSlugs, setFilterSlugs] = useState<string[]>(initialFiltros);
+  const isInternalUpdateRef = useRef(false);
+
+  useEffect(() => {
+    if (isInternalUpdateRef.current) {
+      isInternalUpdateRef.current = false;
+      return;
+    }
+    const next = initialFiltros.join(",");
+    const cur = filterSlugs.join(",");
+    if (next !== cur) setFilterSlugs(initialFiltros);
+  }, [initialFiltros, filterSlugs]);
+
+  useEffect(() => {
+    const currentFiltros = searchParams.get("filtros") || "";
+    const nextFiltros = filterSlugs.join(",");
+    if (currentFiltros === nextFiltros) return;
+
+    const params = new URLSearchParams(searchParams.toString());
+    if (filterSlugs.length === 0) params.delete("filtros");
+    else params.set("filtros", filterSlugs.join(","));
+    const qs = params.toString();
+    const url = qs ? `${pathname}?${qs}` : pathname;
+    router.replace(url, { scroll: false });
+  }, [filterSlugs, pathname, router, searchParams]);
+
+  const toggleFilterSlug = useCallback((slug: string) => {
+    const normalized = slug.toLowerCase();
+    isInternalUpdateRef.current = true;
+    setFilterSlugs((prev) =>
+      prev.includes(normalized) ? prev.filter((s) => s !== normalized) : [...prev, normalized]
+    );
+  }, []);
+
+  const clearFilterSlugs = useCallback(() => {
+    isInternalUpdateRef.current = true;
+    setFilterSlugs([]);
+  }, []);
+
   const [query, setQuery] = useState("");
   const [sortMode, setSortMode] = useState<SortMode>("featured");
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
@@ -99,15 +145,14 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
 
   const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
 
-  const categories: Category[] = useMemo(() => {
-    const unique = Array.from(
+  const categories = useMemo(() => {
+    return Array.from(
       new Set(
         (catalog.products || [])
           .map((product) => product.category)
           .filter((cat): cat is string => Boolean(cat && cat.trim()))
       )
     );
-    return ["Todos", ...unique];
   }, [catalog.products]);
 
   const formats: Format[] = useMemo(() => {
@@ -120,25 +165,19 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
     );
   }, [catalog.products]);
 
-  const validatedActiveCategory = useMemo(() => {
-    if (activeCategory === "Todos") return "Todos";
-    if (categories.includes(activeCategory)) return activeCategory;
-    return "Todos";
-  }, [activeCategory, categories]);
-
   const visibleProducts = useMemo(() => {
     const products = catalog.products || [];
     return products.filter((product) => {
-      const tabOK = validatedActiveCategory === "Todos" || product.category === validatedActiveCategory;
       const categoryOK = !categoryFilters.length || categoryFilters.includes(product.category);
       const formatOK = !formatFilters.length || formatFilters.includes(product.format);
+      const filterOK = !filterSlugs.length || (product.filterSlugs || []).some((s) => filterSlugs.includes(s.toLowerCase()));
       const haystack = `${product.name ?? ""} ${product.detail ?? ""} ${product.description ?? ""}`.toLocaleLowerCase(
         "pt-BR"
       );
       const textOK = !normalizedQuery || haystack.includes(normalizedQuery);
-      return tabOK && categoryOK && formatOK && textOK;
+      return categoryOK && formatOK && filterOK && textOK;
     });
-  }, [catalog.products, validatedActiveCategory, categoryFilters, formatFilters, normalizedQuery]);
+  }, [catalog.products, categoryFilters, formatFilters, filterSlugs, normalizedQuery]);
 
   const sortedProducts = useMemo(() => {
     if (sortMode === "name") {
@@ -164,18 +203,19 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
   function clearFilters() {
     setCategoryFilters([]);
     setFormatFilters([]);
+    clearFilterSlugs();
   }
 
   function handleResetAll() {
     setQuery("");
-    setActiveCategory("Todos");
     setCategoryFilters([]);
     setFormatFilters([]);
+    clearFilterSlugs();
   }
 
   const hasActiveFilters = useMemo(() => {
-    return Boolean(normalizedQuery || validatedActiveCategory !== "Todos" || categoryFilters.length || formatFilters.length);
-  }, [normalizedQuery, validatedActiveCategory, categoryFilters.length, formatFilters.length]);
+    return Boolean(normalizedQuery || categoryFilters.length || formatFilters.length || filterSlugs.length);
+  }, [normalizedQuery, categoryFilters.length, formatFilters.length, filterSlugs.length]);
 
   function handleSearchKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
@@ -367,13 +407,13 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
             </AnimatePresence>
           </motion.button>
 
-          <button
+          {/*<button
             className="menu-button"
             aria-label="Abrir menu"
             onClick={() => document.querySelector("#catalogo")?.scrollIntoView()}
           >
             ↘
-          </button>
+          </button>*/}
         </div>
       </header>
 
@@ -404,6 +444,7 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               {catalog.heroCopy}
             </motion.p>
           )}
+ 
 
           {/* CTA PEÇA EXCLUSIVA */}
           <motion.div className="exclusive-piece-cta" variants={itemVariants}>
@@ -421,7 +462,9 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               whileHover={shouldReduceMotion ? {} : { scale: 1.03 }}
               whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}
             >
-              Criar uma peça exclusiva →
+              Criar uma peça exclusiva <svg className="ml-2" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
+              </svg>
             </motion.a>
           </motion.div>
         </motion.section>
@@ -462,45 +505,11 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               )}
             </label>
 
-            <div className="catalog-filter-row">
-              <label className="catalog-filter-select-wrap" htmlFor="catalogCategoryFilter">
-                <select
-                  id="catalogCategoryFilter"
-                  value={validatedActiveCategory}
-                  onChange={(e) => setActiveCategory(e.target.value)}
-                  aria-label="Filtrar por categoria"
-                >
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {hasActiveFilters && (
-                <button type="button" className="catalog-clear-filters-btn" onClick={handleResetAll}>
-                  Limpar filtros
-                </button>
-              )}
-            </div>
-          </motion.div>
-
-          <div className="toolbar">
-            <div className="categories" role="tablist" aria-label="Categorias de produto">
-              {categories.map((category) => (
-                <motion.button
-                  key={category}
-                  className={`category-chip${validatedActiveCategory === category ? " active" : ""}`}
-                  role="tab"
-                  aria-selected={validatedActiveCategory === category}
-                  onClick={() => setActiveCategory(category)}
-                  whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
-                  whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
-                >
-                  {category}
-                </motion.button>
-              ))}
-            </div>
+            {hasActiveFilters && (
+              <button type="button" className="catalog-clear-filters-btn" onClick={handleResetAll}>
+                Limpar filtros
+              </button>
+            )}
             <motion.button
               className="filter-button"
               aria-haspopup="dialog"
@@ -512,7 +521,7 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               <span className="filter-lines" aria-hidden="true" />
               <span>Filtros</span>
             </motion.button>
-          </div>
+          </motion.div>
 
           <div className="result-line">
             <span>
@@ -758,7 +767,7 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
         <div className="catalog-exclusive-break !bg-[#152336]" aria-hidden="true" />
 
         {/* NOSSO PRINCÍPIO */}
-        <motion.section
+        {/*<motion.section
           className="manifesto"
           id="principios"
           initial={shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
@@ -792,7 +801,7 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               (catalog.manifestoFormula ? `Fórmula: ${catalog.manifestoFormula}` : "Manifesto visual Modulus")
             }
           />
-        </motion.section>
+        </motion.section>*/}
       </main>
 
       <footer id="contato">
@@ -879,12 +888,29 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
             ×
           </button>
         </div>
+        {catalog.filters && catalog.filters.length > 0 && (
+          <div className="filter-group">
+            <h3>Filtros do catálogo</h3>
+            <div className="check-list">
+              {catalog.filters.map((f) => (
+                <label key={f.id}>
+                  <input
+                    type="checkbox"
+                    name="catalog-filter"
+                    value={f.slug}
+                    checked={filterSlugs.includes(f.slug.toLowerCase())}
+                    onChange={() => toggleFilterSlug(f.slug)}
+                  />{" "}
+                  {f.name}
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="filter-group">
           <h3>Categoria</h3>
           <div className="check-list">
-            {categories
-              .filter((c) => c !== "Todos")
-              .map((category) => (
+            {categories.map((category) => (
                 <label key={category}>
                   <input
                     type="checkbox"
@@ -898,7 +924,7 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               ))}
           </div>
         </div>
-        {formats.length > 0 && (
+        {/*formats.length > 0 && (
           <div className="filter-group">
             <h3>Formato</h3>
             <div className="check-list">
@@ -916,7 +942,7 @@ function CatalogoModulusInner({ catalog }: CatalogoModulusProps) {
               ))}
             </div>
           </div>
-        )}
+        )*/}
         <div className="panel-actions">
           <button className="clear-button" onClick={clearFilters}>
             Limpar

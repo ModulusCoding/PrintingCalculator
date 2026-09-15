@@ -52,6 +52,17 @@ export const productSchema = z.object({
   catalog_ids: z.array(z.string().uuid("ID de catálogo inválido.")).optional().default([]),
 });
 
+export const catalogFilterSchema = z.object({
+  name: z
+    .string()
+    .min(2, "O nome deve ter pelo menos 2 caracteres.")
+    .max(100, "O nome deve ter no máximo 100 caracteres.")
+    .trim(),
+  slug: slugSchema,
+  description: z.string().max(2000, "A descrição deve ter no máximo 2000 caracteres.").optional().nullable().or(z.literal("")),
+  display_order: z.number().int().min(0).optional().default(0),
+});
+
 export const closedSaleSchema = z.object({
   cliente_nome: z
     .string()

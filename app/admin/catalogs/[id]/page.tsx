@@ -1,5 +1,6 @@
 import { CatalogForm } from "@/components/admin/CatalogForm";
 import { CatalogProductReorder } from "@/components/admin/CatalogProductReorder";
+import { CatalogFilterManager } from "@/components/admin/CatalogFilterManager";
 import { getCatalogById } from "@/lib/catalogs/actions";
 import { notFound } from "next/navigation";
 
@@ -40,6 +41,10 @@ export default async function EditCatalogPage({
           catalogId={catalog.id}
           initialProducts={orderedProducts}
         />
+      </div>
+
+      <div className="pt-6 border-t border-slate-200 dark:border-slate-800">
+        <CatalogFilterManager catalogId={catalog.id} />
       </div>
     </div>
   );

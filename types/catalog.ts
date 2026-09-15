@@ -14,6 +14,16 @@ export interface CatalogProductView {
   images: string[];
   price?: number | null;
   displayOrder?: number;
+  filterIds?: string[];
+  filterSlugs?: string[];
+}
+
+export interface CatalogFilterView {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  displayOrder: number;
 }
 
 export interface CatalogView {
@@ -28,6 +38,7 @@ export interface CatalogView {
   manifestoFormula?: string | null;
   manifestoDescription?: string | null;
   products: CatalogProductView[];
+  filters?: CatalogFilterView[];
 }
 
 export interface Catalog {
@@ -43,6 +54,25 @@ export interface Catalog {
   updated_at: string;
   // Computed / aggregated
   product_count?: number;
+}
+
+export interface CatalogFilter {
+  id: string;
+  catalog_id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+  product_count?: number;
+}
+
+export interface CatalogFilterFormData {
+  name: string;
+  slug: string;
+  description?: string | null;
+  display_order?: number;
 }
 
 export interface CatalogFormData {
