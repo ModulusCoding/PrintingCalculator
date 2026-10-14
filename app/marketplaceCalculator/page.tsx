@@ -101,6 +101,7 @@ type MarketplaceJSON = {
   mensalidades: Mensalidade[];
   frete: RegrasFrete;
   observacoes: string;
+  ultima_atualizacao?: string;
 };
 
 // ─── Shared UI types ──────────────────────────────────────────────────────────
@@ -941,8 +942,7 @@ export default function MarketplaceCalculator() {
                   <div className="flex justify-between">
                     <span>Atualizado em</span>
                     <strong className="text-black">
-                      {/* @ts-ignore */}
-                      {(marketplace as { ultima_atualizacao?: string }).ultima_atualizacao ?? "—"}
+                      {marketplace.ultima_atualizacao ?? "—"}
                     </strong>
                   </div>
                 </div>

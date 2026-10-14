@@ -83,7 +83,7 @@ export async function getCatalogBySlug(slug: string): Promise<CatalogView | null
         }
 
         let filters: CatalogFilterView[] = [];
-        let filterProductMap = new Map<string, { ids: string[]; slugs: string[] }>();
+        const filterProductMap = new Map<string, { ids: string[]; slugs: string[] }>();
         try {
           const { data: filterRows } = await supabase
             .from("catalog_filters")

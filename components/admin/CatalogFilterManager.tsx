@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import { GripVertical, Pencil, Trash2, Plus, Package, Loader2, AlertCircle, Check, ArrowUp, ArrowDown } from "lucide-react";
 import { getFiltersByCatalog, reorderFiltersAction, deleteFilterAction } from "@/lib/filters/actions";
 import type { CatalogFilter } from "@/types/catalog";
@@ -24,18 +24,18 @@ export function CatalogFilterManager({ catalogId }: CatalogFilterManagerProps) {
   const [deleteConfirm, setDeleteConfirm] = useState<CatalogFilter | null>(null);
   const [deletePending, setDeletePending] = useState(false);
 
-  const loadFilters = async () => {
+  const loadFilters = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     const res = await getFiltersByCatalog(catalogId);
     if (res.error) setError(res.error);
     else setFilters(res.filters as CatalogFilter[]);
     setIsLoading(false);
-  };
+  }, [catalogId]);
 
   useEffect(() => {
     loadFilters();
-  }, [catalogId]);
+  }, [loadFilters]);
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);

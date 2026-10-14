@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import Image from "next/image";
 import { M_SOLID_PATH_D, M_VIEWBOX } from "./MMark";
 
@@ -27,6 +27,45 @@ const chapters = [
   { at: [0.72, 0.75, 0.85, 0.89], kicker: "Manufatura digital", title: "Ah. Era isso que estava sendo criado." },
   { at: [0.9, 0.93, 0.99, 1], kicker: "Manufatura digital", title: "Um objeto real, nascido da fabricação." },
 ];
+
+type Chapter = (typeof chapters)[number];
+
+function ChapterCaption({
+  chapter,
+  scrollYProgress,
+}: {
+  chapter: Chapter;
+  scrollYProgress: MotionValue<number>;
+}) {
+  const opacity = useTransform(scrollYProgress, chapter.at, [0, 1, 1, 0]);
+  const y = useTransform(scrollYProgress, [chapter.at[0], chapter.at[1]], [18, 0]);
+
+  return (
+    <motion.div
+      style={{ opacity, y }}
+      className="absolute inset-x-6 bottom-14 sm:inset-x-10 sm:bottom-16 lg:inset-x-16"
+    >
+      <p className="text-xs font-bold uppercase tracking-[0.28em] text-[var(--modulus-light)]">
+        {chapter.kicker}
+      </p>
+      {chapter.title && (
+        <h3 className="mt-3 max-w-2xl font-[Space_Grotesk] text-3xl font-black leading-[1.05] text-white sm:text-5xl">
+          {chapter.title}
+        </h3>
+      )}
+    </motion.div>
+  );
+}
+
+function ChapterCaptions({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) {
+  return (
+    <>
+      {chapters.map((chapter, i) => (
+        <ChapterCaption key={i} chapter={chapter} scrollYProgress={scrollYProgress} />
+      ))}
+    </>
+  );
+}
 
 export default function Journey() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -211,26 +250,7 @@ export default function Journey() {
         {/* Legendas de capítulo */}
         <div className="absolute inset-x-0 bottom-0 px-6 pb-14 sm:px-10 sm:pb-16 lg:px-16">
           <div className="mx-auto max-w-7xl">
-            {chapters.map((chapter, i) => {
-              const opacity = useTransform(scrollYProgress, chapter.at, [0, 1, 1, 0]);
-              const y = useTransform(scrollYProgress, [chapter.at[0], chapter.at[1]], [18, 0]);
-              return (
-                <motion.div
-                  key={i}
-                  style={{ opacity, y }}
-                  className="absolute inset-x-6 bottom-14 sm:inset-x-10 sm:bottom-16 lg:inset-x-16"
-                >
-                  <p className="text-xs font-bold uppercase tracking-[0.28em] text-[var(--modulus-light)]">
-                    {chapter.kicker}
-                  </p>
-                  {chapter.title && (
-                    <h3 className="mt-3 max-w-2xl font-[Space_Grotesk] text-3xl font-black leading-[1.05] text-white sm:text-5xl">
-                      {chapter.title}
-                    </h3>
-                  )}
-                </motion.div>
-              );
-            })}
+            <ChapterCaptions scrollYProgress={scrollYProgress} />
           </div>
         </div>
       </div>
