@@ -50,6 +50,8 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (isAuthRoute && user) {
+    // The middleware deliberately does not resolve business context. The account
+    // route safely routes ready users onward while preserving blocked states.
     return redirectWithSessionCookies("/conta");
   }
 

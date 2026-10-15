@@ -11,7 +11,7 @@ export function RequiredPasswordForm() {
   const [state, action, pending] = useActionState(changeRequiredPasswordAction, initial);
   useEffect(() => {
     if (state.status === "success") {
-      router.replace("/conta");
+      router.replace("/home");
       router.refresh();
     }
   }, [router, state.status]);

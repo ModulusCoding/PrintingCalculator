@@ -56,7 +56,8 @@ export async function loginAction(formData: FormData) {
       const context = await resolveMinimalIdentity();
       return { success: true, state: context.state };
     } catch {
-      await supabase.auth.signOut();
+      // Keep the authenticated session intact: this is a context-resolution
+      // failure, not a failed login or a reason to sign the user out.
       return { error: "Erro técnico ao validar seu perfil de acesso. Tente novamente em instantes." };
     }
   } catch {

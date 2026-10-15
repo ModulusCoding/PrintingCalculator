@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { loginAction } from "@/lib/auth/actions";
 import { Lock, Mail, Loader2, AlertCircle, Eye, EyeOff } from "lucide-react";
 
-export default function LoginPage() {
+export function LoginForm() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +39,7 @@ export default function LoginPage() {
         if (result.error) {
           setError(result.error);
         } else if (result.success) {
-          router.push("/conta");
+          router.push(result.state === "business_ready" ? "/home" : "/conta");
           router.refresh();
         }
       } catch {

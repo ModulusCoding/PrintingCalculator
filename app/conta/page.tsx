@@ -81,6 +81,10 @@ export default async function ContaPage() {
     redirect("/admin/login");
   }
 
+  if (context.state === "business_ready") {
+    redirect("/home");
+  }
+
   const message = stateMessages[context.state] || {
     title: "Estado desconhecido",
     description: "Não foi possível determinar seu estado de acesso.",
@@ -106,9 +110,7 @@ export default async function ContaPage() {
 
         <div className="mb-8 p-6 rounded-lg bg-gray-50 border border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">{message.title}</h2>
-          {context.state !== "business_ready" && (
-            <p className="text-gray-600">{message.description}</p>
-          )}
+          <p className="text-gray-600">{message.description}</p>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -122,13 +124,6 @@ export default async function ContaPage() {
             >
               Completar cadastro
             </Link>
-          )}
-          {context.state === "business_ready" && (
-            <div className="p-4 rounded-lg bg-gray-50 border border-gray-200 text-sm">
-              <p className="text-gray-500 mb-1">
-                Papel: <span className="text-gray-900 font-medium capitalize">{context.role}</span>
-              </p>
-            </div>
           )}
           <LogoutButton />
         </div>

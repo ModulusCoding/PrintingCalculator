@@ -19,6 +19,7 @@ export default async function ConcluirCadastroPage() {
 
   if (failed) return <AccessValidationFailure />;
   if (context?.state === "unauthenticated") redirect("/admin/login");
+  if (context?.state === "business_ready") redirect("/home");
   if (context?.state !== "no_active_internal_identity") redirect("/conta");
   return <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] px-4"><CompletionForm /></div>;
 }
