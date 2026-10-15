@@ -1,0 +1,6 @@
+export default async function InvalidLinkPage({ searchParams }: { searchParams: Promise<{ reason?: string }> }) {
+  const reason = (await searchParams).reason;
+  const isRecovery = reason === "recovery";
+  const isSignup = ["signup_invalid", "signup_unavailable", "signup_session"].includes(reason ?? "");
+  return <main className="min-h-screen flex items-center justify-center bg-[#f8f9fa] px-4"><section className="max-w-md rounded-xl border bg-white p-10 text-center shadow-sm"><h1 className="text-2xl font-bold text-black">{isRecovery || isSignup ? "Link de acesso inválido" : "Link inválido"}</h1><p className="mt-3 text-gray-600">{(isSignup || isRecovery) ? (isRecovery ? "Este link de recuperação não é mais válido." : (reason === "signup_session" ? "Sua sessão de cadastro não pôde ser validada." : "Este link de confirmação não é mais válido ou ocorreu um erro técnico.")) : "O link solicitado não é válido."}</p><div className="mt-6 flex flex-col gap-3">{(isSignup) ? <><a className="text-indigo-600 hover:underline" href="/cadastro">Ir para o cadastro</a><a className="text-indigo-600 hover:underline" href="/admin/login">Entrar em uma conta existente</a></> : <a className="text-indigo-600 hover:underline" href={isRecovery ? "/esqueci-senha" : "/admin/login"}>{isRecovery ? "Solicitar novo link" : "Ir para o login"}</a>}</div></section></main>;
+}
