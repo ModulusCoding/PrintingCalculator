@@ -1,3 +1,4 @@
+import { isLegacyEnabled } from "@/lib/legacy-gate";
 import { CatalogForm } from "@/components/admin/CatalogForm";
 import { CatalogProductReorder } from "@/components/admin/CatalogProductReorder";
 import { CatalogFilterManager } from "@/components/admin/CatalogFilterManager";
@@ -9,6 +10,8 @@ export default async function EditCatalogPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  if (!(await isLegacyEnabled())) return <p className="p-8 text-center">Unavailable</p>;
+
   const { id } = await params;
   const { catalog, error } = await getCatalogById(id);
 

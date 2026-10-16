@@ -1,152 +1,25 @@
 import Link from "next/link";
-import { Plus, Edit, Package, CheckCircle2, XCircle, Tag } from "lucide-react";
-import { getProducts } from "@/lib/products/actions";
-import { DeleteProductButton } from "@/components/admin/DeleteProductButton";
+import { requireBusinessContext } from "@/lib/auth/context";
+import { listInternalProducts } from "@/lib/products/actions";
+import { ProductArchiveButton } from "@/components/admin/ProductArchiveButton";
 
 export const dynamic = "force-dynamic";
 
-export default async function ProductsPage() {
-  const { products, error } = await getProducts();
+export default async function ProductsPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  const params = await searchParams;
+  const result = await listInternalProducts(params);
+  const canWrite = await requireBusinessContext("products.write").then(() => true).catch(() => false);
+  const canDelete = await requireBusinessContext("products.delete").then(() => true).catch(() => false);
+  const pages = Math.max(1, Math.ceil(result.total / 20));
+  const query = new URLSearchParams({ ...(result.search ? { search: result.search } : {}), status: result.status, page: String(result.page) });
+  const url = (page: number) => `/admin/products?${new URLSearchParams({ ...(result.search ? { search: result.search } : {}), status: result.status, page: String(page) })}`;
 
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <p className="text-sm font-medium text-violet-600 dark:text-violet-400">Administração</p>
-          <h1 className="mt-1 text-3xl font-bold tracking-tight">Produtos</h1>
-          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-            Gerencie seus produtos e associe-os a múltiplos catálogos.
-          </p>
-        </div>
-        <Link
-          href="/admin/products/new"
-          className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-violet-700 transition-colors shadow-md shadow-violet-600/20"
-        >
-          <Plus className="h-4 w-4" />
-          Novo Produto
-        </Link>
-      </div>
-
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800 dark:border-red-900 dark:bg-red-950/50 dark:text-red-400">
-          {error}
-        </div>
-      )}
-
-      {products.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-600 p-12 text-center">
-          <div className="mx-auto w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
-            <Package className="h-7 w-7 text-slate-400" />
-          </div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Nenhum produto cadastrado</h3>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Adicione seu primeiro produto para começar.</p>
-          <Link
-            href="/admin/products/new"
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-violet-700"
-          >
-            <Plus className="h-4 w-4" /> Criar Primeiro Produto
-          </Link>
-        </div>
-      ) : (
-        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Produto</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden md:table-cell">Preço</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Catálogos</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-              {products.map((product) => (
-                <tr key={product.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      {product.image_url ? (
-                        <img
-                          src={product.image_url}
-                          alt={product.name}
-                          className="h-10 w-10 rounded-lg object-cover bg-slate-100 dark:bg-slate-800"
-                        />
-                      ) : (
-                        <div className="h-10 w-10 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
-                          <Package className="h-5 w-5 text-violet-600 dark:text-violet-400" />
-                        </div>
-                      )}
-                      <div>
-                        <p className="font-medium text-slate-900 dark:text-white">{product.name}</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">{product.slug}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 hidden md:table-cell text-sm font-medium tabular-nums">
-                    {product.price != null
-                      ? `R$ ${product.price.toFixed(2).replace(".", ",")}`
-                      : "Sob consulta"}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-1.5">
-                      {(product.catalog_ids || []).length > 0 ? (
-                        <>
-                          {(product.catalog_ids || []).slice(0, 3).map((catId: string, i: number) => (
-                            <span
-                              key={catId}
-                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-violet-50 dark:bg-violet-950/50 text-violet-700 dark:text-violet-400 border border-violet-100 dark:border-violet-900"
-                            >
-                              <Tag className="h-2.5 w-2.5" />
-                              Cat {i + 1}
-                            </span>
-                          ))}
-                          {(product.catalog_count || 0) > 3 && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                              +{(product.catalog_count || 0) - 3}
-                            </span>
-                          )}
-                        </>
-                      ) : (
-                        <span className="text-xs text-slate-400 dark:text-slate-500">Nenhum catálogo</span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                        product.active
-                          ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
-                          : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400"
-                      }`}
-                    >
-                      {product.active ? (
-                        <>
-                          <CheckCircle2 className="h-3 w-3" /> Ativo
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="h-3 w-3" /> Inativo
-                        </>
-                      )}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link
-                        href={`/admin/products/${product.id}`}
-                        className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                        title="Editar"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Link>
-                      <DeleteProductButton productId={product.id} productName={product.name} />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
+  return <div className="space-y-6">
+    <header className="flex flex-wrap justify-between gap-4"><div><h1 className="text-3xl font-bold">Produtos</h1><p className="text-slate-500">Produtos internos da empresa.</p></div>{canWrite && <Link href="/admin/products/new" className="rounded bg-violet-600 px-4 py-2 text-white">Novo produto</Link>}</header>
+    <form className="flex flex-wrap gap-2"><input name="search" defaultValue={result.search} maxLength={200} placeholder="Buscar por nome" aria-label="Buscar por nome" className="rounded border p-2"/><select name="status" defaultValue={result.status} aria-label="Status" className="rounded border p-2"><option value="active">Ativos</option><option value="archived">Arquivados</option><option value="all">Todos</option></select><button className="rounded border px-4">Buscar</button></form>
+    {result.error ? <p role="alert" className="rounded bg-red-50 p-3 text-red-700">Não foi possível carregar os produtos. Tente novamente.</p> : <>
+      {result.products.length === 0 ? <p className="rounded border p-6 text-slate-600">Nenhum produto encontrado para os filtros selecionados.</p> : <div className="overflow-x-auto rounded border"><table className="w-full"><thead><tr><th className="p-3 text-left">Nome</th><th className="p-3 text-left">Preço</th><th className="p-3">Status</th><th className="p-3">Ação</th></tr></thead><tbody>{result.products.map(p => <tr key={p.id} className="border-t"><td className="p-3">{p.name}</td><td className="p-3">{p.price == null ? "Sob consulta" : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(p.price))}</td><td className="p-3 text-center">{p.active ? "Ativo" : "Arquivado"}</td><td className="p-3"><div className="flex justify-center gap-3">{(p.active && canWrite) || (!p.active && canDelete) ? <Link href={`/admin/products/${p.id}`} className="underline">{p.active ? "Editar" : "Visualizar"}</Link> : <Link href={`/admin/products/${p.id}`} className="underline">Visualizar</Link>}{canDelete && <ProductArchiveButton id={p.id} version={p.version} active={p.active} returnTo={`/admin/products?${query}`} />}</div></td></tr>)}</tbody></table></div>}
+      <nav className="flex justify-between" aria-label="Paginação"><Link aria-disabled={result.page <= 1} className={result.page <= 1 ? "pointer-events-none opacity-50" : undefined} href={url(Math.max(1, result.page - 1))}>Anterior</Link><span>Página {result.page} de {pages}</span><Link aria-disabled={result.page >= pages} className={result.page >= pages ? "pointer-events-none opacity-50" : undefined} href={url(Math.min(pages, result.page + 1))}>Próxima</Link></nav>
+    </>}
+  </div>;
 }

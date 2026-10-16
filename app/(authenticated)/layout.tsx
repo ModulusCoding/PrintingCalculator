@@ -31,11 +31,15 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
   const permissions: readonly Permission[] = ROLE_PERMISSIONS[context.role];
   const canManageEnterprise = permissions.includes("enterprise.manage");
   const canManageMembers = permissions.includes("members.manage_operators");
+  const canReadPrinters = permissions.includes("printers.read");
+  const canReadMaterials = permissions.includes("materials.read");
 
   return (
     <AuthenticatedShell
       canManageEnterprise={canManageEnterprise}
       canManageMembers={canManageMembers}
+      canReadPrinters={canReadPrinters}
+      canReadMaterials={canReadMaterials}
     >
       {children}
     </AuthenticatedShell>

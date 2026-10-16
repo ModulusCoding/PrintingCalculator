@@ -1,9 +1,11 @@
 export interface ProductImage {
   id: string;
+  enterprise_id?: string;
   product_id: string;
-  url: string;
+  storage_path: string;
   display_order: number;
   created_at?: string;
+  updated_at?: string;
 }
 
 export interface Product {

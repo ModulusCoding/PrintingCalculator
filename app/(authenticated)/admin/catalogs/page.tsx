@@ -1,3 +1,4 @@
+import { isLegacyEnabled } from "@/lib/legacy-gate";
 import Link from "next/link";
 import { Plus, Edit, CheckCircle2, XCircle } from "lucide-react";
 import { getCatalogs } from "@/lib/catalogs/actions";
@@ -7,6 +8,15 @@ import { DeleteCatalogButton } from "@/components/admin/DeleteCatalogButton";
 export const dynamic = "force-dynamic";
 
 export default async function CatalogsPage() {
+  if (!(await isLegacyEnabled())) {
+    return (
+      <div className="p-8 text-center text-slate-500">
+        <h2 className="text-xl font-semibold mb-2">Unavailable</h2>
+        <p>This legacy feature is not enabled.</p>
+      </div>
+    );
+  }
+
   const { catalogs, error } = await getCatalogs();
 
   return (

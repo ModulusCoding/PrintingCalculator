@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Home, Building2, Users, Menu, X, Package, LayoutGrid, ShoppingCart } from "lucide-react";
+import { Home, Building2, Users, Menu, X, Package, Printer, Layers, Calculator } from "lucide-react";
 import { LogoutButton } from "@/app/conta/LogoutButton";
-export function AuthenticatedShell({ children, canManageEnterprise, canManageMembers }: { children: React.ReactNode; canManageEnterprise: boolean; canManageMembers: boolean }) {
+export function AuthenticatedShell({ children, canManageEnterprise, canManageMembers, canReadPrinters, canReadMaterials }: { children: React.ReactNode; canManageEnterprise: boolean; canManageMembers: boolean; canReadPrinters: boolean; canReadMaterials: boolean }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navClass = (active: boolean) => `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3d32e6] ${active ? "bg-[#5852ff] text-[#f2eeff]" : "text-[#464556] hover:bg-[#e7e8e9]"}`;
@@ -15,8 +15,9 @@ export function AuthenticatedShell({ children, canManageEnterprise, canManageMem
       
       <div className="mt-7"><p className="mb-2 px-4 text-xs font-semibold uppercase tracking-widest text-[#464556]/60">Operação</p><div className="space-y-1">
         <Link href="/admin/products" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/admin/products"))} aria-current={pathname.startsWith("/admin/products") ? "page" : undefined}><Package className="size-5" aria-hidden="true" />Produtos</Link>
-        <Link href="/admin/catalogs" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/admin/catalogs"))} aria-current={pathname.startsWith("/admin/catalogs") ? "page" : undefined}><LayoutGrid className="size-5" aria-hidden="true" />Catálogos</Link>
-        <Link href="/admin/sales" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/admin/sales"))} aria-current={pathname.startsWith("/admin/sales") ? "page" : undefined}><ShoppingCart className="size-5" aria-hidden="true" />Vendas</Link>
+        {canReadPrinters && <Link href="/impressoras" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/impressoras"))} aria-current={pathname.startsWith("/impressoras") ? "page" : undefined}><Printer className="size-5" aria-hidden="true" />Impressoras</Link>}
+        {canReadMaterials && <Link href="/materiais" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/materiais"))} aria-current={pathname.startsWith("/materiais") ? "page" : undefined}><Layers className="size-5" aria-hidden="true" />Materiais</Link>}
+        {(canReadPrinters && canReadMaterials) && <Link href="/precificadora" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/precificadora"))} aria-current={pathname.startsWith("/precificadora") ? "page" : undefined}><Calculator className="size-5" aria-hidden="true" />Precificadora</Link>}
       </div></div>
 
       {(canManageEnterprise || canManageMembers) && <div className="mt-7"><p className="mb-2 px-4 text-xs font-semibold uppercase tracking-widest text-[#464556]/60">Empresa</p><div className="space-y-1">

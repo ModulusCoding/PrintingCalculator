@@ -2,8 +2,17 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+import { loadTrace } from "@/lib/diagnostics/load-trace";
 
 export const PERMISSIONS = [
+  "printers.read",
+  "printers.write",
+  "printers.archive",
+  "pricing.read",
+  "pricing.write",
+  "materials.read",
+  "materials.write",
+  "materials.archive",
   "products.read",
   "products.write",
   "products.delete",
@@ -31,6 +40,14 @@ const uuidSchema = z.uuid();
 export const ROLE_PERMISSIONS = {
   owner: PERMISSIONS,
   admin: [
+    "printers.read",
+    "printers.write",
+    "printers.archive",
+    "pricing.read",
+    "pricing.write",
+    "materials.read",
+    "materials.write",
+    "materials.archive",
     "products.read",
     "products.write",
     "products.delete",
@@ -46,6 +63,10 @@ export const ROLE_PERMISSIONS = {
     "members.manage_operators",
   ],
   operator: [
+    "printers.read",
+    "pricing.read",
+    "pricing.write",
+    "materials.read",
     "products.read",
     "products.write",
     "catalogs.read",
@@ -295,8 +316,13 @@ function toInternalContext(row: z.infer<typeof rpcRowSchema>): MinimalIdentityCo
 }
 
 export async function resolveMinimalIdentity(): Promise<MinimalIdentityContext> {
+  const trace = loadTrace("identity");
+  trace.mark("start");
+  try {
   const supabase = await createClient();
+  trace.mark("session:start");
   const { data: authData, error: authError } = await supabase.auth.getUser();
+  trace.mark("session:end");
 
   if (authError) {
     if (isMissingSessionError(authError)) {
@@ -312,7 +338,9 @@ export async function resolveMinimalIdentity(): Promise<MinimalIdentityContext> 
     return unauthenticatedContext();
   }
 
+  trace.mark("context:start");
   const { data, error } = await supabase.rpc("get_my_access_context");
+  trace.mark("context:end");
 
   if (error) {
     throw new AuthContextError("AUTH_TECHNICAL_FAILURE", { cause: error });
@@ -329,7 +357,13 @@ export async function resolveMinimalIdentity(): Promise<MinimalIdentityContext> 
     });
   }
 
-  return toInternalContext(parsed.data);
+  const result = toInternalContext(parsed.data);
+  trace.mark(`done:${result.state}`);
+  return result;
+  } catch (error) {
+    trace.mark("error");
+    throw error;
+  }
 }
 
 export async function requireBusinessContext(

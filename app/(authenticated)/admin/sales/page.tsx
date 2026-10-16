@@ -1,3 +1,4 @@
+import { isLegacyEnabled } from "@/lib/legacy-gate";
 import { getSales, SalesFilterOptions } from "@/lib/sales/actions";
 import { SalesListClient } from "@/components/admin/SalesListClient";
 
@@ -16,6 +17,8 @@ interface SalesPageProps {
 }
 
 export default async function SalesPage({ searchParams }: SalesPageProps) {
+  if (!(await isLegacyEnabled())) return <p className="p-8 text-center">Unavailable</p>;
+
   const resolvedParams = await searchParams;
 
   const filters: SalesFilterOptions = {
