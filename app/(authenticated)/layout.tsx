@@ -34,6 +34,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
   const canReadPrinters = permissions.includes("printers.read");
   const canReadMaterials = permissions.includes("materials.read");
   const canReadSpools = permissions.includes("spools.read");
+  const canReadInventory = permissions.includes("inventory.read");
 
   return (
     <AuthenticatedShell
@@ -42,6 +43,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
       canReadPrinters={canReadPrinters}
       canReadMaterials={canReadMaterials}
       canReadSpools={canReadSpools}
+      canReadInventory={canReadInventory}
     >
       {children}
     </AuthenticatedShell>
