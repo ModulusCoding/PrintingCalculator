@@ -1,0 +1,23 @@
+import { strict as assert } from "node:assert";
+import { createMaterialSchema, createMovementSchema, updateCostRefSchema, version } from "./validation";
+
+const id = "11111111-1111-4111-8111-111111111111";
+const attempt = "22222222-2222-4222-8222-222222222222";
+const baseMove = { material_id: id, expected_version: "0", movement_type: "consumption" as const, quantity: "20", supplied_unit: "centimetro" as const, reason: "Uso", attempt_id: attempt };
+assert.equal(version.parse("0"), 0);
+assert.equal(version.parse(0), 0);
+for (const input of ["", " ", "-1", "0.5", "abc", Number.NaN, Infinity, null, undefined]) assert.equal(version.safeParse(input).success, false);
+const consumption = createMovementSchema.parse(baseMove);
+if (consumption.movement_type !== "consumption") throw new Error();
+assert.equal(consumption.expected_version, 0);
+assert.equal(consumption.quantity, "20");
+assert.equal(consumption.supplied_unit, "centimetro");
+assert.equal(createMovementSchema.safeParse({ ...baseMove, quantity: "" }).success, false);
+assert.equal(createMovementSchema.safeParse({ ...baseMove, quantity: "0" }).success, false);
+const adj = createMovementSchema.parse({ material_id: id, expected_version: "0", movement_type: "adjustment", counted_balance: "0", supplied_unit: "metro", reason: "Contagem", attempt_id: attempt });
+if (adj.movement_type !== "adjustment") throw new Error();
+assert.equal(adj.counted_balance, "0");
+assert.equal(createMaterialSchema.safeParse({ name: "Fita", control_unit: "metro", reference_quantity: "1", reference_price: "10,50", opening_quantity: "0", attempt_id: attempt }).success, true);
+assert.equal(updateCostRefSchema.safeParse({ material_id: id, expected_version: "0", reference_quantity: "1", reference_price: "10.50", attempt_id: attempt }).success, true);
+assert.equal(createMovementSchema.safeParse({ ...baseMove, quantity: "20abc" }).success, false);
+console.log("Input validation assertions passed: versions, decimals, consumption, adjustment and cost reference.");

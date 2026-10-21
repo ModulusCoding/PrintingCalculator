@@ -23,7 +23,7 @@ export default async function SpoolsPage({ searchParams }: { searchParams: Promi
       </div>
       
       <form className="flex flex-wrap gap-2 rounded border bg-white p-4">
-        <input name="search" defaultValue={search} placeholder="Identificador ou material" className="rounded border p-2 flex-1" />
+        <input name="search" defaultValue={search} placeholder="Identificador, nome, tipo, marca ou cor" className="rounded border p-2 flex-1" />
         <select name="status" defaultValue={status} className="rounded border p-2">
           {["active", "low", "empty", "archived", "all"].map(s => <option key={s} value={s}>{s}</option>)}
         </select>
@@ -35,7 +35,7 @@ export default async function SpoolsPage({ searchParams }: { searchParams: Promi
           <table className="w-full text-left text-sm">
             <thead className="border-b bg-slate-50">
               <tr>
-                {["Identificador", "Material", "Saldo", "Status"].map(h => <th key={h} className="p-3">{h}</th>)}
+                {["Identificador", "Filamento", "Saldo", "Status"].map(h => <th key={h} className="p-3">{h}</th>)}
               </tr>
             </thead>
             <tbody>
@@ -46,7 +46,7 @@ export default async function SpoolsPage({ searchParams }: { searchParams: Promi
                       {s.internal_identifier}
                     </Link>
                   </td>
-                  <td className="p-3">{s.material_name} <span className="text-slate-400">{s.material_brand}</span></td>
+                  <td className="p-3">{s.internal_identifier} · {s.material_type ?? "—"} <span className="text-slate-400">{s.brand} {s.color && `· ${s.color}`}</span></td>
                   <td className="p-3">
                     {formatGrams(s.current_balance_grams)}
                     <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${Number(s.percent_remaining) <= threshold ? "bg-red-100 text-red-800" : "bg-emerald-100 text-emerald-800"}`}>

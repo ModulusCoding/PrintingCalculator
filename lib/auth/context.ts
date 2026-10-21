@@ -33,6 +33,9 @@ export const PERMISSIONS = [
   "enterprise.manage",
   "members.manage_admins",
   "members.manage_operators",
+  "stock.materials.read",
+  "stock.materials.write",
+  "stock.materials.archive",
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
@@ -58,6 +61,9 @@ export const ROLE_PERMISSIONS = {
     "materials.read",
     "materials.write",
     "materials.archive",
+    "stock.materials.read",
+    "stock.materials.write",
+    "stock.materials.archive",
     "products.read",
     "products.write",
     "products.delete",
@@ -81,6 +87,8 @@ export const ROLE_PERMISSIONS = {
     "inventory.read",
     "inventory.write",
     "materials.read",
+    "stock.materials.read",
+    "stock.materials.write",
     "products.read",
     "products.write",
     "catalogs.read",

@@ -33,6 +33,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
   const canManageMembers = permissions.includes("members.manage_operators");
   const canReadPrinters = permissions.includes("printers.read");
   const canReadMaterials = permissions.includes("materials.read");
+  const canReadGeneralMaterials = permissions.includes("stock.materials.read");
   const canReadSpools = permissions.includes("spools.read");
   const canReadInventory = permissions.includes("inventory.read");
 
@@ -42,6 +43,7 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
       canManageMembers={canManageMembers}
       canReadPrinters={canReadPrinters}
       canReadMaterials={canReadMaterials}
+      canReadGeneralMaterials={canReadGeneralMaterials}
       canReadSpools={canReadSpools}
       canReadInventory={canReadInventory}
     >

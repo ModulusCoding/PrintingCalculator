@@ -13,7 +13,7 @@ export default async function SpoolPage({ params, searchParams }: { params: Prom
   const r = await getSpool(id, page);
   if (!r.spool) notFound();
 
-  const s = r.spool, m = r.material, c = r.consumption, ctx = r.context;
+  const s = r.spool, c = r.consumption, ctx = r.context;
   const pages = Math.max(1, Math.ceil(r.total / 20));
   const canWrite = ctx.role !== "operator" || true; // spools.write is in operator
   const canArchive = ctx.role === "owner" || ctx.role === "admin";
@@ -30,7 +30,7 @@ export default async function SpoolPage({ params, searchParams }: { params: Prom
           <Link className="text-sm text-indigo-700 underline" href={back}>← Voltar</Link>
           <h1 className="text-2xl font-bold">{s.internal_identifier}</h1>
           <p className="text-slate-600">
-            {s.active ? "Ativo" : "Arquivado"} · {m.name} ({m.material_type}) {m.brand && `/ ${m.brand}`} {m.color && `/ ${m.color}`}
+            {s.active ? "Ativo" : "Arquivado"} · {s.material_type ?? "tipo não informado"} {s.brand && `· ${s.brand}`} {s.color && `· ${s.color}`}
           </p>
         </div>
 
@@ -84,10 +84,12 @@ export default async function SpoolPage({ params, searchParams }: { params: Prom
       <div className="space-y-6">
         <SpoolControls spool={s} canWrite={canWrite} canArchive={canArchive} />
         <div className="rounded border bg-slate-50 p-5 text-sm">
-          <h3 className="font-semibold mb-2">Detalhes do Material</h3>
-          <p>Referência: {m.name}</p>
-          <p>Peso ref.: {formatGrams(m.reference_weight_grams)}</p>
-          <p>Preço ref.: {formatCurrency(m.reference_price)}</p>
+          <h3 className="font-semibold mb-2">Dados próprios do filamento</h3>
+          <p>Identificação: {s.internal_identifier}</p>
+          <p>Tipo: {s.material_type ?? "Não informado"}</p>
+          <p>Marca: {s.brand ?? "Não informada"}</p>
+          <p>Cor: {s.color ?? "Não informada"}</p>
+          {s.material_id && <p className="mt-2 text-slate-500">Vínculo histórico com material de referência preservado.</p>}
         </div>
       </div>
     </section>
