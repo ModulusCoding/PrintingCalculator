@@ -221,4 +221,4 @@ REVOKE ALL
 ON FUNCTION private.lock_general_material_context(text)
 FROM PUBLIC, anon, authenticated;
 
-COMMIT;
+COMMIT; 

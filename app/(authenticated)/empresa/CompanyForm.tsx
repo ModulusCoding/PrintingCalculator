@@ -1,6 +1,6 @@
 "use client";
 import { useActionState, useState } from "react";
-import { updateCompanyName, updateCompanyRateAction } from "@/lib/enterprise/actions";
+import { updateCompanyName, updateCompanyRateAction, updateCompanyLossAction } from "@/lib/enterprise/actions";
 import type { Company } from "@/lib/enterprise/management";
 
 type ActionState =
@@ -11,7 +11,7 @@ type ActionState =
 const initialNameState: ActionState = { status: "idle" };
 const initialRateState: ActionState = { status: "idle" };
 
-export function CompanyForm({ company }: { company: Company }) {
+export function CompanyForm({ company, canManageEnterprise = true }: { company: Company; canManageEnterprise?: boolean }) {
   const [currentVersion, setCurrentVersion] = useState<number>(company.version);
   const [currentName, setCurrentName] = useState<string>(company.name);
   const [currentRate, setCurrentRate] = useState<number | null>(company.electricity_rate_per_kwh);
@@ -38,6 +38,14 @@ export function CompanyForm({ company }: { company: Company }) {
     },
     initialNameState
   );
+
+  const [currentLoss, setCurrentLoss] = useState<number>(company.default_filament_loss_percent);
+  const [lossState, lossAction, lossPending] = useActionState<ActionState, FormData>(async (_: ActionState, form: FormData) => {
+    const res = await updateCompanyLossAction(null, form);
+    if (res.status === "success") { if (res.version !== undefined) setCurrentVersion(res.version); if (res.default_filament_loss_percent !== undefined) setCurrentLoss(res.default_filament_loss_percent); return { status: "success", message: "Perda padrão salva com sucesso." }; }
+    if (res.status === "conflict") return { status: "conflict", message: "A configuração mudou. Atualize a página antes de continuar." };
+    return { status: res.status, message: res.status === "invalid_input" ? "Informe um percentual entre 0 e 100, com até 2 casas decimais." : "Erro ao atualizar a perda padrão." };
+  }, initialRateState);
 
   const [rateState, rateAction, ratePending] = useActionState<ActionState, FormData>(
     async (_: ActionState, form: FormData) => {
@@ -68,7 +76,7 @@ export function CompanyForm({ company }: { company: Company }) {
 
   return (
     <div className="mt-8 space-y-8">
-      <form action={nameAction} className="space-y-4">
+      {canManageEnterprise && <form action={nameAction} className="space-y-4">
         <input type="hidden" name="version" value={currentVersion} />
         <label htmlFor="company-name" className="block font-medium">
           Nome da empresa
@@ -79,9 +87,9 @@ export function CompanyForm({ company }: { company: Company }) {
         <button type="submit" disabled={namePending} className="rounded-lg bg-[#5852ff] px-4 py-2 font-semibold text-white disabled:opacity-50">
           {namePending ? "Salvando..." : "Salvar nome"}
         </button>
-      </form>
+      </form>}
 
-      <form action={rateAction} className="space-y-4 border-t pt-8">
+      {canManageEnterprise && <form action={rateAction} className="space-y-4 border-t pt-8">
         <input type="hidden" name="version" value={currentVersion} />
         <label htmlFor="electricity-rate" className="block font-medium">
           Tarifa de energia (R$/kWh)
@@ -93,6 +101,14 @@ export function CompanyForm({ company }: { company: Company }) {
         <button type="submit" disabled={ratePending} className="rounded-lg bg-[#5852ff] px-4 py-2 font-semibold text-white disabled:opacity-50">
           {ratePending ? "Salvando..." : "Salvar tarifa"}
         </button>
+      </form>}
+      <form action={lossAction} className="space-y-4 border-t pt-8">
+        <input type="hidden" name="version" value={currentVersion} />
+        <label htmlFor="default-loss" className="block font-medium">Perda padrão de filamento (%)<input id="default-loss" name="default_filament_loss_percent" type="text" defaultValue={currentLoss.toString().replace('.', ',')} className="mt-2 w-full rounded-lg border p-3" /></label>
+        <p className="text-sm text-gray-600">Aplicada como valor inicial da perda na precificadora (0 a 100%, até 2 casas decimais).</p>
+        {lossState.status === "success" && <p className="text-sm font-medium text-green-600">{lossState.message}</p>}
+        {lossState.status !== "idle" && lossState.status !== "success" && <p className="text-sm font-medium text-red-600">{lossState.message}</p>}
+        <button type="submit" disabled={lossPending} className="rounded-lg bg-[#5852ff] px-4 py-2 font-semibold text-white disabled:opacity-50">{lossPending ? "Salvando..." : "Salvar perda padrão"}</button>
       </form>
     </div>
   );

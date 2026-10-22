@@ -13,6 +13,7 @@ export const PERMISSIONS = [
   "spools.read",
   "spools.write",
   "spools.archive",
+  "spools.delete",
   "inventory.read",
   "inventory.write",
   "materials.read",
@@ -31,11 +32,13 @@ export const PERMISSIONS = [
   "sales.write",
   "sales.delete",
   "enterprise.manage",
+  "enterprise.pricing_loss.write",
   "members.manage_admins",
   "members.manage_operators",
   "stock.materials.read",
   "stock.materials.write",
   "stock.materials.archive",
+  "stock.materials.delete",
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
@@ -56,6 +59,7 @@ export const ROLE_PERMISSIONS = {
     "spools.read",
     "spools.write",
     "spools.archive",
+  "spools.delete",
     "inventory.read",
     "inventory.write",
     "materials.read",
@@ -64,6 +68,7 @@ export const ROLE_PERMISSIONS = {
     "stock.materials.read",
     "stock.materials.write",
     "stock.materials.archive",
+    "stock.materials.delete",
     "products.read",
     "products.write",
     "products.delete",
@@ -77,6 +82,7 @@ export const ROLE_PERMISSIONS = {
     "sales.write",
     "sales.delete",
     "members.manage_operators",
+    "enterprise.pricing_loss.write",
   ],
   operator: [
     "printers.read",

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SpoolControls } from "@/components/spools/SpoolForms";
+import { SpoolDeleteButton } from "@/components/spools/SpoolDeleteButton";
 import { getSpool } from "@/lib/spools/actions";
 import { formatCurrency, formatGrams, formatDate, formatPercent } from "@/lib/spools/format";
 import { normalizeReturnTo } from "@/lib/spools/navigation";
@@ -14,6 +15,7 @@ export default async function SpoolPage({ params, searchParams }: { params: Prom
   if (!r.spool) notFound();
 
   const s = r.spool, c = r.consumption, ctx = r.context;
+  const deleted = Boolean((s as typeof s & { deleted_at?: string | null }).deleted_at);
   const pages = Math.max(1, Math.ceil(r.total / 20));
   const canWrite = ctx.role !== "operator" || true; // spools.write is in operator
   const canArchive = ctx.role === "owner" || ctx.role === "admin";
@@ -82,7 +84,8 @@ export default async function SpoolPage({ params, searchParams }: { params: Prom
       </div>
 
       <div className="space-y-6">
-        <SpoolControls spool={s} canWrite={canWrite} canArchive={canArchive} />
+        {!deleted && <SpoolControls spool={s} canWrite={canWrite} canArchive={canArchive} />}
+        {canArchive && s.active && !deleted && <SpoolDeleteButton id={s.id} version={s.version} returnTo={back} />}
         <div className="rounded border bg-slate-50 p-5 text-sm">
           <h3 className="font-semibold mb-2">Dados próprios do filamento</h3>
           <p>Identificação: {s.internal_identifier}</p>

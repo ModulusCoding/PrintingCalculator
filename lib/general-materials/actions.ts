@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
 import { createClient } from "@/lib/supabase/server";
+import { deleteEntity } from "@/lib/deletion/actions";
 import { createMaterialSchema, createMovementSchema, updateProfileSchema, updateCostRefSchema, setActiveSchema, fieldErrors, pt, uuid, version } from "./validation";
 import { createLogger } from "./logger";
 import { materialSchema, materialListSchema, movementSchema, costHistorySchema, countSchema } from "./schemas";
@@ -78,6 +79,7 @@ export async function listGeneralMaterials(params: Record<string, string | undef
     return { materials: [], total: 0, page, error: result.status, correlation_id: result.correlation_id };
   }
 }
+export async function deleteGeneralMaterial(payload: unknown): Promise<MutationResult> { return deleteEntity("general_material", payload) as Promise<MutationResult>; }
 export async function createGeneralMaterial(payload: unknown) {
   const logger = createLogger("general-materials", "createGeneralMaterial");
   const v = createMaterialSchema.safeParse(payload);

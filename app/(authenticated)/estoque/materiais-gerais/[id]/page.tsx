@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GeneralMaterialControls } from "@/components/general-materials/GeneralMaterialForms";
+import { GeneralMaterialDeleteButton } from "@/components/general-materials/GeneralMaterialDeleteButton";
 import { getGeneralMaterial } from "@/lib/general-materials/actions";
 import { formatCurrency, formatDate, formatQuantity } from "@/lib/general-materials/format";
 import type { Movement, CostHistory } from "@/lib/general-materials/schemas";
@@ -18,6 +19,7 @@ export default async function GeneralMaterialPage({ params, searchParams }: { pa
   }
 
   const m = r.material, movs = r.movements, hist = r.history, ctx = r.context;
+  const deleted = Boolean((m as typeof m & { deleted_at?: string | null }).deleted_at);
   const canWrite = ["owner", "admin", "operator"].includes(ctx.role);
   const canArchive = ["owner", "admin"].includes(ctx.role);
 
@@ -45,9 +47,10 @@ export default async function GeneralMaterialPage({ params, searchParams }: { pa
       </div>
 
       <div className="space-y-3">
-        {canWrite && (
+        {!deleted && canWrite && (
           <GeneralMaterialControls material={m} canArchive={canArchive} />
         )}
+        {canArchive && m.active && !deleted && <GeneralMaterialDeleteButton id={m.id} version={m.version} />}
         <div className="rounded border bg-white p-5">
           <h2 className="font-semibold mb-3">Histórico de movimentações</h2>
           {movs.length === 0 ? (

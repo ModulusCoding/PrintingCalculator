@@ -1,68 +1,56 @@
-export type FdmPricingInput = {
+export type FdmRoundingPolicy = { decimals?: number; mode?: "half-up" | "none" };
+export type FdmSpoolLine = { spoolId?: string; consumptionGrams: number; purchasePrice: number; originalFilamentGrams: number };
+export type FdmPackagingLine = {
+  materialId?: string;
+  mode: "per_piece" | "per_lot";
   quantity: number;
-  printTimeHours: number;
+  /** Quantity represented by the reference price (in the same control unit). */
+  referenceQuantity: number;
+  referencePrice: number;
+  /** Optional conversion from supplied units to control units. */
+  conversionFactor?: number;
+};
+export type FdmPricingInput = {
+  quantity: number; printTimeHours: number;
   printer: { purchasePrice: number; lifeHours: number; powerWatts: number; maintenancePerHour: number };
-  energyRate: number;
-  materials: Array<{ consumptionGrams: number; referencePrice: number; referenceWeightGrams: number }>;
+  energyRate: number; lossPercent?: number;
+  /** Authoritative Stage 4 filament lines. */
+  spoolLines?: FdmSpoolLine[];
+  /** Authoritative packaging lines. */
+  packagingLines?: FdmPackagingLine[];
+  // v1 compatibility (read only)
+  materials?: Array<{ consumptionGrams: number; referencePrice: number; referenceWeightGrams: number }>;
+  generalMaterials?: Array<{ consumptionQuantity: number; referencePrice: number; referenceQuantity: number }>;
   finishing: { manualTimeHours: number; laborPerHour: number; fixedCost: number };
-  packagingPerPiece: number;
-  markupPercent: number;
+  /** Explicit manual packaging cost, kept separate from stock material lines. */
+  packagingPerPiece?: number; markupPercent: number; rounding?: FdmRoundingPolicy;
 };
-
-export type FdmPricingResult = {
-  material: number; energy: number; depreciation: number; maintenance: number;
-  finishing: number; packaging: number; total: number; unitCost: number;
-  suggestedLotPrice: number; suggestedUnitPrice: number; markupAmount: number;
-};
-
+export type FdmPricingResult = { material: number; energy: number; depreciation: number; maintenance: number; finishing: number; packaging: number; total: number; unitCost: number; suggestedLotPrice: number; suggestedUnitPrice: number; markupAmount: number };
 export type FdmPricingError = { field: string; message: string };
-
-const finiteNonNegative = (value: number) => Number.isFinite(value) && value >= 0;
-
+const nn = (v: number) => Number.isFinite(v) && v >= 0;
+const round = (v: number, p?: FdmRoundingPolicy) => p?.mode === "none" || p?.decimals === undefined ? v : Math.round((v + Number.EPSILON) * 10 ** p.decimals) / 10 ** p.decimals;
 export function calculateFdmPricing(input: FdmPricingInput): FdmPricingResult | FdmPricingError[] {
-  const errors: FdmPricingError[] = [];
-  if (!Number.isSafeInteger(input.quantity) || input.quantity < 1) errors.push({ field: "quantity", message: "Informe uma quantidade inteira positiva." });
-  if (!Number.isFinite(input.printTimeHours) || input.printTimeHours <= 0 || input.printTimeHours > 10000) errors.push({ field: "printTimeHours", message: "O tempo total deve ser maior que zero." });
-  if (!finiteNonNegative(input.energyRate) || input.energyRate > 1000000) errors.push({ field: "energyRate", message: "Tarifa inválida." });
-  if (!Number.isFinite(input.printer.purchasePrice) || input.printer.purchasePrice < 0) errors.push({ field: "printer", message: "Valor de compra inválido." });
-  if (!Number.isFinite(input.printer.lifeHours) || input.printer.lifeHours <= 0) errors.push({ field: "printer", message: "Vida útil deve ser maior que zero." });
-  if (!Number.isFinite(input.printer.powerWatts) || input.printer.powerWatts <= 0) errors.push({ field: "printer", message: "Potência deve ser maior que zero." });
-  if (!finiteNonNegative(input.printer.maintenancePerHour)) errors.push({ field: "printer", message: "Manutenção inválida." });
-  input.materials.forEach((material, index) => {
-    if (!Number.isFinite(material.consumptionGrams) || material.consumptionGrams <= 0) errors.push({ field: `material-${index}`, message: "Consumo deve ser maior que zero." });
-    if (!Number.isFinite(material.referenceWeightGrams) || material.referenceWeightGrams <= 0) errors.push({ field: `material-${index}`, message: "Peso de referência inválido." });
-    if (!finiteNonNegative(material.referencePrice)) errors.push({ field: `material-${index}`, message: "Preço de referência inválido." });
-  });
-  if (!input.materials.length) errors.push({ field: "materials", message: "Selecione pelo menos um material." });
-  if (!finiteNonNegative(input.finishing.manualTimeHours) || !finiteNonNegative(input.finishing.laborPerHour) || !finiteNonNegative(input.finishing.fixedCost)) errors.push({ field: "finishing", message: "Acabamento inválido." });
-  if (!finiteNonNegative(input.packagingPerPiece)) errors.push({ field: "packagingPerPiece", message: "Embalagem inválida." });
-  if (!finiteNonNegative(input.markupPercent)) errors.push({ field: "markupPercent", message: "Acréscimo inválido." });
-  const bounded: Array<[string, number, number]> = [
-    ["quantity", input.quantity, 100000], ["energyRate", input.energyRate, 100],
-    ["purchasePrice", input.printer.purchasePrice, 1000000], ["lifeHours", input.printer.lifeHours, 100000],
-    ["powerWatts", input.printer.powerWatts, 10000], ["maintenancePerHour", input.printer.maintenancePerHour, 1000],
-    ["manualTimeHours", input.finishing.manualTimeHours, 10000 + 59 / 60],
-    ["laborPerHour", input.finishing.laborPerHour, 100000], ["fixedCost", input.finishing.fixedCost, 1000000],
-    ["packagingPerPiece", input.packagingPerPiece, 1000000], ["markupPercent", input.markupPercent, 100000],
-  ];
-  for (const [field, value, max] of bounded) if (value > max) errors.push({ field, message: "Valor acima do limite operacional." });
-  if (input.materials.length > 10) errors.push({ field: "materials", message: "Use no máximo 10 materiais." });
-  input.materials.forEach((item, index) => {
-    if (item.consumptionGrams > 1000000 || item.referencePrice > 1000000 || item.referenceWeightGrams > 100000 || item.referenceWeightGrams < 0.001) errors.push({ field: `material-${index}`, message: "Valor fora dos limites operacionais." });
-  });
-  if (errors.length) return errors;
-
-  const material = input.materials.reduce((sum, item) => sum + item.consumptionGrams * item.referencePrice / item.referenceWeightGrams, 0);
-  const energy = input.printer.powerWatts / 1000 * input.printTimeHours * input.energyRate;
-  const depreciation = input.printer.purchasePrice / input.printer.lifeHours * input.printTimeHours;
-  const maintenance = input.printer.maintenancePerHour * input.printTimeHours;
+  const e: FdmPricingError[] = []; const loss = input.lossPercent ?? 0;
+  if (!Number.isSafeInteger(input.quantity) || input.quantity < 1) e.push({ field: "quantity", message: "Quantidade inválida." });
+  if (!Number.isFinite(input.printTimeHours) || input.printTimeHours <= 0) e.push({ field: "printTimeHours", message: "Tempo inválido." });
+  if (!nn(input.energyRate) || input.energyRate > 1e6) e.push({ field: "energyRate", message: "Tarifa inválida." });
+  if (!nn(loss) || loss > 100) e.push({ field: "lossPercent", message: "Perda inválida." });
+  const p = input.printer; if (!nn(p.purchasePrice) || !Number.isFinite(p.lifeHours) || p.lifeHours <= 0 || !Number.isFinite(p.powerWatts) || p.powerWatts <= 0 || !nn(p.maintenancePerHour)) e.push({ field: "printer", message: "Impressora inválida." });
+  const spools = input.spoolLines ?? (input.materials ?? []).map(x => ({ consumptionGrams: x.consumptionGrams, purchasePrice: x.referencePrice, originalFilamentGrams: x.referenceWeightGrams }));
+  if (!spools.length) e.push({ field: "spoolLines", message: "Selecione pelo menos um carretel." });
+  spools.forEach((x, i) => { if (!Number.isFinite(x.consumptionGrams) || x.consumptionGrams <= 0 || !nn(x.purchasePrice) || !Number.isFinite(x.originalFilamentGrams) || x.originalFilamentGrams <= 0) e.push({ field: `spool-${i}`, message: "Linha de carretel inválida." }); });
+  const packaging: FdmPackagingLine[] = input.packagingLines ?? (input.generalMaterials ?? []).map(x => ({ mode: "per_lot" as const, quantity: x.consumptionQuantity, referenceQuantity: x.referenceQuantity, referencePrice: x.referencePrice, conversionFactor: 1 }));
+  packaging.forEach((x, i) => { if (!nn(x.quantity) || x.quantity <= 0 || !nn(x.referencePrice) || !Number.isFinite(x.referenceQuantity) || x.referenceQuantity <= 0 || !nn(x.conversionFactor ?? 1)) e.push({ field: `packaging-${i}`, message: "Linha de embalagem inválida." }); });
+  if (input.packagingPerPiece !== undefined && !nn(input.packagingPerPiece)) e.push({ field: "packagingPerPiece", message: "Embalagem inválida." });
+  if (!nn(input.markupPercent)) e.push({ field: "markupPercent", message: "Acréscimo inválido." });
+  if (e.length) return e;
+  const material = spools.reduce((s, x) => s + x.consumptionGrams * x.purchasePrice / x.originalFilamentGrams, 0) * (1 + loss / 100);
+  const packagingCost = packaging.reduce((s, x) => s + x.quantity * (x.mode === "per_piece" ? input.quantity : 1) * (x.conversionFactor ?? 1) * x.referencePrice / x.referenceQuantity, 0) + (input.packagingPerPiece ?? 0) * input.quantity;
+  const energy = p.powerWatts / 1000 * input.printTimeHours * input.energyRate;
+  const depreciation = p.purchasePrice / p.lifeHours * input.printTimeHours;
+  const maintenance = p.maintenancePerHour * input.printTimeHours;
   const finishing = input.finishing.manualTimeHours * input.finishing.laborPerHour + input.finishing.fixedCost;
-  const packaging = input.packagingPerPiece * input.quantity;
-  const total = material + energy + depreciation + maintenance + finishing + packaging;
-  const unitCost = total / input.quantity;
-  const suggestedLotPrice = total * (1 + input.markupPercent / 100);
-  const suggestedUnitPrice = suggestedLotPrice / input.quantity;
-  const markupAmount = suggestedLotPrice - total;
-  const result = { material, energy, depreciation, maintenance, finishing, packaging, total, unitCost, suggestedLotPrice, suggestedUnitPrice, markupAmount };
-  return Object.values(result).every(Number.isFinite) ? result : [{ field: "result", message: "O resultado não é finito. Revise os valores." }];
+  const total = material + energy + depreciation + maintenance + finishing + packagingCost;
+  const raw = { material, energy, depreciation, maintenance, finishing, packaging: packagingCost, total, unitCost: total / input.quantity, suggestedLotPrice: total * (1 + input.markupPercent / 100), suggestedUnitPrice: total * (1 + input.markupPercent / 100) / input.quantity, markupAmount: total * input.markupPercent / 100 };
+  return Object.fromEntries(Object.entries(raw).map(([k, v]) => [k, round(v, input.rounding)])) as FdmPricingResult;
 }

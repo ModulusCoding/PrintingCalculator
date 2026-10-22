@@ -2,10 +2,10 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
-const companySchema=z.object({electricity_rate_per_kwh:z.number().nullable(),version:z.number().int()}).strict();
+const companySchema=z.object({electricity_rate_per_kwh:z.coerce.number().nullable(),default_filament_loss_percent:z.coerce.number().min(0).max(100),version:z.coerce.number().int()}).strip();
 const memberSchema=z.object({membership_id:z.uuid(),full_name:z.string(),email:z.string(),role:z.enum(["owner","admin","operator"]),membership_status:z.enum(["active","inactive"]),membership_created_at:z.string(),must_change_password:z.boolean(),version:z.number().int(),is_self:z.boolean(),is_protected:z.boolean(),name_editable:z.boolean(),total_count:z.coerce.number(),unfiltered_visible_total:z.coerce.number()}).strict();
 export type CompanyConfig=z.infer<typeof companySchema>;
-export type Company= { name: string, created_at: string, version: number, electricity_rate_per_kwh: number | null };
+export type Company= { name: string, created_at: string, version: number, electricity_rate_per_kwh: number | null, default_filament_loss_percent: number };
 export type Member=z.infer<typeof memberSchema>;
 export type MutationResult={status:"success"|"conflict"|"protected"|"name_not_editable"|"target_unavailable"|"permission_denied"|"invalid_input"|"unknown"|"technical"|"session_expired";fieldErrors?:Record<string,string[]>};
 const idSchema=z.uuid();
@@ -23,7 +23,7 @@ export async function getCompany():Promise<Company>{
   const e = z.object({name: z.string(), created_at: z.string(), version: z.number().int()}).safeParse(enterpriseData?.[0]);
   
   if(!c.success || !e.success) throw new Error('technical');
-  return { ...e.data, electricity_rate_per_kwh: c.data.electricity_rate_per_kwh };
+  return { ...e.data, electricity_rate_per_kwh: c.data.electricity_rate_per_kwh, default_filament_loss_percent: c.data.default_filament_loss_percent };
 }
 export async function listMembers(search:string,status:'active'|'inactive'|'all',page:number){const {data,error}=await(await createClient()).rpc('list_my_enterprise_members',{p_search:search,p_status:status,p_page:page,p_page_size:20});if(error)fail(error);const p=z.array(memberSchema).safeParse(data);if(!p.success)throw new Error('technical');return {members:p.data,total:p.data[0]?.total_count??0,unfiltered_visible_total:p.data[0]?.unfiltered_visible_total??0};}
 export async function mutateMember(kind:'edit'|'status',form:FormData):Promise<MutationResult>{
@@ -46,6 +46,16 @@ export async function updateCompanyName(_:unknown,form:FormData){
   if(error)return {status:error.code==='42501'?'permission_denied':'technical'} as const;
   const r=data?.[0];
   return r?.status==='updated'?{status:'success' as const,name:r.name,version:r.version}:r?.status==='version_conflict'?{status:'conflict' as const}:{status:'unknown' as const};
+}
+
+export async function updateCompanyLoss(_:unknown,form:FormData){
+  const loss=z.coerce.number().finite().min(0).max(100).safeParse(String(form.get('default_filament_loss_percent')??'').replace(',','.'));
+  const parsedVersion=versionSchema.safeParse(form.get('version'));
+  if(!loss.success||!parsedVersion.success||!/^\d+(?:[.,]\d{1,2})?$/.test(String(form.get('default_filament_loss_percent')??'').trim()))return {status:'invalid_input' as const};
+  const {data,error}=await(await createClient()).rpc('update_my_pricing_loss',{p_loss:loss.data,p_expected_version:parsedVersion.data});
+  if(error)return {status:error.code==='42501'?'permission_denied':error.code==='22023'?'invalid_input':'technical'} as const;
+  const r=data?.[0];
+  return r?.status==='updated'||r?.status==='no_change'?{status:'success' as const,default_filament_loss_percent:loss.data,version:r.version}:r?.status==='version_conflict'?{status:'conflict' as const}:{status:'unknown' as const};
 }
 
 export async function updateCompanyRate(_:unknown,form:FormData){

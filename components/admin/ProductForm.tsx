@@ -35,7 +35,7 @@ export function ProductForm({ product, canWrite = true, canDelete = true, imageR
       } else if (res.status === "invalid_input") {
         setFieldErrors(res.fieldErrors);
       } else {
-        setError(res.message || `Erro: ${res.status}`);
+        setError(("message" in res ? res.message : undefined) || `Erro: ${res.status}`);
       }
     });
   };

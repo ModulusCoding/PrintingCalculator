@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listGeneralMaterials } from "@/lib/general-materials/actions";
+import { getDeletionCounts } from "@/lib/deletion/actions";
 import { formatQuantity, formatCurrency } from "@/lib/general-materials/format";
 import type { Material } from "@/lib/general-materials/schemas";
 
@@ -8,7 +9,10 @@ export default async function GeneralMaterialsPage({ searchParams }: { searchPar
   const search = (q.search ?? "").trim().slice(0, 120);
   const status = q.status ?? "active";
   const page = Math.max(1, Number(q.page) || 1);
-  const r = await listGeneralMaterials({ search, status, page: String(page) });
+  const [r, deletionCounts] = await Promise.all([
+    listGeneralMaterials({ search, status, page: String(page) }),
+    getDeletionCounts(),
+  ]);
 
   return (
     <section className="space-y-5">
@@ -19,6 +23,11 @@ export default async function GeneralMaterialsPage({ searchParams }: { searchPar
         </div>
         <Link className="rounded bg-indigo-700 px-4 py-2 text-white" href="/estoque/materiais-gerais/novo">Novo material</Link>
       </div>
+
+      {deletionCounts.error && <p role="alert" className="rounded bg-amber-50 p-2 text-xs text-amber-700">Falha técnica ao carregar contagem de exclusões.</p>}
+      {!deletionCounts.error && deletionCounts.counts && deletionCounts.counts.general_materials > 0 && (
+        <p role="status" className="rounded bg-indigo-50 p-2 text-xs text-indigo-700">{deletionCounts.counts.general_materials} material(is) excluído(s) (histórico preservado).</p>
+      )}
 
       <form className="flex gap-2">
         <input name="search" defaultValue={search} placeholder="Buscar por nome" className="flex-1 rounded border p-2" maxLength={120} />

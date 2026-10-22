@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listSpools, getSpoolConfig } from "@/lib/spools/actions";
+import { getDeletionCounts } from "@/lib/deletion/actions";
 import { formatGrams, formatPercent } from "@/lib/spools/format";
 import { spoolDetailHref } from "@/lib/spools/navigation";
 
@@ -8,9 +9,15 @@ export default async function SpoolsPage({ searchParams }: { searchParams: Promi
   const search = (q.search ?? "").trim().slice(0, 120);
   const status = q.status ?? "active";
   const page = Math.max(1, Number(q.page) || 1);
-  const [r, config] = await Promise.all([listSpools({ search, status, page: String(page) }), getSpoolConfig()]);
+  const [r, config, deletionCounts] = await Promise.all([
+    listSpools({ search, status, page: String(page) }),
+    getSpoolConfig(),
+    getDeletionCounts(),
+  ]);
   
   const threshold = config.config?.low_spool_threshold_percent ?? 10;
+  const deletedSpools = deletionCounts.counts?.filament_spools ?? null;
+  const deletedError = deletionCounts.error;
   
   return (
     <section className="space-y-5">
@@ -21,6 +28,17 @@ export default async function SpoolsPage({ searchParams }: { searchParams: Promi
         </div>
         <Link className="rounded bg-indigo-700 px-4 py-2 text-white" href="/estoque/carreteis/novo">Novo carretel</Link>
       </div>
+      
+      {deletedError && (
+        <p role="alert" className="text-xs text-amber-700 bg-amber-50 rounded p-2">
+          Falha técnica ao carregar contagem de exclusões.
+        </p>
+      )}
+      {deletedSpools !== null && deletedSpools > 0 && !deletedError && (
+        <p role="status" className="text-xs text-indigo-700 bg-indigo-50 rounded p-2">
+          {deletedSpools} carretel{deletedSpools > 1 ? "eis" : ""} excluído{deletedSpools > 1 ? "s" : ""} (histórico preservado).
+        </p>
+      )}
       
       <form className="flex flex-wrap gap-2 rounded border bg-white p-4">
         <input name="search" defaultValue={search} placeholder="Identificador, nome, tipo, marca ou cor" className="rounded border p-2 flex-1" />

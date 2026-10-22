@@ -6,7 +6,7 @@ interface LogPayload {
   correlation_id: string;
   scope: string;
   operation: string;
-  stage: "validation" | "context" | "rpc" | "interpretation" | "revalidation" | "navigation";
+  stage: "validation" | "context" | "query" | "rpc" | "interpretation" | "revalidation" | "navigation";
   rpc_name?: string;
   code?: string;
   message?: string;

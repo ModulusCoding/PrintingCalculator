@@ -13,8 +13,9 @@ const rateSchema = z.preprocess((val) => {
 }, z.number().finite().min(0).max(100).nullable());
 
 const configSchema = z.object({
-  electricity_rate_per_kwh: z.number().nullable(),
-  version: z.number().int()
+  electricity_rate_per_kwh: z.coerce.number().nullable(),
+  default_filament_loss_percent: z.coerce.number().min(0).max(100),
+  version: z.coerce.number().int()
 }).strict();
 
 export type Config = z.infer<typeof configSchema>;
