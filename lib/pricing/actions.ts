@@ -4,8 +4,7 @@ import { z } from "zod";
 import { requireBusinessContext } from "@/lib/auth/context";
 import { createClient } from "@/lib/supabase/server";
 import { createLogger } from "@/lib/general-materials/logger";
-import { unstable_rethrow } from "next/navigation";
-import { logPricingFailure } from "@/lib/diagnostics/action-handler";
+import { requirePlanBusinessAccess } from "@/lib/plans";
 
 
 const searchSchema = z.object({ query: z.string().max(200).default(""), page: z.number().int().min(1).max(10000).default(1), limit: z.number().int().min(1).max(50).default(10) }).strict();
@@ -26,8 +25,10 @@ const printerColumns = "id,name,brand,model,purchase_price,estimated_life_hours,
 const materialColumns = "id,name,material_type,brand,color,reference_weight_grams,reference_price,active,version";
 async function search<T>(table: "printers" | "materials", columns: string, schema: z.ZodType<T>, params: Search): Promise<Result<Page<T>>> {
   const logger = createLogger("pricing", `search:${table}`);
-  const ctx = await requireBusinessContext(table === "printers" ? "printers.read" : "materials.read");
-  const parsed = searchSchema.safeParse(params);
+  try {
+    await requirePlanBusinessAccess({ paid: true });
+    const ctx = await requireBusinessContext(table === "printers" ? "printers.read" : "materials.read");
+    const parsed = searchSchema.safeParse(params);
   if (!parsed.success) {
     const id = logger.error({ stage: "validation" });
     return { ok: false, error: "Parâmetros inválidos.", code: "invalid", correlationId: id };
@@ -44,13 +45,16 @@ async function search<T>(table: "printers" | "materials", columns: string, schem
   try {
     return { ok: true, data: { items: z.array(schema).parse(data), total: count ?? 0, page, totalPages: Math.ceil((count ?? 0) / limit) || 1 } };
   } catch (error) {
-    unstable_rethrow(error);
-    const id = logPricingFailure(logger, error, { stage: "interpretation" });
+    const id = logger.error({ stage: "interpretation", code: "ZOD_PARSE_ERROR", technical_detail: error instanceof z.ZodError ? error.issues.map(i => `${i.path.join(".")}:${i.code}:${i.message}`).join(";") : undefined, stack: error instanceof Error ? error.stack : undefined });
     return { ok: false, error: "Erro na interpretação dos dados.", code: "unavailable", correlationId: id };
+  }
+  } catch {
+    return { ok: false, error: "Acesso negado.", code: "forbidden" };
   }
 }
 async function fetchById<T>(table: "printers" | "materials", columns: string, schema: z.ZodType<T>, id: string): Promise<Result<T | null>> {
   try {
+    await requirePlanBusinessAccess({ paid: true });
     const ctx = await requireBusinessContext(table === "printers" ? "printers.read" : "materials.read");
     z.string().uuid().parse(id);
     const client = await createClient();
@@ -66,6 +70,7 @@ export async function fetchMaterialByIdAction(id: string): Promise<Result<Materi
 export async function searchPricingSpoolsAction(params: Search = {}): Promise<Result<Page<z.infer<typeof spoolSchema>>>> {
   const logger = createLogger("pricing", "searchPricingSpools");
   try {
+    await requirePlanBusinessAccess({ paid: true });
     await requireBusinessContext("spools.read");
     const parsed = searchSchema.safeParse(params);
     if (!parsed.success) { const id = logger.error({ stage: "validation" }); return { ok: false, error: "Parâmetros inválidos.", code: "invalid", correlationId: id }; }
@@ -82,6 +87,7 @@ export async function searchPricingSpoolsAction(params: Search = {}): Promise<Re
 export async function searchPricingGeneralMaterialsAction(params: Search = {}): Promise<Result<Page<z.infer<typeof generalMaterialSchema>>>> {
   const logger = createLogger("pricing", "searchPricingGM");
   try {
+    await requirePlanBusinessAccess({ paid: true });
     await requireBusinessContext("stock.materials.read");
     const parsed = searchSchema.safeParse(params);
     if (!parsed.success) { const id = logger.error({ stage: "validation" }); return { ok: false, error: "Parâmetros inválidos.", code: "invalid", correlationId: id }; }

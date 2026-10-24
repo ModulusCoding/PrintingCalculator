@@ -9,7 +9,7 @@ import { createLogger } from "./logger";
 import { materialSchema, materialListSchema, movementSchema, costHistorySchema, countSchema } from "./schemas";
 
 export type MutationResult = { status: string; material_id?: string; movement_id?: string | null; version?: number; balance?: number; fieldErrors?: Record<string, string[]>; correlation_id?: string };
-const known = new Set(["unauthorized", "material_unavailable", "version_conflict", "insufficient_balance", "invalid_input", "idempotency_conflict", "name_conflict", "incompatible_units", "nonrepresentable_conversion"]);
+const known = new Set(["unauthorized", "material_unavailable", "version_conflict", "insufficient_balance", "invalid_input", "idempotency_conflict", "name_conflict", "incompatible_units", "nonrepresentable_conversion", "selection_required", "plan_feature_unavailable", "plan_limit_reached", "member_plan_blocked", "team_regularization_required"]);
 
 function failure(e: unknown, logger: ReturnType<typeof createLogger>) {
   const code = e instanceof AuthContextError ? (e.code === "AUTH_UNAUTHENTICATED" ? "session_expired" : e.code === "AUTH_TECHNICAL_FAILURE" ? "technical" : "permission_denied") : "technical";

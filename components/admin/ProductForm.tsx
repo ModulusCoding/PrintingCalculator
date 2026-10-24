@@ -17,6 +17,8 @@ export function ProductForm({ product, canWrite = true, canDelete = true, imageR
   const [price, setPrice] = useState(product?.price != null ? String(product.price).replace(".", ",") : "");
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [attemptId] = useState(() => crypto.randomUUID());
+  const [frozenPayload, setFrozenPayload] = useState<{ attempt_id: string; name: string; description: string | null; price: string } | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +26,8 @@ export function ProductForm({ product, canWrite = true, canDelete = true, imageR
     setFieldErrors({});
 
     startTransition(async () => {
-      const payload = { name, description: description || null, price };
+      const payload = !product && frozenPayload ? frozenPayload : { attempt_id: attemptId, name, description: description || null, price };
+      if (!product) setFrozenPayload(payload);
       const res = product
         ? await updateInternalProduct(product.id, product.version, payload)
         : await createInternalProduct(payload);

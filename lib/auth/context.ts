@@ -421,6 +421,13 @@ export async function requireBusinessContext(
     throw new AuthContextError("AUTH_PERMISSION_DENIED");
   }
 
+  // Every paid data source/mutation is gated here as well as in the UI.
+  // Historical pricing reads deliberately remain accessible.
+  if (/^(printers\.|materials\.|spools\.|stock\.materials\.)/.test(permission)) {
+    const { requirePlanBusinessAccess } = await import("@/lib/plans");
+    await requirePlanBusinessAccess({ paid: true });
+  }
+
   return {
     userId: context.userId,
     enterpriseId: context.enterpriseId,

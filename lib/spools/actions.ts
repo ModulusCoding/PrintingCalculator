@@ -8,7 +8,7 @@ import { createSpoolSchema, createMovementSchema, updateProfileSchema, updateIde
 import { spoolSchema, spoolListSchema, materialSchema, configSchema, movementSchema, spoolColumns, movementColumns, countSchema, nonnegative } from "./schemas";
 export type MutationResult = {status:string;spool_id?:string;movement_id?:string|null;balance_grams?:number;version?:number;fieldErrors?:Record<string,string[]>};
 function failure(e:unknown):string { if(e instanceof AuthContextError)return e.code==="AUTH_UNAUTHENTICATED"?"session_expired":e.code==="AUTH_TECHNICAL_FAILURE"||e.code==="AUTH_CONTEXT_INVALID_RESPONSE"?"technical":"permission_denied"; return "technical"; }
-const known = new Set(["unauthorized","material_unavailable","spool_unavailable","version_conflict","insufficient_balance","capacity_exceeded","identifier_conflict","idempotency_conflict","invalid_input"]);
+const known = new Set(["unauthorized","material_unavailable","spool_unavailable","version_conflict","insufficient_balance","capacity_exceeded","identifier_conflict","idempotency_conflict","selection_required","plan_feature_unavailable","plan_limit_reached","member_plan_blocked","team_regularization_required","invalid_input"]);
 const createResult=z.object({status:z.enum(["created","idempotent"]),spool_id:uuid,version:z.literal(0)}).strict();
 const movementResult=z.object({status:z.enum(["created","idempotent","no_change"]),movement_id:uuid.nullable(),spool_id:uuid,version, balance_grams:nonnegative}).strict().refine(r=>(r.status==="no_change")===(r.movement_id===null));
 const updateResult=z.object({status:z.enum(["updated","no_change"]),spool_id:uuid,version}).strict();

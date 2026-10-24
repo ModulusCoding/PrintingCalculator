@@ -11,6 +11,9 @@ CREATE INDEX IF NOT EXISTS products_not_deleted_idx ON public.products(enterpris
 CREATE INDEX IF NOT EXISTS filament_spools_not_deleted_idx ON public.filament_spools(enterprise_id,id) WHERE deleted_at IS NULL;
 CREATE INDEX IF NOT EXISTS general_materials_not_deleted_idx ON public.general_materials(enterprise_id,id) WHERE deleted_at IS NULL;
 
+
+
+
 -- Delete permissions are intentionally distinct from archive permissions.
 CREATE OR REPLACE FUNCTION private.can_access_enterprise(p_enterprise_id uuid,p_permission text)
 RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path='' AS $$

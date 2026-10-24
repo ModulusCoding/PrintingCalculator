@@ -5,6 +5,7 @@ import { z } from "zod";
 import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
 import { createClient } from "@/lib/supabase/server";
 import { loadTrace } from "@/lib/diagnostics/load-trace";
+import { planErrorCode } from "@/lib/plans";
 
 export type ProductRecord = {
   id: string;
@@ -27,6 +28,12 @@ export type ProductResult =
         | "permission_denied"
         | "product_unavailable"
         | "version_conflict"
+        | "selection_required"
+        | "plan_limit_reached"
+        | "plan_feature_unavailable"
+        | "member_plan_blocked"
+        | "team_regularization_required"
+        | "idempotency_conflict"
         | "technical"
         | "unknown";
       message?: string;
@@ -50,6 +57,7 @@ const rpcRowSchema = z
   .strict();
 
 const inputSchema = z.object({
+  attempt_id: z.string().uuid().optional(),
   name: z.string().trim().min(2).max(255),
   description: z.string().max(3000).nullable(),
   price: z.string(),
@@ -83,7 +91,7 @@ function parsePrice(value: string): { value: string | null } | { error: string }
 
 function validate(payload: unknown):
   | { errors: Record<string, string[]> }
-  | { data: { name: string; description: string | null; price: string | null } } {
+  | { data: { attempt_id?: string; name: string; description: string | null; price: string | null } } {
   const parsed = inputSchema.safeParse(payload);
   if (!parsed.success)
     return { errors: parsed.error.flatten().fieldErrors as Record<string, string[]> };
@@ -225,6 +233,8 @@ async function callRpc(
     const { data, error } = await supabase.rpc(fn, args);
     if (error) {
       const code = error.message.replace(/^(?:ERROR: |[A-Z0-9]{5}: )/, "");
+      const planCode = planErrorCode(error.message);
+      if (planCode && planCode !== "authorization_conflict") return { status: planCode };
       if (code === "version_conflict") return { status: "version_conflict" };
       if (code === "product_unavailable") return { status: "product_unavailable" };
       if (code === "unauthorized") return { status: "permission_denied" };
@@ -258,6 +268,7 @@ export async function createInternalProduct(payload: unknown): Promise<ProductRe
   const checked = validate(payload);
   if ("errors" in checked) return { status: "invalid_input", fieldErrors: checked.errors };
   const result = await callRpc("create_internal_product", {
+    p_attempt_id: checked.data.attempt_id ?? crypto.randomUUID(),
     p_name: checked.data.name,
     p_description: checked.data.description,
     p_price: checked.data.price,
