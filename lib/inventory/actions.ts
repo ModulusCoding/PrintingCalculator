@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { unstable_rethrow } from "next/navigation";
+import { planErrorCode, planRpcErrorCode } from "@/lib/plans";
 import { z } from "zod";
 import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
 import { createClient } from "@/lib/supabase/server";
@@ -18,6 +20,9 @@ export type MutationResult = {
 };
 
 function failure(e: unknown): string {
+  unstable_rethrow(e);
+  const planCode = planErrorCode(e);
+  if (planCode) return planCode;
   if (e instanceof AuthContextError) {
     if (e.code === "AUTH_UNAUTHENTICATED") return "session_expired";
     if (e.code === "AUTH_ACCESS_BLOCKED") return "denied";
@@ -75,6 +80,8 @@ export async function moveProductInventory(payload: unknown): Promise<MutationRe
     });
 
     if (error) {
+      const planCode = planRpcErrorCode(error);
+      if (planCode) return { status: planCode };
       const code = error.message.replace(/^(?:ERROR: |[A-Z0-9]{5}: )/, "");
       if (known.has(code)) return { status: code === "unauthorized" ? "permission_denied" : code };
       return { status: "uncertain" };
@@ -99,6 +106,7 @@ export async function moveProductInventory(payload: unknown): Promise<MutationRe
       version: r.version,
     };
   } catch (e) {
+    unstable_rethrow(e);
     return { status: dispatched ? "uncertain" : failure(e) };
   }
 }
@@ -159,7 +167,8 @@ export async function getProductInventoryDetail(productId: string, page = 1) {
   let client: Awaited<ReturnType<typeof createClient>>;
   try {
     client = await createClient();
-  } catch {
+  } catch (e) {
+    unstable_rethrow(e);
     return { detail: null, movements: [], total: 0, canWrite: false, error: "technical" };
   }
 
@@ -173,11 +182,14 @@ export async function getProductInventoryDetail(productId: string, page = 1) {
       client.rpc("list_product_inventory_movements", { p_product_id: productId, p_limit: 20, p_offset: offset }),
       client.rpc("count_product_inventory_movements", { p_product_id: productId }),
     ]);
-  } catch {
+  } catch (e) {
+    unstable_rethrow(e);
     return { detail: null, movements: [], total: 0, canWrite: false, error: "technical" };
   }
 
   if (detailRes.error) {
+    const planCode = planRpcErrorCode(detailRes.error);
+    if (planCode) return { detail: null, movements: [], total: 0, canWrite: false, error: planCode };
     const code = detailRes.error.message.replace(/^(?:ERROR: |[A-Z0-9]{5}: )/, "");
     if (known.has(code)) return { detail: null, movements: [], total: 0, canWrite: false, error: code === "unauthorized" ? "permission_denied" : code };
     return { detail: null, movements: [], total: 0, canWrite: false, error: "technical" };

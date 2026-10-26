@@ -3,24 +3,34 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Home, Building2, Users, Menu, X, Package, Printer, Layers, Calculator } from "lucide-react";
+import { Home, Building2, Users, Menu, X, Package, Printer, Layers, Calculator, LockKeyhole, type LucideIcon } from "lucide-react";
 import { LogoutButton } from "@/app/conta/LogoutButton";
-export function AuthenticatedShell({ children, canManageEnterprise, canManageMembers, canReadPrinters, canReadMaterials, canReadGeneralMaterials, canReadSpools, canReadInventory }:  { children: React.ReactNode; canManageEnterprise: boolean; canManageMembers: boolean; canReadPrinters: boolean; canReadMaterials: boolean; canReadGeneralMaterials: boolean; canReadSpools: boolean; canReadInventory: boolean }) {
+export function AuthenticatedShell({ children, canManageEnterprise, canManageMembers, canReadPrinters, canReadMaterials, canReadGeneralMaterials, canReadSpools, canReadInventory, canReadPricing, paidModulesLocked }:  { children: React.ReactNode; canManageEnterprise: boolean; canManageMembers: boolean; canReadPrinters: boolean; canReadMaterials: boolean; canReadGeneralMaterials: boolean; canReadSpools: boolean; canReadInventory: boolean; canReadPricing: boolean; paidModulesLocked: boolean }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navClass = (active: boolean) => `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3d32e6] ${active ? "bg-[#5852ff] text-[#f2eeff]" : "text-[#464556] hover:bg-[#e7e8e9]"}`;
+  const paidModuleLink = (href: string, label: string, Icon: LucideIcon) => {
+    const active = pathname.startsWith(href);
+    return <Link href={href} prefetch={paidModulesLocked ? false : undefined} onClick={() => setMobileOpen(false)} className={navClass(active)} aria-current={active ? "page" : undefined}>
+      <Icon className="size-5 shrink-0" aria-hidden="true" />
+      <span className="min-w-0 flex-1">{label}</span>
+      {paidModulesLocked && <span className="inline-flex shrink-0 items-center gap-1 rounded-md bg-amber-100 px-1.5 py-1 text-[10px] font-semibold text-amber-950"><LockKeyhole className="size-3" aria-hidden="true" />Visionário<span className="sr-only"> — requer Visionário; conhecer este recurso</span></span>}
+    </Link>;
+  };
   const nav = (
     <>
       <Link href="/home" onClick={() => setMobileOpen(false)} className={navClass(pathname === "/home")} aria-current={pathname === "/home" ? "page" : undefined}><Home className="size-5" aria-hidden="true" />Home</Link>
+      <Link href="/conta" className={navClass(false)}>Minha conta</Link>
+      {canManageEnterprise && <Link href="/meu-plano" className={navClass(false)}>Meu plano</Link>}
       
       <div className="mt-7"><p className="mb-2 px-4 text-xs font-semibold uppercase tracking-widest text-[#464556]/60">Operação</p><div className="space-y-1">
         <Link href="/admin/products" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/admin/products"))} aria-current={pathname.startsWith("/admin/products") ? "page" : undefined}><Package className="size-5" aria-hidden="true" />Produtos</Link>
-        {canReadPrinters && <Link href="/impressoras" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/impressoras"))} aria-current={pathname.startsWith("/impressoras") ? "page" : undefined}><Printer className="size-5" aria-hidden="true" />Impressoras</Link>}
-        {canReadMaterials && <Link href="/materiais" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/materiais"))} aria-current={pathname.startsWith("/materiais") ? "page" : undefined}><Layers className="size-5" aria-hidden="true" />Materiais</Link>}
-        {canReadGeneralMaterials && <Link href="/estoque/materiais-gerais" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/estoque/materiais-gerais"))} aria-current={pathname.startsWith("/estoque/materiais-gerais") ? "page" : undefined}><Layers className="size-5" aria-hidden="true" />Materiais gerais</Link>}
-        {canReadInventory && <Link href="/estoque/produtos" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/estoque/produtos"))} aria-current={pathname.startsWith("/estoque/produtos") ? "page" : undefined}><Package className="size-5" aria-hidden="true" />Produtos prontos</Link>}
-         {canReadSpools && <><Link href="/estoque/carreteis" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/estoque/carreteis"))} aria-current={pathname.startsWith("/estoque/carreteis") ? "page" : undefined}><Package className="size-5" aria-hidden="true" />Carretéis</Link><Link href="/estoque/carreteis/configuracao" onClick={() => setMobileOpen(false)} className={navClass(pathname === "/estoque/carreteis/configuracao")}>Alerta de estoque</Link></>}
-        {(canReadPrinters && canReadMaterials) && <Link href="/precificadora" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/precificadora"))} aria-current={pathname.startsWith("/precificadora") ? "page" : undefined}><Calculator className="size-5" aria-hidden="true" />Precificadora</Link>}
+        {canReadPrinters && paidModuleLink("/impressoras", "Impressoras", Printer)}
+        {canReadMaterials && paidModuleLink("/materiais", "Materiais", Layers)}
+        {canReadGeneralMaterials && paidModuleLink("/estoque/materiais-gerais", "Materiais gerais", Layers)}
+        {canReadInventory && paidModuleLink("/estoque/produtos", "Produtos prontos", Package)}
+        {canReadSpools && <>{paidModuleLink("/estoque/carreteis", "Carretéis", Package)}{paidModuleLink("/estoque/carreteis/configuracao", "Alerta de estoque", Package)}</>}
+        {canReadPricing && <Link href="/precificadora" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/precificadora"))} aria-current={pathname.startsWith("/precificadora") ? "page" : undefined}><Calculator className="size-5" aria-hidden="true" />Precificadora</Link>}
       </div></div>
 
       {(canManageEnterprise || canManageMembers) && <div className="mt-7"><p className="mb-2 px-4 text-xs font-semibold uppercase tracking-widest text-[#464556]/60">Empresa</p><div className="space-y-1">

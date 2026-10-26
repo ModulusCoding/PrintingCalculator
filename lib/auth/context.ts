@@ -3,6 +3,7 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { loadTrace } from "@/lib/diagnostics/load-trace";
+import { permissionRequiresVisionario } from "@/lib/plans/permission-capabilities";
 
 export const PERMISSIONS = [
   "printers.read",
@@ -423,9 +424,15 @@ export async function requireBusinessContext(
 
   // Every paid data source/mutation is gated here as well as in the UI.
   // Historical pricing reads deliberately remain accessible.
-  if (/^(printers\.|materials\.|spools\.|stock\.materials\.)/.test(permission)) {
-    const { requirePlanBusinessAccess } = await import("@/lib/plans");
+  const { requirePlanBusinessAccess } = await import("@/lib/plans");
+  if (permissionRequiresVisionario(permission)) {
     await requirePlanBusinessAccess({ paid: true });
+  } else if (!/^(enterprise\.|members\.)/.test(permission)) {
+    // Management remains reachable for remediation. Operational product/pricing
+    // actions must still deny blocked members and paid teams above their limit.
+    await requirePlanBusinessAccess();
+  } else if (context.role !== "owner") {
+    await requirePlanBusinessAccess();
   }
 
   return {

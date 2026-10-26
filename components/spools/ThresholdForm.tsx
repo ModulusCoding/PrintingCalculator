@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { planActionMessage } from "@/lib/plans/action-messages";
 import { useRouter } from "next/navigation";
 import { updateSpoolThreshold } from "@/lib/spools/actions";
 import type { Config } from "@/lib/spools/schemas";
@@ -32,6 +33,7 @@ export function ThresholdForm({ config }: { config: Config }) {
       <button disabled={busy} className="rounded bg-indigo-700 px-4 py-2 text-white">{busy ? "Salvando…" : "Salvar"}</button>
       {result && (
         <p role="status" className="text-sm text-red-700">
+          {planActionMessage(result.status)}
           {result.status === "updated" && "Limite salvo."}
           {result.status === "version_conflict" && "Configuração alterada. Atualize a página e tente novamente."}
           {result.status === "no_change" && "Nenhuma alteração necessária."}

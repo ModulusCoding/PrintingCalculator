@@ -1,7 +1,20 @@
 import Link from "next/link";
 import { NewSpoolForm } from "@/components/spools/SpoolForms";
 
-export default async function NewSpoolPage() {
+import { renderPaidModule } from "@/components/plans/PaidModuleGate";
+import { CreationLimitNotice } from "@/components/plans/CreationLimitNotice";
+import { getCreationCapacity } from "@/lib/plans/creation-access";
+
+export default function PaidNewSpoolPage() {
+  return renderPaidModule("spools", "spools.write", () => NewSpoolPage());
+}
+
+async function NewSpoolPage() {
+  const capacity = await getCreationCapacity("shared_materials");
+  if (!capacity.canCreate && capacity.limit !== null) {
+    return <CreationLimitNotice moduleLabel="Carretéis" used={capacity.used} limit={capacity.limit} backHref="/estoque/carreteis" />;
+  }
+
   return (
     <section className="max-w-xl space-y-4">
       <div>

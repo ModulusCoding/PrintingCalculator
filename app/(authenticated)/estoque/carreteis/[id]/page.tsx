@@ -8,7 +8,13 @@ import { normalizeReturnTo } from "@/lib/spools/navigation";
 
 type Query = { page?: string; returnTo?: string };
 
-export default async function SpoolPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Query> }) {
+import { renderPaidModule } from "@/components/plans/PaidModuleGate";
+
+export default function PaidSpoolPage(props: Parameters<typeof SpoolPage>[0]) {
+  return renderPaidModule("spools", "spools.read", () => SpoolPage(props));
+}
+
+async function SpoolPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Query> }) {
   const { id } = await params, q = await searchParams, page = Math.max(1, Number(q.page) || 1);
   const back = normalizeReturnTo(q.returnTo);
   const r = await getSpool(id, page);

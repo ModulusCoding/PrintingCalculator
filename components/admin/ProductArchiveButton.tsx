@@ -3,16 +3,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { setInternalProductActive } from "@/lib/products/actions";
-
-const messages: Record<string, string> = {
-  permission_denied: "Você não tem permissão.",
-  product_unavailable: "Produto indisponível.",
-  version_conflict: "O produto foi alterado. Atualize a página.",
-  technical: "Erro técnico. Tente novamente.",
-  session_expired: "Sessão expirada. Entre novamente.",
-  unknown: "Erro inesperado. Verifique a lista.",
-  invalid_input: "Dados inválidos.",
-};
+import Link from "next/link";
+import { productMessage, productPlanAction } from "@/lib/products/messages";
 
 function productsListReturnTo(value: string) {
   // Only retain the validated list-state parameters; never navigate to an arbitrary URL.
@@ -35,6 +27,7 @@ export function ProductArchiveButton({ id, version, active, returnTo }: { id: st
   const safeReturnTo = productsListReturnTo(returnTo);
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("");
   const label = active ? "Arquivar" : "Restaurar";
 
   function changeState() {
@@ -47,7 +40,8 @@ export function ProductArchiveButton({ id, version, active, returnTo }: { id: st
         router.refresh();
         return;
       }
-      setMessage(messages[result.status] || messages.unknown);
+      setStatus(result.status);
+      setMessage(productMessage(result.status, "reference" in result ? result.reference : undefined));
     });
   }
 
@@ -55,6 +49,6 @@ export function ProductArchiveButton({ id, version, active, returnTo }: { id: st
     <button type="button" onClick={changeState} disabled={pending} className="text-sm underline text-red-600 disabled:opacity-50">
       {pending ? "Processando..." : label}
     </button>
-    {message && <p role="alert" className="text-xs text-red-700">{message}</p>}
+    {message && <p role="alert" className="text-xs text-red-700">{message} {productPlanAction(status) && <Link href="/planos" className="underline">Consultar planos</Link>}</p>}
   </div>;
 }

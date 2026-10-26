@@ -2,7 +2,9 @@ import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
 import { listMembers } from "@/lib/enterprise/management";
 import { TeamList } from "./TeamList";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { redirect, unstable_rethrow } from "next/navigation";
+import { PlanAccessError } from "@/lib/plans";
+import { planAccessNotice } from "@/components/plans/PlanAccessNotice";
 
 export default async function TeamPage({ searchParams }: { searchParams: Promise<{ search?: string; status?: string; page?: string }> }) {
   const query = await searchParams;
@@ -18,6 +20,8 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
     canManageAdmins = context.role === "owner";
     data = await listMembers(search, status, page);
   } catch (error) {
+    unstable_rethrow(error);
+    if (error instanceof PlanAccessError) return planAccessNotice(error);
     if (error instanceof AuthContextError && error.code === "AUTH_UNAUTHENTICATED") redirect("/admin/login");
     return <TeamUnavailable />;
   }

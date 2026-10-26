@@ -12,9 +12,9 @@ export const manualFdmSchema = z.object({
   input: z.object({
     quantity: z.number().int().positive().safe().max(MAX), printTimeHours: positive,
     tariff, lossPercent: nonnegative.max(100).default(0),
-    printer: z.object({ name: z.string().max(200), purchasePrice: nonnegative, lifeHours: positive, powerWatts: positive, maintenancePerHour: nonnegative }).strict(),
-    spoolLines: z.array(z.object({ name: z.string().max(200), consumptionGrams: positive, purchasePrice: nonnegative, originalFilamentGrams: positive }).strict()).min(1).max(10),
-    packagingLines: z.array(z.object({ name: z.string().max(200), mode: z.enum(["per_piece", "per_lot"]), quantity: positive, suppliedUnit: z.string().min(1).max(50), referencePrice: nonnegative, referenceQuantity: positive }).strict()).max(10),
+    printer: z.object({ name: z.string().trim().min(1).max(200), purchasePrice: nonnegative, lifeHours: positive, powerWatts: positive, maintenancePerHour: nonnegative }).strict(),
+    spoolLines: z.array(z.object({ name: z.string().trim().min(1).max(200), consumptionGrams: positive, purchasePrice: nonnegative, originalFilamentGrams: positive }).strict()).min(1).max(10),
+    packagingLines: z.array(z.object({ name: z.string().trim().min(1).max(200), mode: z.enum(["per_piece", "per_lot"]), quantity: positive, suppliedUnit: z.string().min(1).max(50), referencePrice: nonnegative, referenceQuantity: positive }).strict()).max(10),
     finishing: z.object({ manualTimeHours: nonnegative, laborPerHour: nonnegative, fixedCost: nonnegative }).strict(),
     packagingPerPiece: nonnegative.default(0), markupPercent: nonnegative,
   }).strict(),

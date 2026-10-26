@@ -1,4 +1,5 @@
 "use client";
+import { planActionMessages } from "@/lib/plans/action-messages";
 
 import { useState, useRef, useId, useEffect, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -6,6 +7,7 @@ import { moveProductInventory, type MutationResult } from "@/lib/inventory/actio
 import { movementInputSchema, parseUnits } from "@/lib/inventory/validation";
 
 const MESSAGES: Record<string, string> = {
+  ...planActionMessages,
   created: "Movimentação registrada com sucesso.",
   idempotent: "Esta operação já foi processada anteriormente; exibindo resultado histórico.",
   no_change: "O saldo informado é igual ao saldo atual. Nenhuma alteração foi necessária.",

@@ -1,5 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { unstable_rethrow } from "next/navigation";
+import { planErrorCode, planRpcErrorCode, requirePlanBusinessAccess } from "@/lib/plans";
 import { z } from "zod";
 import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
 import { createClient } from "@/lib/supabase/server";
@@ -7,7 +9,7 @@ import { deleteEntity } from "@/lib/deletion/actions";
 import { createSpoolSchema, createMovementSchema, updateProfileSchema, updateIdentitySchema, setActiveSchema, updateThresholdSchema, fieldErrors, pt, uuid, version } from "./validation";
 import { spoolSchema, spoolListSchema, materialSchema, configSchema, movementSchema, spoolColumns, movementColumns, countSchema, nonnegative } from "./schemas";
 export type MutationResult = {status:string;spool_id?:string;movement_id?:string|null;balance_grams?:number;version?:number;fieldErrors?:Record<string,string[]>};
-function failure(e:unknown):string { if(e instanceof AuthContextError)return e.code==="AUTH_UNAUTHENTICATED"?"session_expired":e.code==="AUTH_TECHNICAL_FAILURE"||e.code==="AUTH_CONTEXT_INVALID_RESPONSE"?"technical":"permission_denied"; return "technical"; }
+function failure(e:unknown):string { unstable_rethrow(e); const planCode=planErrorCode(e); if(planCode)return planCode; if(e instanceof AuthContextError)return e.code==="AUTH_UNAUTHENTICATED"?"session_expired":e.code==="AUTH_TECHNICAL_FAILURE"||e.code==="AUTH_CONTEXT_INVALID_RESPONSE"?"technical":"permission_denied"; return "technical"; }
 const known = new Set(["unauthorized","material_unavailable","spool_unavailable","version_conflict","insufficient_balance","capacity_exceeded","identifier_conflict","idempotency_conflict","selection_required","plan_feature_unavailable","plan_limit_reached","member_plan_blocked","team_regularization_required","invalid_input"]);
 const createResult=z.object({status:z.enum(["created","idempotent"]),spool_id:uuid,version:z.literal(0)}).strict();
 const movementResult=z.object({status:z.enum(["created","idempotent","no_change"]),movement_id:uuid.nullable(),spool_id:uuid,version, balance_grams:nonnegative}).strict().refine(r=>(r.status==="no_change")===(r.movement_id===null));
@@ -17,9 +19,13 @@ const consumptionSummarySchema=z.object({total_consumed_grams:nonnegative,total_
 async function mutate(name:string,args:Record<string,unknown>,permission:"spools.write"|"spools.archive"|"enterprise.manage",schema:z.ZodType):Promise<MutationResult>{
  let dispatched=false;
  try {
-  await requireBusinessContext(permission); const client=await createClient(); dispatched=true;
+  await requireBusinessContext(permission);
+  // Owner enterprise.manage is intentionally available for remediation; this
+  // particular setting still belongs to the paid spools module.
+  if(permission==="enterprise.manage")await requirePlanBusinessAccess({paid:true});
+  const client=await createClient(); dispatched=true;
   const {data,error}=await client.rpc(name,args);
-  if(error){const code=error.message.replace(/^(?:ERROR: |[A-Z0-9]{5}: )/, "");if(known.has(code))return {status:code==="unauthorized"?"permission_denied":code};return {status:"uncertain"};}
+  if(error){const planCode=planRpcErrorCode(error);if(planCode)return {status:planCode};const code=error.message.replace(/^(?:ERROR: |[A-Z0-9]{5}: )/, "");if(known.has(code))return {status:code==="unauthorized"?"permission_denied":code};return {status:"uncertain"};}
   const parsed=z.array(schema).length(1).safeParse(data);if(!parsed.success)return {status:"uncertain"};
   const r=parsed.data[0] as {status:string;spool_id?:string;version:number;balance_grams?:number};
   if(args.p_spool_id && r.spool_id!==args.p_spool_id)return {status:"uncertain"};
@@ -27,7 +33,7 @@ async function mutate(name:string,args:Record<string,unknown>,permission:"spools
   // Cache invalidation failure must never turn a committed write into a retryable failure.
   try{revalidatePath("/estoque/carreteis","layout");}catch{}
   return {status:r.status,...(r.spool_id?{spool_id:r.spool_id}:{}),...("movement_id" in r?{movement_id:(r as {movement_id:string|null}).movement_id}:{}),...(typeof r.version==="number"?{version:r.version}:{}),...(typeof r.balance_grams==="number"?{balance_grams:r.balance_grams}:{})};
- }catch(e){return {status:dispatched?"uncertain":failure(e)};}
+ }catch(e){unstable_rethrow(e);return {status:dispatched?"uncertain":failure(e)};}
 }
 export async function listSpools(params:Record<string,string|undefined>={}){
  const page=Math.min(5001,Math.max(1,Math.floor(Number(params.page)||1))); const search=(params.search||"").trim().slice(0,120);const status=z.enum(["active","archived","all","low","empty"]).catch("active").parse(params.status);

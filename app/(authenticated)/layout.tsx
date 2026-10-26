@@ -1,23 +1,15 @@
-import { AuthContextError, ROLE_PERMISSIONS, resolveMinimalIdentity, type Permission } from "@/lib/auth/context";
+import { ROLE_PERMISSIONS, resolveMinimalIdentity, type Permission } from "@/lib/auth/context";
 import { redirect } from "next/navigation";
 import { AuthenticatedShell } from "./AuthenticatedShell";
+import { getMyPlanAccess, PlanAccessError } from "@/lib/plans";
+import { planAccessNotice } from "@/components/plans/PlanAccessNotice";
 
 export default async function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   let context;
   try {
     context = await resolveMinimalIdentity();
   } catch (error) {
-    if (error instanceof AuthContextError) {
-      return (
-        <main className="min-h-screen bg-[#f3f4f5] p-6">
-          <section className="mx-auto mt-24 max-w-md rounded-2xl border border-red-200 bg-white p-8 text-center shadow-sm" role="alert">
-            <h1 className="text-xl font-bold text-[#152336]">Erro técnico</h1>
-            <p className="mt-3 text-sm text-[#464556]">Não foi possível validar seu acesso neste momento. Tente novamente em instantes.</p>
-          </section>
-        </main>
-      );
-    }
-    throw error;
+    return planAccessNotice(error);
   }
 
   if (context.state === "unauthenticated") {
@@ -28,6 +20,13 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
     redirect("/conta");
   }
 
+  // Plan/account routes live outside this operational layout to avoid redirect loops.
+  let plan;
+  try { plan = await getMyPlanAccess(); }
+  catch (error) { return planAccessNotice(error); }
+  if (!plan || plan.selection_required) redirect("/planos");
+  if (plan.effective_plan === "free" && context.role !== "owner") return planAccessNotice(new PlanAccessError("member_plan_blocked"));
+
   const permissions: readonly Permission[] = ROLE_PERMISSIONS[context.role];
   const canManageEnterprise = permissions.includes("enterprise.manage");
   const canManageMembers = permissions.includes("members.manage_operators");
@@ -36,6 +35,8 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
   const canReadGeneralMaterials = permissions.includes("stock.materials.read");
   const canReadSpools = permissions.includes("spools.read");
   const canReadInventory = permissions.includes("inventory.read");
+  const canReadPricing = permissions.includes("pricing.read");
+  const paidModulesLocked = plan.effective_plan === "free" && context.role === "owner";
 
   return (
     <AuthenticatedShell
@@ -46,7 +47,10 @@ export default async function AuthenticatedLayout({ children }: { children: Reac
       canReadGeneralMaterials={canReadGeneralMaterials}
       canReadSpools={canReadSpools}
       canReadInventory={canReadInventory}
+      canReadPricing={canReadPricing}
+      paidModulesLocked={paidModulesLocked}
     >
+      {plan.effective_plan === "free" && context.role === "owner" && <aside className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">O Aprendiz permite operação somente pelo master. Se houver membros legados, seus vínculos são preservados, mas não permitem operação empresarial. <a href="/empresa/equipe" className="underline">Revisar equipe</a> · <a href="/meu-plano" className="underline">Meu plano</a></aside>}
       {children}
     </AuthenticatedShell>
   );

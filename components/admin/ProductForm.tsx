@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { productMessage, productPlanAction } from "@/lib/products/messages";
 import { createInternalProduct, updateInternalProduct, type ProductRecord } from "@/lib/products/actions";
 
 import { ProductArchiveButton } from "@/components/admin/ProductArchiveButton";
@@ -16,6 +17,7 @@ export function ProductForm({ product, canWrite = true, canDelete = true, imageR
   const [description, setDescription] = useState(product?.description || "");
   const [price, setPrice] = useState(product?.price != null ? String(product.price).replace(".", ",") : "");
   const [error, setError] = useState<string | null>(null);
+  const [errorStatus, setErrorStatus] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [attemptId] = useState(() => crypto.randomUUID());
   const [frozenPayload, setFrozenPayload] = useState<{ attempt_id: string; name: string; description: string | null; price: string } | null>(null);
@@ -38,7 +40,8 @@ export function ProductForm({ product, canWrite = true, canDelete = true, imageR
       } else if (res.status === "invalid_input") {
         setFieldErrors(res.fieldErrors);
       } else {
-        setError(("message" in res ? res.message : undefined) || `Erro: ${res.status}`);
+        setErrorStatus(res.status);
+        setError(productMessage(res.status, "reference" in res ? res.reference : undefined));
       }
     });
   };
@@ -49,7 +52,7 @@ export function ProductForm({ product, canWrite = true, canDelete = true, imageR
         <h2 className="text-xl font-bold">{product ? "Editar Produto" : "Novo Produto"}</h2>
       </div>
 
-      {error && <div className="p-3 bg-red-100 text-red-800 rounded">{error}</div>}
+      {error && <div role="alert" className="p-3 bg-red-100 text-red-800 rounded">{error} {productPlanAction(errorStatus) && <Link href="/planos" className="underline">Consultar planos</Link>}</div>}
 
       <div>
         <label className="block text-sm font-medium mb-1">Nome *</label>

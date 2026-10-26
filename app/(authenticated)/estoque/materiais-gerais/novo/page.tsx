@@ -1,7 +1,20 @@
 import Link from "next/link";
 import { NewGeneralMaterialForm } from "@/components/general-materials/GeneralMaterialForms";
 
-export default function NewGeneralMaterialPage() {
+import { renderPaidModule } from "@/components/plans/PaidModuleGate";
+import { CreationLimitNotice } from "@/components/plans/CreationLimitNotice";
+import { getCreationCapacity } from "@/lib/plans/creation-access";
+
+export default function PaidNewGeneralMaterialPage() {
+  return renderPaidModule("generalMaterials", "stock.materials.write", () => NewGeneralMaterialPage());
+}
+
+async function NewGeneralMaterialPage() {
+  const capacity = await getCreationCapacity("shared_materials");
+  if (!capacity.canCreate && capacity.limit !== null) {
+    return <CreationLimitNotice moduleLabel="Materiais gerais" used={capacity.used} limit={capacity.limit} backHref="/estoque/materiais-gerais" />;
+  }
+
   return (
     <section className="max-w-xl space-y-4">
       <div>

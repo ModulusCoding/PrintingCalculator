@@ -3,25 +3,20 @@
 import { z } from "zod";
 import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
-import { canonicalJson, pricingRequestSchema, runFdm, sha256, type PricingOutcome } from "./persistence";
+import { canonicalJson, pricingRequestSchema, runFdm, sha256, type PricingOutcome as EnginePricingOutcome } from "./persistence";
 import { spoolColumns, spoolSchema } from "@/lib/spools/schemas";
 import { materialSchema as generalMaterialSchema } from "@/lib/general-materials/schemas";
 import { createLogger } from "@/lib/general-materials/logger";
 import { unstable_rethrow } from "next/navigation";
-import { requirePlanBusinessAccess } from "@/lib/plans";
+import { requirePlanBusinessAccess, PlanAccessError, PlanTechnicalError, planRpcErrorCode, type PlanErrorCode } from "@/lib/plans";
+import { logPricingFailure, pricingPlanMessage } from "@/lib/diagnostics/action-handler";
+
+type PricingOutcome<T> = EnginePricingOutcome<T> | { ok: false; code: PlanErrorCode | "unavailable" | "unknown"; error: string; correlationId?: string };
 import { manualFdmSchema } from "./manual";
 
 function logSourceFailure(logger: ReturnType<typeof createLogger>, error: unknown, stage: "context" | "query" | "interpretation" | "validation", operation?: string) {
   unstable_rethrow(error);
-  const code = error instanceof AuthContextError
-    ? error.code
-    : error instanceof z.ZodError
-      ? "ZOD_PARSE_ERROR"
-      : stage === "query" ? "QUERY_FAILURE" : "TECHNICAL_FAILURE";
-  const technical_detail = error instanceof z.ZodError
-    ? error.issues.map(issue => `${issue.path.join(".") || "<root>"}:${issue.code}`).join(";")
-    : undefined;
-  logger.error({ stage, rpc_name: operation, code, message: "Pricing source operation failed", technical_detail });
+  return logPricingFailure(logger, error, { stage, operation });
 }
 
 const unitFactors: Record<string, number> = { unidade: 1, metro: 1, centimetro: .01, grama: 1, quilograma: 1000 };
@@ -38,17 +33,26 @@ export type PricingProduct = z.infer<typeof productSchema>;
 const paging = z.object({ query: z.string().trim().max(200).default(""), page: z.number().int().min(1).max(10000).default(1), limit: z.number().int().min(1).max(50).default(10) }).strict();
 const failure = (code: "invalid" | "not_found" | "conflict" | "unavailable" | "forbidden" | "unknown", error: string) => ({ ok: false as const, code, error });
 
-function caught(error: unknown, dispatched = false) {
-  if (error instanceof AuthContextError) return failure(
-    error.code === "AUTH_TECHNICAL_FAILURE" || error.code === "AUTH_CONTEXT_INVALID_RESPONSE" ? "unavailable" : "forbidden", error.message);
-  return failure(dispatched ? "unknown" : "unavailable", dispatched ? "Resultado não confirmado. Tente novamente com a mesma tentativa." : "Serviço indisponível.");
+function caught(error: unknown, dispatched = false, logger = createLogger("pricing", "action")) {
+  unstable_rethrow(error);
+  if (error instanceof PlanAccessError) return { ok: false as const, code: error.code, error: pricingPlanMessage(error.code) };
+  if (error instanceof AuthContextError && error.code !== "AUTH_TECHNICAL_FAILURE" && error.code !== "AUTH_CONTEXT_INVALID_RESPONSE") {
+    return failure("forbidden", "Acesso negado.");
+  }
+  const correlationId = error instanceof PlanTechnicalError ? error.correlationId : logPricingFailure(logger, error, { stage: "context" });
+  return { ...failure(dispatched ? "unknown" : "unavailable", dispatched ? "Resultado não confirmado. Tente novamente com a mesma tentativa." : "Serviço indisponível."), correlationId };
 }
 
-function rpcFailure(error: { code?: string }, dispatched = false) {
+function rpcFailure(error: { code?: string; message?: string }, dispatched = false, operation = "pricing.rpc") {
+  const planCode = planRpcErrorCode(error);
+  if (planCode) return { ok: false as const, code: planCode, error: pricingPlanMessage(planCode) };
   if (error.code === "42501") return failure("forbidden", "Acesso negado.");
   if (["23505", "40001"].includes(error.code ?? "")) return failure("conflict", "Cadastro ou tentativa alterado. Recalcule.");
   if (error.code === "22023") return failure("invalid", "Entradas inválidas.");
-  return caught(error, dispatched && !/^[0-9A-Z]{5}$/.test(error.code ?? ""));
+  const logger = createLogger("pricing", operation);
+  const correlationId = logPricingFailure(logger, error, { stage: "rpc", operation });
+  const uncertain = dispatched && !/^[0-9A-Z]{5}$/.test(error.code ?? "");
+  return { ...failure(uncertain ? "unknown" : "unavailable", uncertain ? "Resultado não confirmado. Tente novamente com a mesma tentativa." : "Serviço indisponível."), correlationId };
 }
 
 function singleRow<T extends z.ZodType>(schema: T, data: unknown): z.infer<T> {
@@ -83,7 +87,7 @@ export async function searchProductsAction(params: { query?: string; page?: numb
       const items = z.array(productSchema).parse(data).map(p => ({ id: p.id, name: p.name, active: p.active, version: p.version, price: p.price }));
       return { ok: true, data: { items, total: count ?? 0, page, totalPages: Math.max(1, Math.ceil((count ?? 0) / limit)) } };
     } catch (error) { logSourceFailure(logger, error, "interpretation"); return failure("unavailable", `Erro ao interpretar produtos. Referência: ${ref()}.`); }
-  } catch (error) { logSourceFailure(logger, error, error instanceof AuthContextError ? "context" : "interpretation"); return caught(error); }
+  } catch (error) { return caught(error, false, logger); }
 }
 
 export async function saveFdmPricingAction(input: unknown): Promise<PricingOutcome<{ pricingId: string; status: string }>> {
@@ -94,22 +98,24 @@ export async function saveFdmPricingAction(input: unknown): Promise<PricingOutco
   if (new Set(r.generalMaterialIds).size !== r.generalMaterialIds.length || r.generalMaterialIds.length !== r.generalMaterialVersions.length || r.generalMaterialIds.length !== r.input.generalMaterialConsumptions.length) return failure("invalid", "Materiais gerais inconsistentes.");
   let dispatched = false;
   try {
-    await requirePlanBusinessAccess({ paid: true });
-    const ctx = await requireBusinessContext("pricing.write");
-    if (ctx.role !== "owner") return failure("forbidden", "Apenas o proprietário pode executar esta ação.");
-    await requireBusinessContext("products.read");
+    // Recover an already committed integrated attempt without converting its
+    // frozen V2 intent or loading paid sources after a downgrade.
     const client = await createClient();
     const { authUid, issuer } = await authenticatedActor(client);
     const admin = createAdminClient();
     const intent = Object.fromEntries(Object.entries(r).filter(([key]) => key !== "configVersion"));
     const requestHash = sha256(canonicalJson(intent));
     const lookup = await admin.rpc("lookup_pricing_attempt", { p_actor: authUid, p_issuer: issuer, p_attempt_id: r.attemptId, p_request_hash: requestHash });
-    if (lookup.error) return rpcFailure(lookup.error);
+    if (lookup.error) return rpcFailure(lookup.error, false, "lookup_pricing_attempt");
     const found = singleRow(z.object({ status: z.enum(["found", "missing"]), calculation_id: uuid.nullable() }), lookup.data);
     if (found.status === "found") {
       if (!found.calculation_id) return failure("unavailable", "Resposta inválida.");
       return { ok: true, data: { pricingId: found.calculation_id, status: "idempotent" } };
     }
+    await requirePlanBusinessAccess({ paid: true });
+    const ctx = await requireBusinessContext("pricing.write");
+    if (ctx.role !== "owner") return failure("forbidden", "Apenas o proprietário pode executar esta ação.");
+    await requireBusinessContext("products.read");
     const [product, printer, materials, spools, generalMaterials, config] = await Promise.all([
       client.from("products").select("id,name,active,version,price,deleted_at").eq("enterprise_id", ctx.enterpriseId).eq("id", r.productId).maybeSingle(),
       client.from("printers").select("id,name,active,version,purchase_price,estimated_life_hours,average_power_watts,maintenance_cost_per_hour").eq("enterprise_id", ctx.enterpriseId).eq("id", r.printerId).maybeSingle(),
@@ -201,15 +207,16 @@ export async function saveManualFdmPricingAction(input: unknown): Promise<Pricin
 
     // Integrated lookup BEFORE paid guard so retry downgrade works no paid queries on receipt
     const lookup = await admin.rpc("lookup_pricing_attempt", { p_actor: authUid, p_issuer: issuer, p_attempt_id: r.attemptId, p_request_hash: requestHash });
-    if (lookup.error) return rpcFailure(lookup.error);
+    if (lookup.error) return rpcFailure(lookup.error, false, "lookup_pricing_attempt");
     const found = singleRow(z.object({ status: z.enum(["found", "missing"]), calculation_id: uuid.nullable() }), lookup.data);
     if (found.status === "found") {
       if (!found.calculation_id) return failure("unavailable", "Resposta inválida.");
       return { ok: true, data: { pricingId: found.calculation_id, status: "idempotent" } };
     }
 
-    // New integrated guard after lookup - permit free and selection_required
-    await requirePlanBusinessAccess({ allowSelection: true });
+    // Receipts can be recovered after a plan change; new operations require
+    // actual operational authorization, including an explicit plan selection.
+    await requirePlanBusinessAccess();
     const ctx = await requireBusinessContext("pricing.write");
     if (ctx.role !== "owner") return failure("forbidden", "Apenas o proprietário pode executar esta ação.");
     await requireBusinessContext("products.read");
@@ -221,8 +228,17 @@ export async function saveManualFdmPricingAction(input: unknown): Promise<Pricin
       .eq("id", r.productId)
       .maybeSingle();
 
-    if (prodError || !product) return failure("not_found", "Produto não encontrado.");
-    const pRaw = productSchema.parse(product);
+    if (prodError) {
+      logSourceFailure(logger, prodError, "query", "products.select");
+      return { ...failure("unavailable", "Erro ao carregar produto."), correlationId: logger.id };
+    }
+    if (!product) return failure("not_found", "Produto não encontrado ou fora da janela do plano.");
+    const interpreted = productSchema.safeParse(product);
+    if (!interpreted.success) {
+      logSourceFailure(logger, interpreted.error, "interpretation", "products.select");
+      return { ...failure("unavailable", "Erro ao interpretar produto."), correlationId: logger.id };
+    }
+    const pRaw = interpreted.data;
     if (!pRaw.active || pRaw.deleted_at !== null) return failure("conflict", "Produto inativo ou excluído.");
 
     // Explicit product version comparison, deleted active
@@ -293,13 +309,12 @@ export async function saveManualFdmPricingAction(input: unknown): Promise<Pricin
       p_suggested_price: res.data.suggestedUnitPrice,
     });
 
-    if (save.error) return rpcFailure(save.error, true);
+    if (save.error) return rpcFailure(save.error, true, "save_manual_pricing_attempt");
     const row = singleRow(z.object({ status: z.enum(["created", "idempotent"]), calculation_id: uuid }), save.data);
     return { ok: true, data: { pricingId: row.calculation_id, status: row.status } };
   } catch (error) {
     unstable_rethrow(error);
-    logSourceFailure(logger, error, "interpretation", "saveManualFdmPricingAction");
-    return caught(error, dispatched);
+    return caught(error, dispatched, logger);
   }
 }
 

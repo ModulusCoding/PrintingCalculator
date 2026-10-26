@@ -83,6 +83,8 @@ O salvamento manual é permitido exclusivamente ao owner no plano efetivo gratui
    - O 16º item deve ser rejeitado com `plan_limit_reached`.
 6. Simular retentativa com o mesmo `attempt_id`: deve retornar o resultado salvo de forma idempotente sem consumir novas vagas.
 
+> Atualização posterior: consulte `ETAPA_06_ESCOLHA_PLANO.md` para a escolha inicial e Meu plano. O usuário informou a aplicação das migrations anteriores no desenvolvimento; os testes funcionais 6B/6C continuam pendentes. As notas abaixo preservam o histórico desta etapa.
+
 ## Incremento 6B — estado da implementação
 
 O 6B foi separado da fundação 6A e adiciona uma migration nova:

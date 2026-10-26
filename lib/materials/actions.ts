@@ -1,9 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { unstable_rethrow } from "next/navigation";
+import { planErrorCode, planRpcErrorCode, type PlanErrorCode } from "@/lib/plans";
 import { z } from "zod";
 import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
 import { createClient } from "@/lib/supabase/server";
+import { planActionMessages } from "@/lib/plans/action-messages";
 import { calculateCostPerGram } from "./format";
 import { escapePostgrestIlike, fieldErrors, parsePtBrDecimal } from "./validation";
 
@@ -27,6 +30,7 @@ export type MaterialResult =
   | { status: "invalid_input"; message: string; fieldErrors: Record<string, string[]> }
   | {
       status:
+        | PlanErrorCode
         | "session_expired"
         | "permission_denied"
         | "material_unavailable"
@@ -138,7 +142,14 @@ function resultFailure(status: keyof typeof messages): MaterialResult {
   return { status, message: messages[status], fieldErrors: {} };
 }
 
+function failureFromPlan(status: PlanErrorCode): MaterialResult {
+  return { status, message: planActionMessages[status], fieldErrors: {} };
+}
+
 function failure(error: unknown): MaterialResult {
+  unstable_rethrow(error);
+  const planCode = planErrorCode(error);
+  if (planCode) return failureFromPlan(planCode);
   if (error instanceof AuthContextError) {
     if (error.code === "AUTH_UNAUTHENTICATED") return resultFailure("session_expired");
     if (error.code === "AUTH_ACCESS_BLOCKED" || error.code === "AUTH_PERMISSION_DENIED") {
@@ -152,7 +163,8 @@ function refresh(id?: string) {
   try {
     revalidatePath("/materiais");
     if (id) revalidatePath(`/materiais/${id}`);
-  } catch {
+  } catch (error) {
+    unstable_rethrow(error);
     // The committed RPC result remains successful.
   }
 }
@@ -281,7 +293,11 @@ async function mutate(
 
   try {
     const { data, error } = await client.rpc(method, args);
-    if (error) return resultFailure("unknown_result");
+    if (error) {
+      const planCode = planRpcErrorCode(error);
+      if (planCode) return failureFromPlan(planCode);
+      return resultFailure("unknown_result");
+    }
     if (!Array.isArray(data) || data.length !== 1) return resultFailure("unknown_result");
     const parsed = rpcRowSchema.safeParse(data[0]);
     if (!parsed.success) return resultFailure("unknown_result");
@@ -302,7 +318,8 @@ async function mutate(
       return { status: "invalid_input", message: "Confira os campos indicados.", fieldErrors: {} };
     }
     return resultFailure(row.status);
-  } catch {
+  } catch (error) {
+    unstable_rethrow(error);
     return resultFailure("unknown_result");
   }
 }

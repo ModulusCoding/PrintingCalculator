@@ -82,7 +82,17 @@ export default async function ContaPage() {
   }
 
   if (context.state === "business_ready") {
-    redirect("/home");
+    return (
+      <main className="mx-auto my-16 max-w-lg space-y-6 rounded-xl border bg-white p-8">
+        <h1 className="text-2xl font-bold">Minha conta</h1>
+        <p>Sua conta está vinculada a uma empresa ativa.</p>
+        <nav className="flex flex-wrap gap-4">
+          <Link className="underline" href="/home">Entrar no Hub</Link>
+          {context.role === "owner" && <Link className="underline" href="/meu-plano">Meu plano</Link>}
+        </nav>
+        <LogoutButton />
+      </main>
+    );
   }
 
   const message = stateMessages[context.state] || {

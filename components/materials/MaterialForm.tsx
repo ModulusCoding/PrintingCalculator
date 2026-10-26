@@ -1,4 +1,5 @@
 "use client";
+import { planActionMessage } from "@/lib/plans/action-messages";
 
 import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
@@ -34,6 +35,8 @@ const messageFor = (
   result: Exclude<MaterialResult, { status: "success" | "invalid_input" }>,
   action: string
 ) => {
+  const planMessage = planActionMessage(result.status);
+  if (planMessage) return planMessage;
   if (result.status === "session_expired") return "Sua sessão expirou. Entre novamente para continuar.";
   if (result.status === "permission_denied") return "Você não tem permissão para realizar esta ação.";
   if (result.status === "version_conflict") return "O material foi alterado em outra aba. Recarregue antes de continuar.";

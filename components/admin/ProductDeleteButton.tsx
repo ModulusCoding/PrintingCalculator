@@ -3,19 +3,8 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { deleteInternalProduct } from "@/lib/products/actions";
-
-const messages: Record<string, string> = {
-  permission_denied: "Você não tem permissão.",
-  product_unavailable: "Produto indisponível.",
-  version_conflict: "O produto foi alterado. Atualize a página.",
-  invalid_input: "Dados inválidos.",
-  technical: "Erro técnico. Tente novamente.",
-  session_expired: "Sessão expirada. Entre novamente.",
-  uncertain: "Não foi possível confirmar o resultado. Repita a exclusão.",
-  unknown: "Erro inesperado. Verifique a lista.",
-  balance_not_zero: "Produto tem saldo não zero no estoque. Zere antes de excluir.",
-  idempotency_conflict: "Esta tentativa já foi usada com dados diferentes.",
-};
+import Link from "next/link";
+import { productMessage, productPlanAction } from "@/lib/products/messages";
 
 function productsListReturnTo(value: string) {
   const source = value.startsWith("/admin/products") ? value : "/admin/products";
@@ -36,6 +25,7 @@ export function ProductDeleteButton({ id, version, returnTo }: { id: string; ver
   const safeReturnTo = productsListReturnTo(returnTo);
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState("");
+  const [status, setStatus] = useState("");
   const [attempt] = useState(() => ({ attemptId: crypto.randomUUID(), expectedVersion: version }));
 
   function deleteProduct() {
@@ -48,7 +38,8 @@ export function ProductDeleteButton({ id, version, returnTo }: { id: string; ver
         router.refresh();
         return;
       }
-      setMessage(messages[result.status] || messages.unknown);
+      setStatus(result.status);
+      setMessage(productMessage(result.status, "reference" in result ? result.reference : undefined));
     });
   }
 
@@ -62,7 +53,7 @@ export function ProductDeleteButton({ id, version, returnTo }: { id: string; ver
       >
         {pending ? "Excluindo..." : "Excluir"}
       </button>
-      {message && <p role="alert" className="text-xs text-red-700">{message}</p>}
+      {message && <p role="alert" className="text-xs text-red-700">{message} {productPlanAction(status) && <Link href="/planos" className="underline">Consultar planos</Link>}</p>}
     </div>
   );
 }

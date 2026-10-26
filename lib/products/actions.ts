@@ -2,10 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
+import { requireBusinessContext } from "@/lib/auth/context";
+import { productFailure } from "@/lib/products/access";
 import { createClient } from "@/lib/supabase/server";
 import { loadTrace } from "@/lib/diagnostics/load-trace";
-import { planErrorCode } from "@/lib/plans";
+import { planRpcErrorCode } from "@/lib/plans";
 
 export type ProductRecord = {
   id: string;
@@ -34,9 +35,11 @@ export type ProductResult =
         | "member_plan_blocked"
         | "team_regularization_required"
         | "idempotency_conflict"
+        | "authorization_conflict"
         | "technical"
         | "unknown";
       message?: string;
+      reference?: string;
       version?: number;
     };
 
@@ -63,17 +66,7 @@ const inputSchema = z.object({
   price: z.string(),
 });
 
-function contextFailure(error: unknown): ProductResult {
-  if (error instanceof AuthContextError) {
-    if (error.code === "AUTH_UNAUTHENTICATED") return { status: "session_expired" };
-    if (
-      error.code === "AUTH_PERMISSION_DENIED" ||
-      error.code === "AUTH_ACCESS_BLOCKED"
-    )
-      return { status: "permission_denied" };
-  }
-  return { status: "technical", message: "Erro técnico de acesso." };
-}
+const contextFailure = productFailure;
 
 function parsePrice(value: string): { value: string | null } | { error: string } {
   const raw = value.trim();
@@ -145,15 +138,7 @@ export async function listInternalProducts(
     trace.mark("count:start");
     const { count, error: countError } = await countQuery;
     trace.mark("count:end");
-    if (countError)
-      return {
-        products: [] as ProductRecord[],
-        total: 0,
-        page: 1,
-        status,
-        search,
-        error: "technical" as const,
-      };
+    if (countError) throw countError;
 
     const total = count || 0;
     const page = Math.min(requested, Math.max(1, Math.ceil(total / 20)));
@@ -174,16 +159,19 @@ export async function listInternalProducts(
       .range((page - 1) * 20, page * 20 - 1);
     trace.mark("rows:end");
 
-    trace.mark(error ? "done:error" : "done");
+    if (error) throw error;
+    trace.mark("done");
     return {
       products: (data || []) as ProductRecord[],
       total,
       page,
       status,
       search,
-      error: error ? ("technical" as const) : null,
+      error: null,
+      reference: undefined as string | undefined,
     };
   } catch (error) {
+    const failure = contextFailure(error);
     trace.mark("done:exception");
     return {
       products: [] as ProductRecord[],
@@ -191,14 +179,15 @@ export async function listInternalProducts(
       page: 1,
       status: "active",
       search: "",
-      error: contextFailure(error).status,
+      error: failure.status,
+      reference: "reference" in failure ? failure.reference : undefined,
     };
   }
 }
 
 export async function getInternalProduct(id: string) {
   if (!uuid.safeParse(id).success)
-    return { product: null, error: "product_unavailable" as const };
+    return { product: null, error: "product_unavailable" as const, reference: undefined as string | undefined };
   try {
     const context = await requireBusinessContext("products.read");
     const supabase = await createClient();
@@ -209,12 +198,15 @@ export async function getInternalProduct(id: string) {
       .eq("id", id)
       .is("deleted_at", null)
       .maybeSingle();
+    if (error) throw error;
     return {
       product: data as ProductRecord | null,
-      error: error || !data ? ("product_unavailable" as const) : null,
+      error: !data ? ("product_unavailable" as const) : null,
+      reference: undefined as string | undefined,
     };
   } catch (error) {
-    return { product: null, error: contextFailure(error).status };
+    const failure = contextFailure(error);
+    return { product: null, error: failure.status, reference: "reference" in failure ? failure.reference : undefined };
   }
 }
 
@@ -223,36 +215,34 @@ async function callRpc(
   args: Record<string, unknown>,
   requestedId?: string
 ): Promise<ProductResult> {
-  let begun = false;
   try {
     await requireBusinessContext(
       fn === "set_internal_product_active" || fn === "delete_internal_product" ? "products.delete" : "products.write"
     );
-    begun = true;
     const supabase = await createClient();
     const { data, error } = await supabase.rpc(fn, args);
     if (error) {
       const code = error.message.replace(/^(?:ERROR: |[A-Z0-9]{5}: )/, "");
-      const planCode = planErrorCode(error.message);
-      if (planCode && planCode !== "authorization_conflict") return { status: planCode };
+      const planCode = planRpcErrorCode(error);
+      if (planCode) return { status: planCode };
       if (code === "version_conflict") return { status: "version_conflict" };
       if (code === "product_unavailable") return { status: "product_unavailable" };
       if (code === "unauthorized") return { status: "permission_denied" };
       if (code === "invalid_input") return { status: "invalid_input", fieldErrors: {} };
-      return { status: "unknown" };
+      return contextFailure(error);
     }
-    if (!Array.isArray(data) || data.length !== 1) return { status: "unknown" };
+    if (!Array.isArray(data) || data.length !== 1) return contextFailure(new Error("Invalid product RPC response"));
     const row = rpcRowSchema.safeParse(data[0]);
     if (!row.success || (requestedId && row.data.product_id !== requestedId))
-      return { status: "unknown" };
+      return contextFailure(new Error("Invalid product RPC row"));
     if ((row.data.status === "success" || row.data.status === "deleted") && row.data.product_id && row.data.version !== null)
       return { status: row.data.status, productId: row.data.product_id, version: row.data.version };
     if (row.data.status === "invalid_input") return { status: "invalid_input", fieldErrors: {} };
     if (row.data.status === "version_conflict") return { status: "version_conflict", version: row.data.version ?? undefined };
     if (row.data.status === "permission_denied") return { status: "permission_denied" };
-    return { status: "product_unavailable" };
+    if (row.data.status === "product_unavailable") return { status: "product_unavailable" };
+    return contextFailure(new Error("Incomplete product RPC success"));
   } catch (error) {
-    if (begun && error instanceof Error && error.message.includes("timeout")) return { status: "technical" };
     return contextFailure(error);
   }
 }

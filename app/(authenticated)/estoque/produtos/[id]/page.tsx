@@ -10,7 +10,13 @@ const movementLabels = {
   adjustment: "Ajuste",
 } as const;
 
-export default async function ProductInventoryDetailPage({
+import { renderPaidModule } from "@/components/plans/PaidModuleGate";
+
+export default function PaidProductInventoryDetailPage(props: Parameters<typeof ProductInventoryDetailPage>[0]) {
+  return renderPaidModule("inventory", "inventory.read", () => ProductInventoryDetailPage(props));
+}
+
+async function ProductInventoryDetailPage({
   params,
   searchParams,
 }: {

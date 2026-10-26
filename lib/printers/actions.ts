@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { unstable_rethrow } from "next/navigation";
+import { planErrorCode, planRpcErrorCode, type PlanErrorCode } from "@/lib/plans";
 import { z } from "zod";
 import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
 import { createClient } from "@/lib/supabase/server";
@@ -14,7 +16,7 @@ export type PrinterRecord = {
 export type PrinterResult =
   | { status: "success"; printerId: string; version: number }
   | { status: "invalid_input"; fieldErrors: Record<string, string[]> }
-  | { status: "session_expired" | "permission_denied" | "printer_unavailable" | "version_conflict" | "technical" | "unknown_result"; message?: string; version?: number };
+  | { status: PlanErrorCode | "session_expired" | "permission_denied" | "printer_unavailable" | "version_conflict" | "technical" | "unknown_result"; message?: string; version?: number };
 
 const input = z.object({ name: z.string().trim().min(2).max(120), brand: z.string().trim().max(120), model: z.string().trim().max(160), purchasePrice: z.string(), estimatedLifeHours: z.string(), averagePowerWatts: z.string(), maintenanceCostPerHour: z.string() }).strict();
 const uuid = z.string().uuid();
@@ -39,13 +41,16 @@ function validate(payload: unknown) {
   return { data: { name: parsed.data.name, brand: parsed.data.brand, model: parsed.data.model, purchasePrice: values.purchasePrice, estimatedLifeHours: values.estimatedLifeHours, averagePowerWatts: values.averagePowerWatts, maintenanceCostPerHour: values.maintenanceCostPerHour } };
 }
 function failure(error: unknown): PrinterResult {
+  unstable_rethrow(error);
+  const planCode = planErrorCode(error);
+  if (planCode) return { status: planCode };
   if (error instanceof AuthContextError) {
     if (error.code === "AUTH_UNAUTHENTICATED") return { status: "session_expired" };
     if (error.code === "AUTH_ACCESS_BLOCKED" || error.code === "AUTH_PERMISSION_DENIED") return { status: "permission_denied" };
   }
   return { status: "technical", message: "Erro técnico. Tente novamente." };
 }
-function refresh(id?: string) { try { revalidatePath("/impressoras"); if (id) revalidatePath(`/impressoras/${id}`); } catch { /* The committed RPC result remains successful. */ } }
+function refresh(id?: string) { try { revalidatePath("/impressoras"); if (id) revalidatePath(`/impressoras/${id}`); } catch (error) { unstable_rethrow(error); /* The committed RPC result remains successful. */ } }
 
 export async function listPrinters(params: Record<string, string | undefined> = {}) {
   try {
@@ -57,7 +62,7 @@ export async function listPrinters(params: Record<string, string | undefined> = 
   } catch (e) { return { printers: [], total: 0, page: 1, status: "active", search: "", error: failure(e).status }; }
 }
 export async function getPrinter(id: string) { if (!uuid.safeParse(id).success) return { printer: null, error: "printer_unavailable" }; try { const c = await requireBusinessContext("printers.read"); const { data, error } = await (await createClient()).from("printers").select("id,name,brand,model,purchase_price,estimated_life_hours,average_power_watts,maintenance_cost_per_hour,active,version,created_at,updated_at").eq("enterprise_id", c.enterpriseId).eq("id", id).maybeSingle(); if (error || !data) return { printer: null, error: error ? "technical" : "printer_unavailable" }; return { printer: normalize(recordSchema.parse(data)), error: null }; } catch (e) { return { printer: null, error: failure(e).status }; } }
-async function mutate(method: string, args: Record<string, unknown>, permission: "printers.write" | "printers.archive", id?: string): Promise<PrinterResult> { try { await requireBusinessContext(permission); const { data, error } = await (await createClient()).rpc(method, args); if (error) return { status: "technical" }; if (!Array.isArray(data) || data.length !== 1) return { status: "unknown_result" }; const parsed = rpcRowSchema.safeParse(data[0]); if (!parsed.success) return { status: "unknown_result" }; const row = parsed.data; if (row.status === "success") { if (row.printer_id === null || row.version === null || (id !== undefined && row.printer_id !== id)) return { status: "unknown_result" }; refresh(row.printer_id); return { status: "success", printerId: row.printer_id, version: row.version }; } if (row.printer_id !== null || row.version !== null) return { status: "unknown_result" }; if (row.status === "invalid_input") return { status: "invalid_input", fieldErrors: {} }; return { status: row.status }; } catch (e) { return failure(e); } }
+async function mutate(method: string, args: Record<string, unknown>, permission: "printers.write" | "printers.archive", id?: string): Promise<PrinterResult> { try { await requireBusinessContext(permission); const { data, error } = await (await createClient()).rpc(method, args); if (error) return { status: planRpcErrorCode(error) ?? "technical" }; if (!Array.isArray(data) || data.length !== 1) return { status: "unknown_result" }; const parsed = rpcRowSchema.safeParse(data[0]); if (!parsed.success) return { status: "unknown_result" }; const row = parsed.data; if (row.status === "success") { if (row.printer_id === null || row.version === null || (id !== undefined && row.printer_id !== id)) return { status: "unknown_result" }; refresh(row.printer_id); return { status: "success", printerId: row.printer_id, version: row.version }; } if (row.printer_id !== null || row.version !== null) return { status: "unknown_result" }; if (row.status === "invalid_input") return { status: "invalid_input", fieldErrors: {} }; return { status: row.status }; } catch (e) { return failure(e); } }
 export async function createPrinter(payload: unknown) { const v = validate(payload); if ("errors" in v) return { status: "invalid_input", fieldErrors: v.errors ?? {} } as PrinterResult; return mutate("create_my_printer", { p_name: v.data.name, p_brand: v.data.brand, p_model: v.data.model, p_purchase_price: v.data.purchasePrice, p_estimated_life_hours: v.data.estimatedLifeHours, p_average_power_watts: v.data.averagePowerWatts, p_maintenance_cost_per_hour: v.data.maintenanceCostPerHour }, "printers.write"); }
 export async function updatePrinter(id: string, expectedVersion: number, payload: unknown) { if (!uuid.safeParse(id).success || !Number.isSafeInteger(expectedVersion) || expectedVersion < 0) return { status: "printer_unavailable" } as PrinterResult; const v = validate(payload); if ("errors" in v) return { status: "invalid_input", fieldErrors: v.errors ?? {} } as PrinterResult; return mutate("update_my_printer", { p_id: id, p_expected_version: expectedVersion, p_name: v.data.name, p_brand: v.data.brand, p_model: v.data.model, p_purchase_price: v.data.purchasePrice, p_estimated_life_hours: v.data.estimatedLifeHours, p_average_power_watts: v.data.averagePowerWatts, p_maintenance_cost_per_hour: v.data.maintenanceCostPerHour }, "printers.write", id); }
 export async function setPrinterActive(id: string, expectedVersion: number, active: boolean) { if (!uuid.safeParse(id).success || !Number.isSafeInteger(expectedVersion) || expectedVersion < 0 || typeof active !== "boolean") return { status: "printer_unavailable" } as PrinterResult; return mutate("set_my_printer_active", { p_id: id, p_expected_version: expectedVersion, p_active: active }, "printers.archive", id); }

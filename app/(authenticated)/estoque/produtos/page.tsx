@@ -7,7 +7,13 @@ import { inventoryListPath, normalizeReturnTo, safePage } from "@/lib/inventory/
 
 export const metadata: Metadata = { title: "Produtos prontos — Estoque" };
 
-export default async function ProductInventoryListPage({ searchParams }: {
+import { renderPaidModule } from "@/components/plans/PaidModuleGate";
+
+export default function PaidProductInventoryListPage(props: Parameters<typeof ProductInventoryListPage>[0]) {
+  return renderPaidModule("inventory", "inventory.read", () => ProductInventoryListPage(props));
+}
+
+async function ProductInventoryListPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;

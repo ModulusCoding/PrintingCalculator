@@ -1,4 +1,5 @@
 "use client";
+import { planActionMessages } from "@/lib/plans/action-messages";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -16,6 +17,7 @@ const units = ["unidade", "metro", "centimetro", "grama", "quilograma"] as const
 type FrozenPayload = Record<string, string | boolean | number>;
 
 const messages: Record<string, string> = {
+  ...planActionMessages,
   created: "Material criado.", updated: "Alteração salva.", idempotent: "Operação já registrada.", no_change: "Nenhuma alteração necessária.", uncertain: "Não foi possível confirmar o resultado. Use Repetir tentativa para consultar com os mesmos dados.", permission_denied: "Sem permissão.", version_conflict: "O registro mudou. Atualize a página.", insufficient_balance: "Saldo insuficiente.", invalid_input: "Revise os campos.", technical: "Não foi possível concluir a operação.", material_unavailable: "Material indisponível.", idempotency_conflict: "Esta tentativa já foi usada com dados diferentes.", name_conflict: "Já existe um material com esse nome.", session_expired: "Sua sessão expirou. Entre novamente.",
 };
 

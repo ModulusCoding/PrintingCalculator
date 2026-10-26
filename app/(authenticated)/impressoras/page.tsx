@@ -1,13 +1,24 @@
 import { listPrinters, type PrinterRecord } from "@/lib/printers/actions";
 import Link from "next/link";
-import { requireBusinessContext } from "@/lib/auth/context";
+import { unstable_rethrow } from "next/navigation";
+import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
 
 export const dynamic = "force-dynamic";
 
-export default async function PrintersPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+import { renderPaidModule } from "@/components/plans/PaidModuleGate";
+
+export default function PaidPrintersPage(props: Parameters<typeof PrintersPage>[0]) {
+  return renderPaidModule("printers", "printers.read", () => PrintersPage(props));
+}
+
+async function PrintersPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const p = await searchParams;
   const result = await listPrinters(p);
-  const canWrite = await requireBusinessContext("printers.write").then(() => true).catch(() => false);
+  const canWrite = await requireBusinessContext("printers.write").then(() => true).catch((error: unknown) => {
+    unstable_rethrow(error);
+    if (error instanceof AuthContextError && error.code === "AUTH_PERMISSION_DENIED") return false;
+    throw error;
+  });
   const pages = Math.max(1, Math.ceil(result.total / 20));
   const url = (page: number, overrides: Record<string, string> = {}) => `/impressoras?${new URLSearchParams({ ...p, ...overrides, page: String(page) })}`;
 

@@ -1,5 +1,6 @@
 import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
-import { requirePlanBusinessAccess, planErrorCode } from "@/lib/plans";
+import { requirePlanBusinessAccess } from "@/lib/plans";
+import { planAccessNotice } from "@/components/plans/PlanAccessNotice";
 import Link from "next/link";
 import { PricingSimulator } from "@/components/pricing/PricingSimulator";
 import { fetchElectricityConfigAction, searchPrintersAction, searchPricingSpoolsAction, searchPricingGeneralMaterialsAction } from "@/lib/pricing/actions";
@@ -18,12 +19,16 @@ async function hasPermission(permission: Parameters<typeof requireBusinessContex
 }
 
 export default async function PricingPage() {
+  try { return await renderPricingPage(); }
+  catch (error) { return planAccessNotice(error); }
+}
+
+async function renderPricingPage() {
   let access;
   try {
     access = await requirePlanBusinessAccess();
   } catch (error) {
-    if (planErrorCode(error) === "selection_required") return <section role="status" className="rounded border bg-white p-6"><h1 className="text-2xl font-bold">Selecione um plano</h1><p>Escolha um plano para usar a precificadora.</p><Link href="/planos" className="underline">Ver planos</Link></section>;
-    throw error;
+    return planAccessNotice(error);
   }
   const products = await searchProductsAction({ page: 1, limit: 10 });
   if (!products.ok) {
@@ -31,8 +36,8 @@ export default async function PricingPage() {
     return <section role="alert" className="rounded border bg-white p-6"><p>Não foi possível carregar a precificadora. Tente novamente. Referência: {reference}.</p><nav className="mt-4 flex gap-4"><a href="/precificadora">Tentar novamente</a><Link href="/">Sair</Link></nav></section>;
   }
   if (access.effective_plan === "free") {
-    const canSave = await hasPermission("pricing.write");
-    return <PricingSimulator mode="manual" initialProducts={products.data} canSave={canSave} effectivePlan="free" />;
+    const [canSave, canCreateProduct] = await Promise.all([hasPermission("pricing.write"), hasPermission("products.write")]);
+    return <PricingSimulator mode="manual" initialProducts={products.data} canSave={canSave} canCreateProduct={canCreateProduct} effectivePlan="free" />;
   }
   if (access.effective_plan !== "intermediate") return <section role="status" className="rounded border bg-white p-6">Plano Magnata indisponível no momento.</section>;
 
@@ -50,5 +55,5 @@ export default async function PricingPage() {
     return <section role="alert" className="rounded border bg-white p-6"><p>Não foi possível carregar a precificadora. Tente novamente. Referência: {references[0] ?? "UNKNOWN0"}.</p><nav className="mt-4 flex gap-4"><a href="/precificadora">Tentar novamente</a><Link href="/">Sair</Link></nav></section>;
   }
   const [canManageEnterprise, canSave] = await Promise.all([hasPermission("enterprise.manage"), hasPermission("products.write")]);
-  return <PricingSimulator mode="integrated" effectivePlan="intermediate" initialPrinters={printers.data} initialSpools={spools.data} initialGeneralMaterials={generalMaterials.data} initialProducts={products.data} electricityRate={config.data.rate} defaultLoss={config.data.defaultLoss} configVersion={config.data.version} canManageEnterprise={canManageEnterprise} canSave={canSave} />;
+  return <PricingSimulator mode="integrated" effectivePlan="intermediate" initialPrinters={printers.data} initialSpools={spools.data} initialGeneralMaterials={generalMaterials.data} initialProducts={products.data} electricityRate={config.data.rate} defaultLoss={config.data.defaultLoss} configVersion={config.data.version} canManageEnterprise={canManageEnterprise} canSave={canSave} canCreateProduct={canSave} />;
 }

@@ -4,7 +4,13 @@ import { getDeletionCounts } from "@/lib/deletion/actions";
 import { formatGrams, formatPercent } from "@/lib/spools/format";
 import { spoolDetailHref } from "@/lib/spools/navigation";
 
-export default async function SpoolsPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+import { renderPaidModule } from "@/components/plans/PaidModuleGate";
+
+export default function PaidSpoolsPage(props: Parameters<typeof SpoolsPage>[0]) {
+  return renderPaidModule("spools", "spools.read", () => SpoolsPage(props));
+}
+
+async function SpoolsPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const q = await searchParams;
   const search = (q.search ?? "").trim().slice(0, 120);
   const status = q.status ?? "active";

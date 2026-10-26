@@ -9,7 +9,13 @@ import { normalizeReturnTo } from "@/lib/general-materials/navigation";
 
 type Query = { page?: string; returnTo?: string };
 
-export default async function GeneralMaterialPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Query> }) {
+import { renderPaidModule } from "@/components/plans/PaidModuleGate";
+
+export default function PaidGeneralMaterialPage(props: Parameters<typeof GeneralMaterialPage>[0]) {
+  return renderPaidModule("generalMaterials", "stock.materials.read", () => GeneralMaterialPage(props));
+}
+
+async function GeneralMaterialPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Query> }) {
   const { id } = await params, q = await searchParams, page = Math.max(1, Number(q.page) || 1);
   const back = normalizeReturnTo(q.returnTo);
   const r = await getGeneralMaterial(id, page);

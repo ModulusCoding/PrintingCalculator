@@ -1,4 +1,5 @@
 "use client";
+import { planActionMessage } from "@/lib/plans/action-messages";
 import Link from "next/link";
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -7,6 +8,8 @@ import { createPrinter, updatePrinter, setPrinterActive, type PrinterRecord, typ
 const br = (v: string) => v.replace(".", ",");
 const safeReturnTo = (value: string) => (/^\/impressoras(?:\?|\/|$)/.test(value) && !value.startsWith("//")) ? value : "/impressoras";
 const messageFor = (result: Exclude<PrinterResult, { status: "success" | "invalid_input" }>, action: string) => {
+  const planMessage = planActionMessage(result.status);
+  if (planMessage) return planMessage;
   if (result.status === "session_expired") return "Sua sessão expirou. Entre novamente para continuar.";
   if (result.status === "permission_denied") return "Você não tem permissão para realizar esta ação.";
   if (result.status === "unknown_result" || result.status === "technical") return `Não foi possível confirmar ${action}. Verifique a lista antes de tentar novamente.`;

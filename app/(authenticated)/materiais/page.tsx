@@ -1,14 +1,29 @@
 import Link from "next/link";
-import { requireBusinessContext } from "@/lib/auth/context";
+import { unstable_rethrow } from "next/navigation";
+import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
 import { listMaterials, type MaterialRecord } from "@/lib/materials/actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function MaterialsPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+import { renderPaidModule } from "@/components/plans/PaidModuleGate";
+
+export default function PaidMaterialsPage(props: Parameters<typeof MaterialsPage>[0]) {
+  return renderPaidModule("materials", "materials.read", () => MaterialsPage(props));
+}
+
+async function MaterialsPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const params = await searchParams;
   const result = await listMaterials(params);
-  const canWrite = await requireBusinessContext("materials.write").then(() => true).catch(() => false);
-  const canArchive = await requireBusinessContext("materials.archive").then(() => true).catch(() => false);
+  const canWrite = await requireBusinessContext("materials.write").then(() => true).catch((error: unknown) => {
+    unstable_rethrow(error);
+    if (error instanceof AuthContextError && error.code === "AUTH_PERMISSION_DENIED") return false;
+    throw error;
+  });
+  const canArchive = await requireBusinessContext("materials.archive").then(() => true).catch((error: unknown) => {
+    unstable_rethrow(error);
+    if (error instanceof AuthContextError && error.code === "AUTH_PERMISSION_DENIED") return false;
+    throw error;
+  });
   const pages = Math.max(1, Math.ceil(result.total / 20));
   const query = new URLSearchParams();
   if (result.search) query.set("search", result.search);

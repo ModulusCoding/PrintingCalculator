@@ -1,5 +1,3 @@
-import { requirePlanBusinessAccess } from "@/lib/plans";
-export default async function PaidMaterialsLayout({ children }: { children: React.ReactNode }) {
-  await requirePlanBusinessAccess();
+export default function PaidMaterialsLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

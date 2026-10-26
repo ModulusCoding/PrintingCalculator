@@ -1,20 +1,27 @@
 "use server";
 import { revalidatePath } from "next/cache";
+import { unstable_rethrow } from "next/navigation";
+import { planErrorCode, planRpcErrorCode } from "@/lib/plans";
 import { z } from "zod";
 import { AuthContextError, requireBusinessContext } from "@/lib/auth/context";
 import { createClient } from "@/lib/supabase/server";
 import { deleteEntity } from "@/lib/deletion/actions";
 import { createMaterialSchema, createMovementSchema, updateProfileSchema, updateCostRefSchema, setActiveSchema, fieldErrors, pt, uuid, version } from "./validation";
 import { createLogger } from "./logger";
+import { safeErrorDiagnostic } from "@/lib/diagnostics/safe-error";
 import { materialSchema, materialListSchema, movementSchema, costHistorySchema, countSchema } from "./schemas";
 
 export type MutationResult = { status: string; material_id?: string; movement_id?: string | null; version?: number; balance?: number; fieldErrors?: Record<string, string[]>; correlation_id?: string };
 const known = new Set(["unauthorized", "material_unavailable", "version_conflict", "insufficient_balance", "invalid_input", "idempotency_conflict", "name_conflict", "incompatible_units", "nonrepresentable_conversion", "selection_required", "plan_feature_unavailable", "plan_limit_reached", "member_plan_blocked", "team_regularization_required"]);
 
 function failure(e: unknown, logger: ReturnType<typeof createLogger>) {
-  const code = e instanceof AuthContextError ? (e.code === "AUTH_UNAUTHENTICATED" ? "session_expired" : e.code === "AUTH_TECHNICAL_FAILURE" ? "technical" : "permission_denied") : "technical";
-  const stage = e instanceof AuthContextError ? "context" : "interpretation";
-  const cid = logger.error({ stage, code, message: String(e), technical_detail: e instanceof Error ? e.stack : undefined });
+  unstable_rethrow(e);
+  const planCode = planErrorCode(e);
+  if (planCode) return { status: planCode, correlation_id: undefined };
+  const code = e instanceof AuthContextError ? (e.code === "AUTH_UNAUTHENTICATED" ? "session_expired" : e.code === "AUTH_TECHNICAL_FAILURE" || e.code === "AUTH_CONTEXT_INVALID_RESPONSE" ? "technical" : "permission_denied") : "technical";
+  if (code !== "technical") return { status: code, correlation_id: undefined };
+  const stage = e instanceof z.ZodError ? "interpretation" : "context";
+  const cid = logger.error({ stage, ...safeErrorDiagnostic(e) });
   return { status: code, correlation_id: cid };
 }
 
@@ -27,8 +34,10 @@ async function mutate(name: string, args: Record<string, unknown>, permission: "
     const client = await createClient();
     const { data, error } = await client.rpc(name, args);
     if (error) {
+      const planCode = planRpcErrorCode(error);
+      if (planCode) return { status: planCode };
       const code = error.message.replace(/^(?:ERROR: |[A-Z0-9]{5}: )/, "");
-      if (!known.has(code)) logger.warn({ stage: "rpc", rpc_name: name, code: "unexpected", message: error.message });
+      if (!known.has(code)) logger.warn({ stage: "rpc", rpc_name: name, ...safeErrorDiagnostic(error) });
       return { status: known.has(code) ? code : "uncertain", correlation_id: logger.id };
     }
     const parsed = z.array(resultSchema).length(1).safeParse(data);
@@ -41,7 +50,7 @@ async function mutate(name: string, args: Record<string, unknown>, permission: "
       logger.warn({ stage: "interpretation", message: "Unexpected version sequence", code: "version_mismatch" });
       return { status: "uncertain", correlation_id: logger.id };
     }
-    try { revalidatePath("/estoque/materiais-gerais", "layout"); } catch (e) { logger.warn({ stage: "revalidation", message: String(e) }); }
+    try { revalidatePath("/estoque/materiais-gerais", "layout"); } catch (e) { unstable_rethrow(e); logger.warn({ stage: "revalidation", message: String(e) }); }
     return { status: r.status, material_id: r.material_id, movement_id: r.movement_id, version: r.version, balance: r.balance };
   } catch (e) {
     return failure(e, logger);
@@ -60,12 +69,12 @@ export async function listGeneralMaterials(params: Record<string, string | undef
       c.rpc("count_general_materials", { p_search: search, p_status: status })
     ]);
     if (list.error || count.error) {
-      const cid = logger.error({ stage: "rpc", code: "list_error", message: list.error?.message || count.error?.message });
+      const cid = logger.error({ stage: "rpc", ...safeErrorDiagnostic(list.error || count.error) });
       return { materials: [], total: 0, page, error: "technical", correlation_id: cid };
     }
     const parsedMaterials = z.array(materialListSchema).max(20).safeParse(list.data);
     if (!parsedMaterials.success) {
-      const cid = logger.error({ stage: "interpretation", message: "Failed parsing list_general_materials response", technical_detail: JSON.stringify(parsedMaterials.error.issues) });
+      const cid = logger.error({ stage: "interpretation", message: "Failed parsing list_general_materials response", ...safeErrorDiagnostic(parsedMaterials.error) });
       return { materials: [], total: 0, page, error: "technical", correlation_id: cid };
     }
     const parsedCount = countSchema.safeParse(count.data);
@@ -138,20 +147,20 @@ export async function getGeneralMaterial(id: string, page = 1) {
     const c = await createClient();
     const { data, error } = await c.rpc("get_general_material", { p_material_id: id });
     if (error) {
-      logger.error({ stage: "rpc", rpc_name: "get_general_material", code: "read_error", message: error.message });
+      logger.error({ stage: "rpc", rpc_name: "get_general_material", ...safeErrorDiagnostic(error) });
       return { material: null, movements: [], history: [], total: 0, error: "technical", correlation_id: logger.id };
     }
     const rows = Array.isArray(data) ? data : [];
     if (rows.length === 0) return { material: null, movements: [], history: [], total: 0, error: "material_unavailable", correlation_id: logger.id };
     const parsedMaterial = materialSchema.safeParse(rows[0]);
     if (!parsedMaterial.success) {
-      const cid = logger.error({ stage: "interpretation", message: "Failed parsing get_general_material response", technical_detail: JSON.stringify(parsedMaterial.error.issues) });
+      const cid = logger.error({ stage: "interpretation", message: "Failed parsing get_general_material response", ...safeErrorDiagnostic(parsedMaterial.error) });
       return { material: null, movements: [], history: [], total: 0, error: "technical", correlation_id: cid };
     }
     const material = parsedMaterial.data;
     const [mov, hist] = await Promise.all([c.rpc("list_general_material_movements", { p_material_id: id, p_limit: 20, p_offset: (page - 1) * 20 }), c.rpc("list_general_material_cost_history", { p_material_id: id, p_limit: 20, p_offset: 0 })]);
     if (mov.error || hist.error) {
-      const cid = logger.error({ stage: "rpc", code: "history_read_error", message: mov.error?.message || hist.error?.message });
+      const cid = logger.error({ stage: "rpc", ...safeErrorDiagnostic(mov.error || hist.error) });
       return { material: null, movements: [], history: [], total: 0, error: "technical", correlation_id: cid };
     }
     const parsedMov = z.array(movementSchema).safeParse(mov.data);
@@ -162,7 +171,7 @@ export async function getGeneralMaterial(id: string, page = 1) {
     }
     return { material, movements: parsedMov.data, history: parsedHist.data, total: 0, context, error: null, correlation_id: null };
   } catch (e) {
-    const cid = logger.error({ stage: "interpretation", message: String(e), technical_detail: e instanceof Error ? e.stack : undefined });
-    return { material: null, movements: [], history: [], total: 0, error: "technical", correlation_id: cid };
+    const result = failure(e, logger);
+    return { material: null, movements: [], history: [], total: 0, error: result.status, correlation_id: result.correlation_id };
   }
 }

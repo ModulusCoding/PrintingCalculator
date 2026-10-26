@@ -1,12 +1,13 @@
 "use client";
 import { useState } from "react";
+import { planActionMessages } from "@/lib/plans/action-messages";
 import { useRouter } from "next/navigation";
 import { createMovement, createSpool, setSpoolActive, updateSpoolProfile } from "@/lib/spools/actions";
 import type { Spool } from "@/lib/spools/schemas";
 
 type ResultType = { status: string; fieldErrors?: Record<string, string[]>; spool_id?: string };
 type Payload = Record<string, unknown>;
-const messages: Record<string, string> = { created: "Operação registrada.", idempotent: "Operação já registrada.", updated: "Alteração salva.", no_change: "Nenhuma alteração necessária.", version_conflict: "O registro mudou. Atualize a página e revise os dados.", uncertain: "Não foi possível confirmar o resultado. Repita exatamente a mesma tentativa.", technical: "Falha técnica. Tente novamente.", invalid_input: "Revise os campos.", permission_denied: "Você não tem permissão.", insufficient_balance: "Saldo insuficiente.", capacity_exceeded: "O saldo ultrapassaria a capacidade.", identifier_conflict: "Identificador já usado." };
+const messages: Record<string, string> = { ...planActionMessages, created: "Operação registrada.", idempotent: "Operação já registrada.", updated: "Alteração salva.", no_change: "Nenhuma alteração necessária.", version_conflict: "O registro mudou. Atualize a página e revise os dados.", uncertain: "Não foi possível confirmar o resultado. Repita exatamente a mesma tentativa.", technical: "Falha técnica. Tente novamente.", invalid_input: "Revise os campos.", permission_denied: "Você não tem permissão.", insufficient_balance: "Saldo insuficiente.", capacity_exceeded: "O saldo ultrapassaria a capacidade.", identifier_conflict: "Identificador já usado." };
 function Notice({ result }: { result: ResultType | null }) { if (!result) return null; return <div role="alert" className="rounded bg-red-50 p-3 text-red-700"><p>{messages[result.status] ?? "Não foi possível concluir."}</p>{result.fieldErrors && <ul className="mt-1 list-disc pl-5">{Object.entries(result.fieldErrors).flatMap(([field, errors]) => errors.map(error => <li key={`${field}-${error}`}>{field}: {error}</li>))}</ul>}</div>; }
 function Input({ name, label, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { name: string; label: string }) { return <label className="block">{label}<input name={name} className="mt-1 block w-full rounded border p-2" {...props} /></label>; }
 

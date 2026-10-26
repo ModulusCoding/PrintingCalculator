@@ -4,7 +4,13 @@ import { getDeletionCounts } from "@/lib/deletion/actions";
 import { formatQuantity, formatCurrency } from "@/lib/general-materials/format";
 import type { Material } from "@/lib/general-materials/schemas";
 
-export default async function GeneralMaterialsPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+import { renderPaidModule } from "@/components/plans/PaidModuleGate";
+
+export default function PaidGeneralMaterialsPage(props: Parameters<typeof GeneralMaterialsPage>[0]) {
+  return renderPaidModule("generalMaterials", "stock.materials.read", () => GeneralMaterialsPage(props));
+}
+
+async function GeneralMaterialsPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const q = await searchParams;
   const search = (q.search ?? "").trim().slice(0, 120);
   const status = q.status ?? "active";
