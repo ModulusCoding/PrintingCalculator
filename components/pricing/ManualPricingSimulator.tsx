@@ -25,6 +25,7 @@ export function ManualPricingSimulator({ initialProducts, canSave, canCreateProd
   const [attempt, setAttempt] = useState<Attempt | null>(null), [stale, setStale] = useState(false);
   const [saved, setSaved] = useState<string | null>(null), [notice, setNotice] = useState(""), [busy, setBusy] = useState(false);
   const lock = useRef(false);
+  const [uncertain, setUncertain] = useState(false);
   const change = () => { setStale(true); setSaved(null); };
   const update = <K extends keyof ManualForm>(key: K, value: ManualForm[K]) => { setForm(previous => ({ ...previous, [key]: value })); change(); };
   const field = (label: string, value: string, setter: (value: string) => void, numeric = true) => <label className="block text-sm">{label}<input className="mt-1 w-full rounded border p-2" inputMode={numeric ? "decimal" : "text"} value={value} onChange={event => setter(event.target.value)} /></label>;
@@ -34,6 +35,7 @@ export function ManualPricingSimulator({ initialProducts, canSave, canCreateProd
     if (response.ok) setProducts(response.data); else setNotice(response.error);
   };
   const calculate = () => {
+    if (lock.current || uncertain) return;
     const input = parseManualForm(form);
     if (!input) { setStale(true); setNotice("Preencha os campos obrigatórios com números finitos válidos. Use vírgula para decimais e zero explícito para custos sem valor."); return; }
     const output = calculateFdmPricing({ ...input, energyRate: input.tariff.effective });
@@ -47,13 +49,16 @@ export function ManualPricingSimulator({ initialProducts, canSave, canCreateProd
     lock.current = true; setBusy(true); setNotice("");
     try {
       const response = await saveManualFdmPricingAction({ attemptId: attempt.id, productId: attempt.product.id, productVersion: attempt.product.version, input: attempt.input });
-      if (response.ok) { setSaved(response.data.pricingId); setNotice("Precificação salva."); } else setNotice(response.error);
-    } catch { setNotice("Não foi possível salvar. Tente novamente com a mesma tentativa."); }
+      if (response.ok) { setUncertain(false); setSaved(response.data.pricingId); setNotice("Precificação salva."); }
+      else { setUncertain(previous => previous || response.code === "unknown"); setNotice(response.error); }
+    } catch { setUncertain(true); setNotice("Resultado não confirmado. Tente novamente com a mesma tentativa congelada."); }
     finally { lock.current = false; setBusy(false); }
   };
   return <main className="mx-auto max-w-4xl space-y-6">
     <header className="flex justify-between gap-3"><div><h1 className="text-3xl font-bold">Precificadora FDM manual</h1><p>Plano Aprendiz: dados manuais, sem consulta de impressoras, estoque ou configuração da empresa.</p><p>Tempo de impressão e consumo de filamento são totais do lote. Valores monetários em reais.</p></div><Link href="/precificadora/historico" className="underline">Histórico</Link></header>
     {notice && <p role="status" className="rounded bg-blue-50 p-3">{notice}</p>}
+    {uncertain && <p role="status">A tentativa está congelada porque o resultado do salvamento não foi confirmado. Salve novamente para confirmar sem duplicar.</p>}
+    <fieldset disabled={busy || uncertain} className="min-w-0 space-y-6">
     <section className="space-y-3 rounded border bg-white p-5"><h2 className="text-xl font-semibold">1. Impressora e energia manuais</h2><div className="grid gap-3 sm:grid-cols-2">
       {mainField("name", "Nome da impressora")}{mainField("purchasePrice", "Preço de aquisição (R$)")}{mainField("lifeHours", "Vida útil estimada (h)")}{mainField("powerWatts", "Potência média (W)")}{mainField("maintenancePerHour", "Manutenção (R$/h)")}{mainField("energyRate", "Tarifa de energia (R$/kWh)")}
     </div></section>
@@ -70,7 +75,10 @@ export function ManualPricingSimulator({ initialProducts, canSave, canCreateProd
       {initialProducts.total === 0 ? <p role="status">Nenhum produto ativo disponível na janela do seu plano. Cadastre um produto ou revise os cadastros permitidos. {canCreateProduct && <Link href="/produtos" className="underline">Cadastrar produto</Link>}</p> : <><div className="flex gap-2"><input aria-label="Buscar produto" className="w-full rounded border p-2" value={query} onChange={event => setQuery(event.target.value)} /><button type="button" onClick={() => search(1)}>Buscar</button></div>{products.items.length === 0 && <p>Nenhum produto encontrado nesta busca.</p>}<label className="block">Produto<select className="mt-1 w-full rounded border p-2" value={product?.id ?? ""} onChange={event => { setProduct(products.items.find(item => item.id === event.target.value) ?? null); change(); }}><option value="">Selecione</option>{product && !products.items.some(item => item.id === product.id) && <option value={product.id}>{product.name}</option>}{products.items.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label><div className="flex gap-3"><button type="button" disabled={products.page <= 1} onClick={() => search(products.page - 1)}>Anterior</button><span>Página {products.page} de {products.totalPages}</span><button type="button" disabled={products.page >= products.totalPages} onClick={() => search(products.page + 1)}>Próxima</button></div></>}
       <button type="button" onClick={calculate} className="rounded bg-violet-600 px-4 py-2 text-white">Calcular</button>
       {attempt && <div className="space-y-1 rounded bg-slate-50 p-4"><h3 className="font-semibold">Resultado {stale && "— desatualizado; recalcule"}</h3>{([["Filamento (inclui perda)", "material"], ["Energia", "energy"], ["Depreciação", "depreciation"], ["Manutenção", "maintenance"], ["Acabamento", "finishing"], ["Embalagem", "packaging"], ["Total do lote", "total"], ["Custo por peça", "unitCost"], ["Preço sugerido do lote", "suggestedLotPrice"], ["Preço sugerido por peça", "suggestedUnitPrice"]] as const).map(([label, key]) => <p key={key}>{label}: <strong>{money(attempt.result[key])}</strong></p>)}</div>}
-      {canSave && <button type="button" disabled={!attempt?.product || stale || busy || !!saved} onClick={save} className="rounded bg-violet-600 px-4 py-2 text-white disabled:opacity-50">{busy ? "Salvando…" : "Salvar tentativa congelada"}</button>}{saved && <Link href={`/precificadora/historico/${saved}`} className="block underline">Ver salva</Link>}
     </section>
+    </fieldset>
+    <div>
+      {canSave && <button type="button" disabled={!attempt?.product || stale || busy || !!saved} onClick={save} className="rounded bg-violet-600 px-4 py-2 text-white disabled:opacity-50">{busy ? "Salvando…" : "Salvar tentativa congelada"}</button>}{saved && <Link href={`/precificadora/historico/${saved}`} className="block underline">Ver salva</Link>}
+    </div>
   </main>;
 }

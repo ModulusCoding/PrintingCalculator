@@ -6,12 +6,12 @@ import { provisionEmployeeAction, resumeProvisioningAction, type EmployeeProvisi
 
 const initialState: EmployeeProvisioningResult = { status: "idle" };
 
-type Props = { canCreateAdmin: boolean; initialOperationId?: string };
+type Props = { initialOperationId?: string };
 
-export function EmployeeProvisioningForm({ canCreateAdmin, initialOperationId }: Props) {
+export function EmployeeProvisioningForm({ initialOperationId }: Props) {
   const [state, formAction, pending] = useActionState(provisionEmployeeAction, initialState);
   const [resumeState, resumeAction, resumePending] = useActionState(resumeProvisioningAction, initialState);
-  const resumeOperationId = initialOperationId ?? (state.status === "partial" || state.status === "outcome_unknown" ? state.operationId : undefined);
+  const resumeOperationId = initialOperationId ?? ("operationId" in state ? state.operationId : undefined);
   const displayedState = resumeState.status === "idle" ? state : resumeState;
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -23,16 +23,16 @@ export function EmployeeProvisioningForm({ canCreateAdmin, initialOperationId }:
       window.history.replaceState(null, "", url);
     }
   }, [resumeOperationId]);
-  const terminal = Boolean(initialOperationId) || state.status === "success" || state.status === "partial" || state.status === "outcome_unknown" || resumeState.status === "resume";
+  const terminal = Boolean(resumeOperationId) || state.status === "success" || state.status === "partial" || state.status === "outcome_unknown" || state.status === "resume" || resumeState.status === "resume";
 
   useEffect(() => {
-    if (state.status === "success" || state.status === "partial" || state.status === "outcome_unknown") {
+    if (terminal) {
       const passwordInput = formRef.current?.querySelector<HTMLInputElement>("[name=temporaryPassword]");
       if (passwordInput) passwordInput.value = "";
       const confirmationInput = formRef.current?.querySelector<HTMLInputElement>("[name=temporaryPasswordConfirmation]");
       if (confirmationInput) confirmationInput.value = "";
     }
-  }, [state.status]);
+  }, [terminal]);
 
   const fields = state.status === "error" ? state.fieldErrors ?? {} : {};
   const inputClass = "mt-2 w-full rounded-lg border border-gray-300 px-3 py-3 text-gray-900 outline-none transition focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/30";
@@ -43,9 +43,9 @@ export function EmployeeProvisioningForm({ canCreateAdmin, initialOperationId }:
                     (resumeState.status === "resume" && (resumeState.code === "completed" || resumeState.code === "already_completed"));
     const isAlreadyCompleted = (state.status === "success" && state.code === "already_completed") ||
                                (resumeState.status === "resume" && resumeState.code === "already_completed");
-    const unknown = state.status === "outcome_unknown" || (resumeState.status === "resume" && resumeState.code === "outcome_unknown");
-    const notFound = resumeState.status === "resume" && resumeState.code === "auth_account_not_found";
-    const inconsistentOrFailed = resumeState.status === "resume" && (resumeState.code === "inconsistent" || resumeState.code === "failed");
+    const unknown = displayedState.status === "outcome_unknown" || (displayedState.status === "resume" && displayedState.code === "outcome_unknown");
+    const notFound = displayedState.status === "resume" && displayedState.code === "auth_account_not_found";
+    const inconsistentOrFailed = displayedState.status === "resume" && (displayedState.code === "inconsistent" || displayedState.code === "failed");
 
     return (
       <section className={`rounded-lg border p-5 ${success ? "border-green-200 bg-green-50" : "border-amber-200 bg-amber-50"}`} role="alert" aria-live="polite">
@@ -56,7 +56,7 @@ export function EmployeeProvisioningForm({ canCreateAdmin, initialOperationId }:
         {success && <p className="mt-3 text-sm font-medium text-gray-800">O funcionário deverá trocar a senha no primeiro acesso.</p>}
         {!success && <p className="mt-3 text-sm font-medium text-gray-800">Esta verificação não cria outra conta nem altera senhas. Verifique a operação com o responsável se necessário.</p>}
         <div className="mt-5 flex flex-wrap gap-3">
-          {success && <button type="button" onClick={() => window.location.reload()} className="rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Cadastrar outro funcionário</button>}
+          {success && <button type="button" onClick={() => { const url = new URL(window.location.href); url.searchParams.delete("operationId"); window.location.assign(url.toString()); }} className="rounded-lg bg-indigo-600 px-4 py-3 font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Cadastrar outro funcionário</button>}
           {!success && !inconsistentOrFailed && resumeOperationId && (
             <form action={resumeAction}>
               <input type="hidden" name="operationId" value={resumeOperationId} />
@@ -84,8 +84,7 @@ export function EmployeeProvisioningForm({ canCreateAdmin, initialOperationId }:
       </div>
       <div>
         <label htmlFor="role" className="font-medium text-gray-800">Papel</label>
-        <select id="role" name="role" defaultValue={canCreateAdmin ? "operator" : "operator"} className={inputClass} aria-invalid={Boolean(fields.role)} aria-describedby={fields.role ? errorId("role") : undefined}>
-          {canCreateAdmin && <option value="admin">Administrador</option>}
+        <select id="role" name="role" defaultValue="operator" className={inputClass} aria-invalid={Boolean(fields.role)} aria-describedby={fields.role ? errorId("role") : undefined}>
           <option value="operator">Operador</option>
         </select>
         {fields.role && <p id={errorId("role")} className="mt-1 text-sm text-red-600">{fields.role}</p>}

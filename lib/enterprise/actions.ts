@@ -30,7 +30,7 @@ export async function memberMutation(kind: "edit" | "status", _prev: unknown, fo
     if (result.status === "success") revalidatePath("/empresa/equipe");
     return result;
   } catch (err) {
-    if (err instanceof AuthContextError) return { status: "session_expired" as const };
+    if (err instanceof AuthContextError) return { status: err.code === "AUTH_UNAUTHENTICATED" ? "session_expired" as const : "permission_denied" as const };
     return { status: "technical" as const };
   }
 }

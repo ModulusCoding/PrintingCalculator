@@ -8,9 +8,8 @@ export default async function NewTeamMemberPage(props: { searchParams?: Promise<
   const searchParams = props.searchParams ? await props.searchParams : undefined;
   const rawOperationId = searchParams?.operationId;
   const initialOperationId = rawOperationId && z.uuid().safeParse(rawOperationId).success ? rawOperationId : undefined;
-  let context;
   try {
-    context = await requireBusinessContext("members.manage_operators");
+    await requireBusinessContext("members.manage_operators");
   } catch (caught) {
     if (caught instanceof AuthContextError && caught.code === "AUTH_UNAUTHENTICATED") redirect("/admin/login");
     const unavailable = caught instanceof AuthContextError && (caught.code === "AUTH_ACCESS_BLOCKED" || caught.code === "AUTH_PERMISSION_DENIED");
@@ -24,6 +23,5 @@ export default async function NewTeamMemberPage(props: { searchParams?: Promise<
       </main>
     );
   }
-  const canCreateAdmin = context.role === "owner";
-  return <NewEmployeeContent canCreateAdmin={canCreateAdmin} initialOperationId={initialOperationId} />;
+  return <NewEmployeeContent initialOperationId={initialOperationId} />;
 }

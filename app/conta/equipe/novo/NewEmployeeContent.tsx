@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { EmployeeProvisioningForm } from "./EmployeeProvisioningForm";
 
-type Props = { canCreateAdmin: boolean; initialOperationId?: string };
+type Props = { initialOperationId?: string };
 
-export function NewEmployeeContent({ canCreateAdmin, initialOperationId }: Props) {
+export function NewEmployeeContent({ initialOperationId }: Props) {
   return (
     <div className="text-gray-900">
       <div className="mx-auto max-w-xl">
@@ -13,7 +13,7 @@ export function NewEmployeeContent({ canCreateAdmin, initialOperationId }: Props
             <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-xl font-bold text-white shadow-lg shadow-indigo-500/30">M</div>
             <div><h1 className="text-2xl font-bold sm:text-3xl">Cadastrar funcionário</h1><p className="mt-1 text-sm text-gray-600">Crie o acesso administrativo da equipe.</p></div>
           </div>
-          <EmployeeProvisioningForm canCreateAdmin={canCreateAdmin} initialOperationId={initialOperationId} />
+          <EmployeeProvisioningForm initialOperationId={initialOperationId} />
         </section>
       </div>
     </div>

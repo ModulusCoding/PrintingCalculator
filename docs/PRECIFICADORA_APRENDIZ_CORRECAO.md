@@ -15,17 +15,20 @@ A migration incremental `20261026070000_pricing_read_access_fix.sql` concede a c
 - Novo salvamento exige plano selecionado e autorização operacional; receipt idempotente é recuperado antes de carregar fontes. V3 é recalculado no servidor.
 - Retry integrado preserva intenção V2 e pode recuperar receipt após downgrade sem consultar fontes pagas; nova gravação continua paga.
 - A regra SQL existente de owner Free com equipe legada permanece; não-owner bloqueado. Não houve alteração de memberships, saldos ou ledgers.
-- Nenhuma alteração nas fórmulas do motor, históricos ou aplicação PRC-001.
+- Nenhuma alteração nas fórmulas do motor. O contrato V3 de novas gravações tem schema estrito no servidor e migration SQL por estágios; V1/V2 e snapshots históricos permanecem legíveis.
+- Histórico identifica V3 manual e usa nomes/unidades armazenados no próprio snapshot; unidades estão ausentes apenas em V3 históricos gravados antes desse campo, sem reconstrução por fontes atuais.
+- Aplicação V3 usa somente preço persistido e confirmação da versão revisada. A exceção Free é local à RPC de apply para V3 manual elegível; V1/V2 mantêm a autorização anterior. A aplicação não recalcula nem mexe em saldos/estoque.
 
 ## Verificações executadas
 
 - `npx tsc --noEmit`: passou.
 - ESLint focado nos arquivos TS/TSX alterados e harness CJS: passou após ajuste das regras do harness.
-- `node --test tests/pricing-access.test.cjs`: 9 testes passaram; mocks de fronteiras Supabase/Next, não integração real de banco.
+- `node --test tests/*.test.cjs`: 61 testes passaram; includes action com schemas e motor reais, gates e UI; fronteiras Supabase/Next são mockadas, não integração real de banco.
+- ESLint focado nos arquivos V3/histórico/UI: passou.
 - `npx --no-install tsx lib/pricing/manual-form.test.ts`: passou.
 - `npx --no-install tsx lib/pricing/fdm.test.ts`: passou.
 
-SQL novo não executado: psql ausente; Docker sem daemon (`failed to connect to the docker API ... dockerDesktopLinuxEngine ... The system cannot find the file specified`). Nenhum SQL remoto/reset foi executado. Não houve validação em navegador autenticado.
+Migrations incrementais V3 (`20261026100000`, `20261026110000`) e assertions SQL (`tests/sql/20261026100000_manual_v3_assertions.sql`) não foram executadas. O ambiente não tem conexão de desenvolvimento autorizada identificada; não alegar SQL validado. Nenhum SQL remoto/reset foi executado. Não houve validação em navegador autenticado.
 
 ## Roteiro local/homologação
 

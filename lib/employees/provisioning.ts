@@ -12,7 +12,7 @@ const inputSchema = z
   .object({
     fullName: z.string().trim().min(1, "Preencha este campo.").max(200, "Use no máximo 200 caracteres."),
     email: z.string().trim().min(1, "Preencha este campo.").email("Informe um e-mail válido.").max(320, "Informe um e-mail válido.").transform(value => value.toLowerCase()),
-    role: z.enum(["admin", "operator"], { error: "Selecione um papel válido." }),
+    role: z.literal("operator", { error: "Novos funcionários devem ter o papel Operador." }),
     temporaryPassword: z.string().min(1, "Preencha este campo.").min(8, "Use pelo menos 8 caracteres."),
     temporaryPasswordConfirmation: z.string().min(1, "Preencha este campo."),
   })
@@ -37,7 +37,7 @@ type FieldErrors = Partial<Record<FieldName, string>>;
 
 export type EmployeeProvisioningResult =
   | { status: "idle" }
-  | { status: "error"; code: "validation" | "session_expired" | "permission_denied" | "account_unavailable" | "password_rejected" | "rate_limited" | "operation_conflict" | "configuration" | "technical_failure"; message: string; fieldErrors?: FieldErrors }
+  | { status: "error"; code: "validation" | "session_expired" | "permission_denied" | "account_unavailable" | "password_rejected" | "rate_limited" | "operation_conflict" | "configuration" | "technical_failure" | "team_limit_reached"; message: string; fieldErrors?: FieldErrors; operationId?: string }
   | { status: "outcome_unknown"; code: "start_outcome_unknown" | "auth_creation_outcome_unknown"; message: string; operationId?: string }
   | { status: "partial"; code: "finalization_rejected" | "finalization_outcome_unknown"; message: string; operationId: string }
   | { status: "resume"; code: "completed" | "already_completed" | "auth_account_not_found" | "inconsistent" | "failed" | "outcome_unknown"; message: string; operationId: string }
@@ -47,11 +47,16 @@ function error(code: Extract<EmployeeProvisioningResult, { status: "error" }>["c
   return { status: "error", code, message, ...(fieldErrors ? { fieldErrors } : {}) };
 }
 
+function withOperation(result: EmployeeProvisioningResult, operationId: string): EmployeeProvisioningResult {
+  return { ...result, operationId } as EmployeeProvisioningResult;
+}
+
 function uncertain(code?: string): boolean {
   return !code || !["42501", "28000", "23505", "22023", "P0001", "P0002", "P0003", "P0004"].includes(code);
 }
 
 function mapRpcError(rpcError: { code?: string; message?: string }): EmployeeProvisioningResult {
+  if (rpcError.code === "P0001" && rpcError.message?.includes("team_limit_reached")) return error("team_limit_reached", "O limite de funcionários do plano foi atingido. Revise a equipe antes de continuar.");
   if (rpcError.code === "42501" || rpcError.code === "28000") return error("permission_denied", "Você não tem permissão para cadastrar este funcionário.");
   if (rpcError.code === "23505") return error("account_unavailable", "Este e-mail ou esta conta não está disponível para o provisionamento. Revise a operação antes de tentar novamente.");
   if (rpcError.code === "22023" || rpcError.code === "P0003") return error("operation_conflict", "A operação não corresponde aos dados solicitados.");
@@ -74,7 +79,7 @@ const resumeResponseSchema = z.array(z.object({
   auth_user_id: z.uuid().nullable(), user_id: z.uuid().nullable(), auth_identity_id: z.uuid().nullable(), membership_id: z.uuid().nullable(),
 }).strict()).length(1);
 
-export async function resumeProvisioningAction(
+async function resumeProvisioning(
   _previousState: EmployeeProvisioningResult,
   formData: FormData
 ): Promise<EmployeeProvisioningResult> {
@@ -114,6 +119,7 @@ export async function resumeProvisioningAction(
       p_operation_id: operationId, p_actor_auth_user_id: sessionData.user.id, p_actor_issuer: issuer
     });
     if (response.error) {
+      if (!uncertain(response.error.code)) return withOperation(mapRpcError(response.error), operationId);
       // Never log SDK messages/details: they may contain application data.
       console.error("employee_resume", {
         stage: "rpc_error",
@@ -168,6 +174,15 @@ export async function resumeProvisioningAction(
   }
 }
 
+export async function resumeProvisioningAction(
+  previousState: EmployeeProvisioningResult,
+  formData: FormData
+): Promise<EmployeeProvisioningResult> {
+  const result = await resumeProvisioning(previousState, formData);
+  const operationId = formData.get("operationId")?.toString();
+  return operationId && z.uuid().safeParse(operationId).success ? withOperation(result, operationId) : result;
+}
+
 export async function provisionEmployeeAction(
   _previousState: EmployeeProvisioningResult,
   formData: FormData
@@ -191,7 +206,7 @@ export async function provisionEmployeeAction(
   const { data: sessionData, error: sessionError } = await sessionClient.auth.getUser();
   if (sessionError || !sessionData.user) return error("session_expired", "Sua sessão expirou. Entre novamente para continuar.");
 
-  const permission = parsed.data.role === "admin" ? "members.manage_admins" : "members.manage_operators";
+  const permission = "members.manage_operators";
   let context;
   try {
     context = await requireBusinessContext(permission);
@@ -218,6 +233,7 @@ export async function provisionEmployeeAction(
 
   let startCallBegan = false;
   let startResult;
+  let knownOperationId: string | undefined;
   try {
     startCallBegan = true;
     const response = await admin.rpc("start_employee_provisioning", {
@@ -225,6 +241,7 @@ export async function provisionEmployeeAction(
       p_email: parsed.data.email, p_full_name: parsed.data.fullName, p_role: parsed.data.role,
     });
     if (response.error) {
+      if (!uncertain(response.error.code)) return mapRpcError(response.error);
       console.error("employee_provisioning", {
         stage: "start_rpc_error",
         code: typeof response.error.code === "string" && /^(?:[0-9A-Z]{5}|PGRST[0-9]{3})$/.test(response.error.code) ? response.error.code : "unclassified",
@@ -234,6 +251,8 @@ export async function provisionEmployeeAction(
         ? { status: "outcome_unknown", code: "start_outcome_unknown", message: "Não foi possível confirmar o resultado do início da operação. Não repita o cadastro sem revisar ou retomar a operação." }
         : mapRpcError(response.error);
     }
+    const responseOperationId = Array.isArray(response.data) && response.data.length === 1 ? response.data[0]?.operation_id : undefined;
+    if (z.uuid().safeParse(responseOperationId).success) knownOperationId = responseOperationId;
     startResult = startResponseSchema.safeParse(response.data);
     if (!startResult.success) {
       console.error("employee_provisioning", {
@@ -247,13 +266,35 @@ export async function provisionEmployeeAction(
       ? { status: "outcome_unknown", code: "start_outcome_unknown", message: "Não foi possível confirmar o resultado do início da operação. Não repita o cadastro sem revisar ou retomar a operação." }
       : error("technical_failure", "Não foi possível iniciar o provisionamento.");
   }
-  if (!startResult.success) return error("technical_failure", "O servidor retornou uma resposta inválida ao iniciar o provisionamento.");
+  if (!startResult.success) return { status: "outcome_unknown", code: "start_outcome_unknown", message: "Não foi possível confirmar o início da operação. Não repita o cadastro sem revisão.", ...(knownOperationId ? { operationId: knownOperationId } : {}) };
   const operation = startResult.data[0];
   if (operation.enterprise_id !== context.enterpriseId || operation.email_normalized !== parsed.data.email || operation.requested_role !== parsed.data.role) {
-    return error("operation_conflict", "A operação existente possui parâmetros incompatíveis com esta solicitação.");
+    return withOperation(error("operation_conflict", "A operação existente possui parâmetros incompatíveis com esta solicitação."), operation.operation_id);
   }
   if (operation.status === "completed") return { status: "success", code: "already_completed", message: "O funcionário já havia sido provisionado. Nenhuma conta ou senha foi alterada.", operationId: operation.operation_id };
-  if (operation.status !== "pending") return error("operation_conflict", "A operação não está disponível para continuação.");
+  if (operation.status !== "pending") return withOperation(error("operation_conflict", "A operação não está disponível para continuação."), operation.operation_id);
+
+  // A repeated start may represent an earlier Auth creation. Recover it before
+  // attempting a new creation; never replace credentials or delete an account.
+  try {
+    const checked = await admin.rpc("resume_employee_provisioning", {
+      p_operation_id: operation.operation_id, p_actor_auth_user_id: sessionData.user.id, p_actor_issuer: issuer,
+    });
+    const recovered = resumeResponseSchema.safeParse(checked.data);
+    if (checked.error || !recovered.success || recovered.data[0].operation_id !== operation.operation_id) {
+      return { status: "resume", code: "outcome_unknown", operationId: operation.operation_id, message: "Não foi possível verificar a tentativa anterior. Não repita o cadastro; verifique esta operação." };
+    }
+    const result = recovered.data[0];
+    const completed = result.status === "completed" || result.status === "already_completed";
+    const ids = [result.auth_user_id, result.user_id, result.auth_identity_id, result.membership_id];
+    if (completed ? ids.some(id => id === null) : ids.some(id => id !== null)) {
+      return { status: "resume", code: "outcome_unknown", operationId: operation.operation_id, message: "A verificação retornou dados incompatíveis. É necessária revisão da operação." };
+    }
+    if (completed) return { status: "success", code: result.status as "completed" | "already_completed", operationId: operation.operation_id, message: "O funcionário já havia sido provisionado. Nenhuma conta ou senha foi alterada." };
+    if (result.status !== "auth_account_not_found") return { status: "resume", code: result.status, operationId: operation.operation_id, message: "A tentativa anterior exige revisão. Nenhuma nova conta foi criada." };
+  } catch {
+    return { status: "resume", code: "outcome_unknown", operationId: operation.operation_id, message: "Não foi possível verificar a tentativa anterior. Não repita o cadastro; verifique esta operação." };
+  }
 
   let authUserId: string;
   try {
@@ -265,10 +306,10 @@ export async function provisionEmployeeAction(
       if (!created.error.status || created.error.status >= 500 || created.error.status === 408) {
         return { status: "outcome_unknown", code: "auth_creation_outcome_unknown", message: "A criação da conta foi iniciada, mas seu resultado não pôde ser confirmado. Não tente criar outra conta; solicite revisão da operação.", operationId: operation.operation_id };
       }
-      return mapCreateUserError(created.error);
+      return withOperation(mapCreateUserError(created.error), operation.operation_id);
     }
     if (!created.data.user || !z.uuid().safeParse(created.data.user.id).success) {
-      return { status: "outcome_unknown", code: "auth_creation_outcome_unknown", message: "A criação da conta foi iniciada, mas seu resultado não pôde ser confirmado. Não tente criar outra conta; solicite revisão da operação." };
+      return { status: "outcome_unknown", code: "auth_creation_outcome_unknown", message: "A criação da conta foi iniciada, mas seu resultado não pôde ser confirmado. Não tente criar outra conta; solicite revisão da operação.", operationId: operation.operation_id };
     }
     authUserId = created.data.user.id;
   } catch {
@@ -280,6 +321,7 @@ export async function provisionEmployeeAction(
       p_operation_id: operation.operation_id, p_actor_auth_user_id: sessionData.user.id,
       p_actor_issuer: issuer, p_auth_user_id: authUserId, p_auth_issuer: issuer,
     });
+    if (finished.error?.code === "P0001" && finished.error.message?.includes("team_limit_reached")) return { status: "partial", code: "finalization_rejected", operationId: operation.operation_id, message: "A conta Auth foi criada, mas o limite de funcionários do plano impede a conclusão. Revise a equipe e esta operação; não crie outra conta." };
     if (finished.error) return uncertain(finished.error.code)
       ? { status: "partial", code: "finalization_outcome_unknown", message: "A conta Auth foi criada, mas a conclusão não pôde ser confirmada. Não crie outra conta; retome após revisão.", operationId: operation.operation_id }
       : { status: "partial", code: "finalization_rejected", message: "A conta Auth foi criada, mas a conclusão interna foi rejeitada. A operação precisa ser revisada; a conta não foi excluída.", operationId: operation.operation_id };

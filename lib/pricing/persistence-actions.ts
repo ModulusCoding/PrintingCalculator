@@ -13,6 +13,7 @@ import { logPricingFailure, pricingPlanMessage } from "@/lib/diagnostics/action-
 
 type PricingOutcome<T> = EnginePricingOutcome<T> | { ok: false; code: PlanErrorCode | "unavailable" | "unknown"; error: string; correlationId?: string };
 import { manualFdmSchema } from "./manual";
+import { MANUAL_UNITS, manualSnapshotSchema } from "./manual-snapshot";
 
 function logSourceFailure(logger: ReturnType<typeof createLogger>, error: unknown, stage: "context" | "query" | "interpretation" | "validation", operation?: string) {
   unstable_rethrow(error);
@@ -205,7 +206,8 @@ export async function saveManualFdmPricingAction(input: unknown): Promise<Pricin
     const intent = { ...r, source: "manual" };
     const requestHash = sha256(canonicalJson(intent));
 
-    // Integrated lookup BEFORE paid guard so retry downgrade works no paid queries on receipt
+    // Recover by frozen manual intent before loading current product metadata.
+    // A completed attempt survives later product/version/plan changes.
     const lookup = await admin.rpc("lookup_pricing_attempt", { p_actor: authUid, p_issuer: issuer, p_attempt_id: r.attemptId, p_request_hash: requestHash });
     if (lookup.error) return rpcFailure(lookup.error, false, "lookup_pricing_attempt");
     const found = singleRow(z.object({ status: z.enum(["found", "missing"]), calculation_id: uuid.nullable() }), lookup.data);
@@ -273,26 +275,24 @@ export async function saveManualFdmPricingAction(input: unknown): Promise<Pricin
 
     const res = runFdm(calcInput);
     if (!res.ok) return res;
+    // Existing persistence column contract is 0..1e30; do not round or truncate
+    // an otherwise finite engine result to force it into the database.
+    if (res.data.suggestedUnitPrice > 1e30) return failure("invalid", "Preço sugerido excede o limite de persistência.");
 
-    const snapshot = {
+    const snapshot = manualSnapshotSchema.parse({
       schema_version: "3",
       source: "manual",
       input: calcInput,
       result: res.data,
       product_snapshot: p,
-      units: {
-        filament: "g/lot",
-        printTime: "h/lot",
-        finishing: "lot",
-        packagingPerPiece: "BRL/piece",
-        quantity: "piece",
-      },
+      units: MANUAL_UNITS,
       config_snapshot: { source: "manual", energyRate: r.input.tariff.effective },
       manual_input_references: {
         spool_names: r.input.spoolLines.map(s => s.name),
         packaging_names: r.input.packagingLines.map(p => p.name),
+        packaging_units: r.input.packagingLines.map(p => p.suppliedUnit),
       },
-    };
+    });
 
     const snapshotText = JSON.stringify(snapshot);
     dispatched = true;
@@ -352,7 +352,7 @@ const historySchema = z.object({
   product_id: uuid,
   created_at: z.string().datetime({ offset: true }),
   snapshot: z.record(z.string(), z.unknown()),
-  price_suggested_unit: z.coerce.number(),
+  price_suggested_unit: z.coerce.number().finite().nonnegative(),
   status: z.enum(["saved", "applied", "reviewed"]).default("saved"),
 }).strict();
 export type PricingHistoryItem = z.infer<typeof historySchema>;

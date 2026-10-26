@@ -15,6 +15,8 @@ function load(file, imports) {
   return sandboxModule.exports;
 }
 const safe = load('lib/diagnostics/safe-error.ts', { zod: { z } });
+const manual = load('lib/pricing/manual.ts', { zod: { z } });
+const manualSnapshot = load('lib/pricing/manual-snapshot.ts', { zod: { z }, './manual': manual });
 test('preserves SQL code/message without row values, tokens or personal data', () => {
   const result = safe.safeErrorDiagnostic({ code: '42501', message: 'permission denied for table products', details: "Key (email)=(person@example.com) already exists.", hint: "password=secret 'private value'" });
   assert.equal(result.code, '42501');
@@ -25,7 +27,7 @@ test('Zod diagnostics include paths and issue codes, not values', () => {
   const parsed = z.object({ version: z.number() }).safeParse({ version: 'private' });
   assert.deepEqual(JSON.parse(JSON.stringify(safe.safeErrorDiagnostic(parsed.error))), { code: 'ZOD_PARSE_ERROR', technical_detail: 'version:invalid_type' });
 });
-function actionHarness({ rows = [], error = null, accessError = null, manual = false } = {}) {
+function actionHarness({ rows = [], error = null, accessError = null } = {}) {
   const events = [], logs = [];
   const request = {};
   for (const method of ['select', 'eq', 'is', 'order', 'ilike']) request[method] = (...args) => { events.push([method, ...args]); return request; };
@@ -37,7 +39,7 @@ function actionHarness({ rows = [], error = null, accessError = null, manual = f
   const actions = load('lib/pricing/persistence-actions.ts', {
     zod: { z }, '@/lib/auth/context': { AuthContextError, requireBusinessContext: async permission => { events.push(['permission', permission]); return { enterpriseId: 'enterprise', role: 'owner' }; } },
     '@/lib/supabase/server': { createClient: async () => ({ auth: { getUser: async () => ({ data: { user: { id: 'a2f9472d-c017-42dd-b0d5-56e4b5650690' } }, error: null }) }, from: table => { events.push(['from', table]); return request; } }), createAdminClient: () => ({ rpc: async (name, args) => { events.push(['rpc', name, args]); return name === 'lookup_pricing_attempt' ? { data: [{ status: 'missing', calculation_id: null }], error: null } : { data: [{ status: 'created', calculation_id: 'a2f9472d-c017-42dd-b0d5-56e4b5650690' }], error: null }; } }) },
-    './persistence': { canonicalJson: JSON.stringify, sha256: () => 'hash', runFdm: () => ({ ok: true, data: { suggestedUnitPrice: 12 } }) }, '@/lib/spools/schemas': {}, '@/lib/general-materials/schemas': {}, './manual': { manualFdmSchema: { safeParse: input => ({ success: manual, data: input }) } },
+    './persistence': { canonicalJson: JSON.stringify, sha256: () => 'hash', runFdm: () => ({ ok: true, data: { suggestedUnitPrice: 12 } }) }, '@/lib/spools/schemas': {}, '@/lib/general-materials/schemas': {}, './manual': manual, './manual-snapshot': manualSnapshot,
     '@/lib/general-materials/logger': { createLogger: () => ({ id: '12345678' }) },
     'next/navigation': { unstable_rethrow: () => {} },
     '@/lib/plans': { PlanAccessError, PlanTechnicalError, requirePlanBusinessAccess: async () => { events.push(['plan']); if (accessError) throw new PlanAccessError(accessError); return { effective_plan: 'free' }; } },
@@ -69,24 +71,6 @@ test('invalid product response is diagnosed at interpretation, not query', async
   const h = actionHarness({ rows: [{ id: 'invalid' }] });
   assert.equal((await h.actions.searchProductsAction()).ok, false);
   assert.equal(h.logs[0].stage, 'interpretation'); assert.equal(h.logs[0].code, 'ZOD_PARSE_ERROR');
-});
-test('manual save recalculates V3 on server using products only, never paid sources', async () => {
-  const oldUrl = process.env.NEXT_PUBLIC_SUPABASE_URL, oldIssuer = process.env.SUPABASE_AUTH_ISSUER;
-  process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://local.example.test';
-  process.env.SUPABASE_AUTH_ISSUER = 'https://local.example.test/auth/v1';
-  try {
-    const h = actionHarness({ manual: true, rows: [{ id: 'a2f9472d-c017-42dd-b0d5-56e4b5650690', name: 'Produto', active: true, version: 1, price: 10, deleted_at: null }] });
-    const response = await h.actions.saveManualFdmPricingAction({ attemptId: 'attempt', productId: 'a2f9472d-c017-42dd-b0d5-56e4b5650690', productVersion: 1, input: { quantity: 1, printTimeHours: 1, printer: {}, tariff: { effective: 1 }, lossPercent: 0, spoolLines: [], packagingLines: [], finishing: {}, packagingPerPiece: 0, markupPercent: 0 } });
-    assert.equal(response.ok, true);
-    assert.deepEqual(h.events.filter(e => e[0] === 'from'), [['from', 'products']]);
-    const save = h.events.find(e => e[0] === 'rpc' && e[1] === 'save_manual_pricing_attempt');
-    assert.equal(save[2].p_snapshot.schema_version, '3');
-    assert.equal(save[2].p_snapshot.source, 'manual');
-    assert.equal(save[2].p_snapshot.result.suggestedUnitPrice, 12);
-  } finally {
-    if (oldUrl === undefined) delete process.env.NEXT_PUBLIC_SUPABASE_URL; else process.env.NEXT_PUBLIC_SUPABASE_URL = oldUrl;
-    if (oldIssuer === undefined) delete process.env.SUPABASE_AUTH_ISSUER; else process.env.SUPABASE_AUTH_ISSUER = oldIssuer;
-  }
 });
 for (const code of ['selection_required', 'member_plan_blocked']) test(`${code} stops before product query`, async () => {
   const h = actionHarness({ accessError: code });

@@ -33,7 +33,7 @@ export async function mutateMember(kind:'edit'|'status',form:FormData):Promise<M
  const args=kind==='edit'?{p_membership_id:input.membership_id,p_expected_version:input.version,p_full_name:(input as z.infer<typeof editSchema>).full_name,p_role:(input as z.infer<typeof editSchema>).role,p_expected_full_name:(input as z.infer<typeof editSchema>).expected_full_name}:{p_membership_id:input.membership_id,p_expected_version:input.version,p_status:(input as z.infer<typeof statusSchema>).status};
  let response;
  try{response=await(await createClient()).rpc(kind==='edit'?'update_my_enterprise_member':'set_my_enterprise_member_status',args);}catch{return {status:'unknown'};}
- if(response.error)return {status:response.error.code==='42501'?'permission_denied':'technical'};
+ if(response.error)return {status:response.error.code==='42501'?'permission_denied':response.error.code==='22023'?'invalid_input':'technical'};
  const result=z.object({status:z.enum(['success','conflict','protected','name_not_editable','target_unavailable','permission_denied','invalid_input']),version:z.number().nullable()}).safeParse(response.data?.[0]);
  return result.success?{status:result.data.status}:{status:'unknown'};
 }

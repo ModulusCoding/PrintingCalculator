@@ -13,23 +13,32 @@ export function ApplyPricingButton({ pricingId }: { pricingId: string; productVe
   const loadReview = async () => {
     if (lock.current) return;
     lock.current = true; setLoading(true); setMessage("");
+    try {
     const result = await getPricingReviewAction(pricingId);
-    lock.current = false; setLoading(false);
     if (!result.ok) return setMessage(result.error);
     if (!result.data.currentProduct?.active) return setMessage("O produto não está mais disponível.");
     const snapshot = result.data.calculation.snapshot.product_snapshot as { version?: unknown } | undefined;
     if (snapshot?.version !== undefined && Number(snapshot.version) !== result.data.currentProduct.version) setMessage("O produto foi alterado desde esta precificação. Revise os dados e o preço atuais antes de confirmar.");
     setReview({ version: result.data.currentProduct.version, name: result.data.currentProduct.name, price: result.data.currentProduct.price, suggested: result.data.calculation.price_suggested_unit });
+    } catch {
+      setReview(null);
+      setMessage("Não foi possível carregar a revisão. Tente novamente.");
+    } finally { lock.current = false; setLoading(false); }
   };
   const apply = async () => {
     if (!review || lock.current) return;
     lock.current = true; setLoading(true); setMessage("");
     const expected = review.version;
-    const result = await applyFdmPricingPriceAction(pricingId, expected);
-    lock.current = false; setLoading(false);
-    if (result.ok) { setReview(null); setCompleted(true); setMessage("Preço aplicado ao produto."); return; }
-    setMessage(result.code === "conflict" ? "O produto mudou enquanto você revisava. Carregue a revisão novamente." : result.error);
-    if (result.code === "conflict" || result.code === "unknown") setReview(null);
+    try {
+      const result = await applyFdmPricingPriceAction(pricingId, expected);
+      if (result.ok) { setReview(null); setCompleted(true); setMessage("Preço aplicado ao produto."); return; }
+      const conflict = result.code === "conflict" || String(result.code) === "PRC001";
+      setMessage(conflict ? "O produto mudou enquanto você revisava. Carregue a revisão novamente." : result.error);
+      if (conflict || result.code === "unknown") setReview(null);
+    } catch {
+      setReview(null);
+      setMessage("Resultado da aplicação não confirmado. Carregue a revisão novamente antes de tentar aplicar.");
+    } finally { lock.current = false; setLoading(false); }
   };
   const money = (v: number | null) => v == null ? "não definido" : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
   return <div className="space-y-3 rounded border bg-white p-5">
