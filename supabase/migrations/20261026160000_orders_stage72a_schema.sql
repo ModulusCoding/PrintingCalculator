@@ -60,13 +60,16 @@ CREATE TABLE public.orders (
   CONSTRAINT orders_discount_calculation_check CHECK (
     discount_base = subtotal
     AND discount_amount <= subtotal
-    AND ((discount_type = 'fixed' AND discount_amount = pg_catalog.least(discount_input, subtotal))
+    AND ((discount_type = 'fixed' AND discount_amount = LEAST(discount_input, subtotal))
       OR (discount_type = 'percent' AND discount_amount = pg_catalog.round(subtotal * discount_input / 100, 2)))
   ),
   CONSTRAINT orders_shipping_amount_check CHECK
     (shipping_amount::text NOT IN ('NaN', 'Infinity', '-Infinity') AND shipping_amount BETWEEN 0 AND 999999999999.99 AND pg_catalog.scale(shipping_amount) <= 2),
   CONSTRAINT orders_total_amount_check CHECK
     (total_amount::text NOT IN ('NaN', 'Infinity', '-Infinity') AND total_amount BETWEEN 0 AND 999999999999.99 AND pg_catalog.scale(total_amount) <= 2),
+  CONSTRAINT orders_total_calculation_check CHECK (
+    total_amount = subtotal - discount_amount + shipping_amount
+  ),
   CONSTRAINT orders_notes_check CHECK (notes IS NULL OR pg_catalog.length(notes) <= 5000),
   CONSTRAINT orders_terminal_timestamp_check CHECK (
     (operational_status = 'entregue' AND delivered_at IS NOT NULL)
@@ -141,8 +144,18 @@ CREATE TABLE public.order_items (
     (unit_price::text NOT IN ('NaN', 'Infinity', '-Infinity') AND unit_price BETWEEN 0 AND 1000000 AND pg_catalog.scale(unit_price) <= 2),
   CONSTRAINT order_items_line_subtotal_check CHECK
     (line_subtotal::text NOT IN ('NaN', 'Infinity', '-Infinity') AND line_subtotal BETWEEN 0 AND 999999999999.99 AND pg_catalog.scale(line_subtotal) <= 2),
+  CONSTRAINT order_items_line_calculation_check CHECK (
+    line_subtotal::text NOT IN ('NaN', 'Infinity', '-Infinity')
+    AND line_subtotal = quantity::numeric * unit_price
+  ),
   CONSTRAINT order_items_fulfillment_mode_check CHECK
     (fulfillment_mode IN ('stock', 'make_to_order', 'untracked')),
+  CONSTRAINT order_items_physical_fulfillment_requires_product_check CHECK (
+    fulfillment_mode = 'untracked' OR product_id IS NOT NULL
+  ),
+  CONSTRAINT order_items_custom_without_product_untracked_check CHECK (
+    origin <> 'custom' OR product_id IS NOT NULL OR fulfillment_mode = 'untracked'
+  ),
   CONSTRAINT order_items_timestamps_finite_check CHECK (isfinite(created_at) AND isfinite(updated_at))
 );
 

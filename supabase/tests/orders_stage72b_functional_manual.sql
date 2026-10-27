@@ -1,0 +1,38 @@
+-- Behavioral scenarios only; NOT EXECUTED. Requires isolated DB + valid synthetic
+-- auth/tenant/plan fixtures and approved M7.2-C commands. Never run on production.
+-- Structural catalog checks are separate in orders_stage72b_structure_manual.sql.
+-- Static signature and remote metadata collection are in remote_preflight_readonly.sql.
+--
+-- TRANSACTIONAL FIXTURE TESTS (implement in disposable DB harness):
+-- 1) balance 20/reserved 8: exit 12 succeeds; exit 13 and adjustment to 7 fail;
+--    entry preserves reserved; adjustment >=8 succeeds.
+-- 2) exact full persisted item quantity reserved; insufficient stock creates no
+--    reservation or aggregate update; zero/missing inventory fails without row create.
+-- 3) second active reservation for same item fails; active reservation SUM equals
+--    aggregate after each reserve/release/consume; historical rows remain immutable.
+-- 4) release: active->released and aggregate decrement only; repeat fails. Consume:
+--    aggregate + physical decrement and reservation transition + movement ledger +
+--    settlement all occur in one caller transaction; injected failure rolls all back.
+-- 5) archive/delete blocked only when active reservation; no order/reservation
+--    mutation on rejection. Non-state product edits remain permitted.
+-- 6) settlement tenant/order/item/product/reservation/quantity/movement mismatches
+--    fail composite FKs; duplicate reservation or movement settlement fails.
+-- 7) cancel releases; reopening after release creates a new active historical cycle;
+--    edits after release pass item guard. Cancel vs delivery resolves once only.
+-- 8) foreign enterprise IDs cannot be supplied to trusted commands; direct API role
+--    helper/table calls fail. Do not infer tenant isolation by running as postgres.
+-- 9) retries preserve movement idempotency; changed payload conflicts. Future order
+--    command retries must validate receipt payload hash/status in M7.2-C.
+--
+-- REAL CONCURRENT SESSIONS REQUIRED (not verified sequentially):
+-- A. Reservation vs item quantity/product edit. Both first lock order; prove the
+--    reservation matches the item row committed and no writer bypasses order lock.
+-- B. Two authorized reservations competing for last unit: exactly one succeeds.
+-- C. Reservation vs manual exit: product->position serializes; no oversell.
+-- D. Reservation vs archive/delete: product->position then reservation check; one
+--    valid outcome, never archived/deleted with active reservation.
+-- E. Cancel/release vs delivery/consume; reopen vs cancel; assert one valid state,
+--    no duplicate active reservation, no double consume, no deadlock.
+-- F. Downgrade vs create reservation: hold same plan mutex through transaction;
+--    after downgrade no new reservation, but authorized resolution of old one allowed.
+-- Each requires simultaneous independent sessions and bounded lock_timeout; not run.

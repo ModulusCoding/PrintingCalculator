@@ -1,0 +1,45 @@
+-- M7.2-B.1 regression plan; NOT EXECUTED. Use disposable DB and synthetic tenants.
+-- No DDL/DML is performed by this file. Real concurrency requires separate sessions.
+--
+-- Static/catalog: compare pg_get_functiondef, identity args, result types, owners,
+-- proconfig/proacl before/after using the read-only preflight query. Confirm only the
+-- documented predicates and position lock were added to the supplied RPC bodies.
+--
+-- Functional fixtures through authorized RPCs:
+-- 1. No reservation: exit succeeds, ledger row and five-column response unchanged.
+-- 2. Active reservation: exit that leaves balance >= reserved succeeds; exit taking
+--    physical below reserved raises insufficient_stock (known action code).
+-- 3. Adjustment count above reserved succeeds and records exact legacy movement;
+--    adjustment below reserved fails; equal reserved succeeds.
+-- 4. Entry with active reservation succeeds and increases physical, not reserved.
+-- 5. Position absent, expected_version=0: legacy adjustment zero remains no_change;
+--    entry creates position with reserved_balance=0. No synthetic reservation.
+-- 6. Retry same attempt/payload replays same movement and version before current
+--    version validation; changed payload raises idempotency_conflict.
+-- 7. Stale version yields version_conflict. Authorization denial and product
+--    visibility maintain existing results/errors.
+-- 8. Archive active->inactive with no reservation succeeds; same operation with
+--    active reservation raises product_has_active_reservations and makes no change.
+--    Verify the RPC is called using its pre-existing authenticated grant/owner.
+--    Reactivation and already-inactive no-op retain legacy behavior.
+-- 9. Delete with no reservation exercises receipt, version, visibility, physical
+--    zero, pending upload and soft-delete semantics unchanged. Active reservation
+--    blocks before soft-delete; no receipt is persisted on failure.
+-- 10. Tenant A cannot use a product/reservation belonging to tenant B. Run as real
+--     authenticated identities, not postgres, to test auth/RLS boundaries.
+--
+-- Concurrent sessions (must actually run simultaneously; pending):
+-- A. Reserve last available quantity vs manual exit. Both lock product then position;
+--    exactly one may claim the same units; no aggregate or physical underflow.
+-- B. Reserve vs archive/delete. Both serialize at product lock; active reservation
+--    cannot coexist with archived/deleted state.
+-- C. Reservation implementation must lock product FOR UPDATE before insert; verify
+--    the exact deployed M7.2-B helper/command does so. A caller bypassing this rule
+--    defeats the serialization claimed by these RPC guards.
+-- D. Cancel/release vs consume/delivery: order row first, sorted product, position,
+--    reservation; one finalization only. Requires M7.2-C caller and ledger/settlement.
+--
+-- API error mapping note: inventory action maps insufficient_stock; product action
+-- currently does not map product_has_active_reservations to a named ProductResult.
+-- The latter may surface as generic technical until an separately approved UI/action
+-- change is made. No frontend code changed by this stage.

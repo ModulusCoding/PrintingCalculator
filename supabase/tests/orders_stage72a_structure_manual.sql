@@ -82,6 +82,19 @@ BEGIN
     WHERE conrelid = 'public.orders'::regclass AND conname = 'orders_discount_calculation_check') THEN
     RAISE EXCEPTION 'missing discount calculation check';
   END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_constraint
+    WHERE conrelid = 'public.orders'::regclass AND conname = 'orders_total_calculation_check') THEN
+    RAISE EXCEPTION 'missing total calculation check';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_constraint
+    WHERE conrelid = 'public.order_items'::regclass AND conname = 'order_items_line_calculation_check') THEN
+    RAISE EXCEPTION 'missing line subtotal calculation check';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_constraint
+    WHERE conrelid = 'public.order_items'::regclass
+      AND conname = 'order_items_physical_fulfillment_requires_product_check') THEN
+    RAISE EXCEPTION 'missing physical fulfillment product requirement';
+  END IF;
   IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_trigger
     WHERE tgrelid = 'public.order_events'::regclass AND tgname = 'order_events_immutable' AND NOT tgisinternal)
     OR NOT EXISTS (SELECT 1 FROM pg_catalog.pg_trigger

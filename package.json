@@ -16,6 +16,7 @@
     "unrs-resolver"
   ],
   "dependencies": {
+    "@dnd-kit/react": "^0.5.1",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
     "@vercel/analytics": "^2.0.1",

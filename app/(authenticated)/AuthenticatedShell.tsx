@@ -25,6 +25,7 @@ export function AuthenticatedShell({ children, canManageEnterprise, canManageMem
       
       <div className="mt-7"><p className="mb-2 px-4 text-xs font-semibold uppercase tracking-widest text-[#464556]/60">Operação</p><div className="space-y-1">
         <Link href="/admin/products" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/admin/products"))} aria-current={pathname.startsWith("/admin/products") ? "page" : undefined}><Package className="size-5" aria-hidden="true" />Produtos</Link>
+        <Link href="/admin/orders" onClick={() => setMobileOpen(false)} className={navClass(pathname.startsWith("/admin/orders"))} aria-current={pathname.startsWith("/admin/orders") ? "page" : undefined}><Package className="size-5" aria-hidden="true" />Pedidos</Link>
         {canReadPrinters && paidModuleLink("/impressoras", "Impressoras", Printer)}
         {canReadMaterials && paidModuleLink("/materiais", "Materiais", Layers)}
         {canReadGeneralMaterials && paidModuleLink("/estoque/materiais-gerais", "Materiais gerais", Layers)}
