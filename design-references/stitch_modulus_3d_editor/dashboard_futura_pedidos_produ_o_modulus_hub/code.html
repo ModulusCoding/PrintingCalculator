@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"on-secondary":"#ffffff","on-tertiary-fixed-variant":"#7b2f00","secondary":"#5e5e5e","surface-container":"#edeeef","inverse-primary":"#c2c1ff","on-primary-container":"#f2eeff","on-primary":"#ffffff","on-tertiary":"#ffffff","on-primary-fixed":"#0c006a","surface-container-lowest":"#ffffff","on-surface":"#191c1d","error-container":"#ffdad6","outline-variant":"#c7c4d9","surface-variant":"#e1e3e4","tertiary-fixed":"#ffdbcc","secondary-fixed-dim":"#c6c6c6","surface":"#f8f9fa","primary-fixed":"#e2dfff","primary":"#3d32e6","surface-container-high":"#e7e8e9","outline":"#777588","tertiary-container":"#ba4a00","secondary-fixed":"#e2e2e2","tertiary-fixed-dim":"#ffb695","inverse-on-surface":"#f0f1f2","tertiary":"#933900","on-secondary-fixed":"#1b1b1b","on-secondary-fixed-variant":"#474747","on-tertiary-fixed":"#351000","surface-container-highest":"#e1e3e4","surface-container-low":"#f3f4f5","inverse-surface":"#2e3132","on-error-container":"#93000a","primary-fixed-dim":"#c2c1ff","error":"#ba1a1a","primary-container":"#5852ff","on-primary-fixed-variant":"#2c18d9","secondary-container":"#e2e2e2","on-tertiary-container":"#ffede6","surface-tint":"#483ff0","surface-dim":"#d9dadb","background":"#f8f9fa","on-surface-variant":"#464556","surface-bright":"#f8f9fa","on-secondary-container":"#646464","on-background":"#191c1d","on-error":"#ffffff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"margin-mobile":"16px","xs":"4px","xl":"40px","unit":"4px","gutter":"24px","md":"16px","sm":"8px","container-max-width":"1200px","lg":"24px"},"fontFamily":{"headline-md":["Geist"],"display-lg":["Geist"],"display-lg-mobile":["Geist"],"body-sm":["Geist"],"body-base":["Geist"],"label-mono":["Geist"]},"fontSize":{"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"600"}],"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.04em","fontWeight":"700"}],"display-lg-mobile":["36px",{"lineHeight":"42px","letterSpacing":"-0.03em","fontWeight":"700"}],"body-sm":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"body-base":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"label-mono":["12px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"500"}]}}}}</script></head><body class="bg-background font-body-base text-body-base text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col"><div class="h-16 px-md flex items-center gap-sm"><img alt="logo_Horizontal.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UUZXPHofwvqvsOQEg5HfjWzCJFZoukHNEdKLk9fcRe8f8Wq8tMta95Uni1sQEIp1xgSSmF_TVIYOFFzieBxZNxzyF2g6OZF6rdXV-a0T58jLjICIbAq4e5KeAmzDE6ayezRvAk5XmLNqy-RN-NI3N8X0XVEnPTU5IiKKcxH-w9fYMKwyTfvQogZhILZsrzNv-MmkVCkYa3Av9DNdlrxpcKy2xziPLGhYQYgLsxfncaipKOLJeEE69Dv6hLx5f4jBQNNR2peaT6BQ"/><span class="font-headline-md text-headline-md tracking-tight text-on-surface">Modulus Hub</span></div><nav class="px-sm flex flex-col gap-xs mt-sm" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg"><div class="px-sm pt-sm pb-xs font-label-mono text-label-mono uppercase text-outline tracking-wider">Visão Geral</div><a aria-current="page" class="flex items-center gap-sm px-sm py-xs transition-colors bg-primary-container text-on-primary-container font-semibold rounded-lg" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-body-sm text-body-sm">Dashboard</span></a><div class="px-sm pt-md pb-xs font-label-mono text-label-mono uppercase text-outline tracking-wider">Operação</div><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="produtos" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span class="font-body-sm text-body-sm">Produtos</span></a><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="precificadora" href="#"><span class="material-symbols-outlined text-[20px]">calculate</span><span class="font-body-sm text-body-sm">Precificadora</span></a><div class="px-sm pt-md pb-xs font-label-mono text-label-mono uppercase text-outline tracking-wider">Recursos</div><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="impressoras" href="#"><span class="material-symbols-outlined text-[20px]">print</span><span class="font-body-sm text-body-sm">Impressoras</span></a><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="materiais" href="#"><span class="material-symbols-outlined text-[20px]">layers</span><span class="font-body-sm text-body-sm">Materiais</span></a><div class="px-sm pt-md pb-xs font-label-mono text-label-mono uppercase text-outline tracking-wider">Gestão</div><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="empresa" href="#"><span class="material-symbols-outlined text-[20px]">apartment</span><span class="font-body-sm text-body-sm">Empresa</span></a><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="equipe" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span class="font-body-sm text-body-sm">Equipe</span></a></nav></div><div class="p-sm bg-surface-container-low"><div class="flex items-center justify-between p-sm rounded-lg bg-surface-container-lowest"><div class="flex flex-col min-w-0 pr-xs"><span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Oficina 3D Criativa</span><div class="flex items-center gap-xs mt-xs"><span class="w-2 h-2 rounded-full bg-primary inline-block"></span><span class="font-label-mono text-label-mono text-on-surface-variant">Ativo</span></div></div><a class="p-xs rounded-lg text-on-surface-variant hover:text-error hover:bg-error-container transition-colors" data-path="logout" href="#" title="Sair"><span class="material-symbols-outlined text-[20px]">logout</span></a></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/80 backdrop-blur-xl z-40 px-lg flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center w-80"><div class="flex items-center w-full px-sm py-xs rounded-lg bg-surface-container-lowest shadow-[0_1px_4px_rgba(0,0,0,0.02)]"><span class="material-symbols-outlined text-outline text-[18px] mr-xs">search</span><span class="font-body-sm text-body-sm text-outline flex-1 select-none">Buscar...</span><kbd class="font-label-mono text-label-mono px-xs py-0.5 rounded bg-surface-container text-on-surface-variant">Ctrl+K</kbd></div></div><div class="flex items-center gap-md"><button class="p-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span></button><button class="p-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">help</span></button><div class="flex items-center gap-sm pl-sm"><div class="flex flex-col text-right hidden sm:flex"><span class="font-body-sm text-body-sm font-semibold text-on-surface leading-tight">Rafael Moura</span><span class="font-label-mono text-label-mono text-on-surface-variant leading-tight">Proprietário</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="w-full max-w-container-max-width mx-auto px-lg py-xl flex flex-col gap-xl">
+<!-- Top Bar: Breadcrumb, Main Title, Period Switcher & Subtitle -->
+<div class="flex flex-col gap-sm">
+<div class="flex items-center gap-xs font-label-mono text-label-mono text-outline">
+<span>Visão Geral</span>
+<span>/</span>
+<span class="text-on-surface font-semibold">Dashboard (Visão Operacional & Financeira)</span>
+</div>
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-md pt-xs">
+<div class="flex items-center gap-md flex-wrap">
+<h1 class="font-headline-md text-headline-md text-on-surface tracking-tight">Dashboard Geral</h1>
+<span class="inline-flex items-center gap-xs px-sm py-0.5 rounded-full bg-primary/10 text-primary font-label-mono text-label-mono font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+            Integração Pedidos & Produção Ativa
+          </span>
+</div>
+<!-- Period Selector Controls -->
+<div class="flex items-center p-0.5 rounded-lg bg-surface-container shadow-sm self-start lg:self-auto">
+<button class="px-md py-1 rounded bg-surface-container-lowest text-on-surface font-label-mono text-label-mono font-semibold shadow-sm transition-colors" type="button">
+            Mês atual
+          </button>
+<button class="px-md py-1 rounded text-on-surface-variant hover:text-on-surface font-label-mono text-label-mono transition-colors" type="button">
+            Hoje
+          </button>
+<button class="px-md py-1 rounded text-on-surface-variant hover:text-on-surface font-label-mono text-label-mono transition-colors" type="button">
+            Últimos 30 dias
+          </button>
+<button class="px-md py-1 rounded text-on-surface-variant hover:text-on-surface font-label-mono text-label-mono flex items-center gap-xs transition-colors" type="button">
+            Personalizado
+            <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+</button>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-3xl">
+        Faturamento e lucros consideram a conclusão no período selecionado. Prazos, carretéis e fila de máquinas representam a situação atual em tempo real.
+      </p>
+</div>
+<!-- Section 1: Financial KPI Metric Mosaic -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-md">
+<!-- KPI 1: Faturamento Realizado -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-xs">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase tracking-wider">Faturamento Realizado</span>
+<span class="material-symbols-outlined text-outline text-[16px] cursor-help" title="Valor líquido dos pedidos com entrega concluída dentro do mês">info</span>
+</div>
+<span class="px-xs py-0.5 rounded bg-primary/10 text-primary font-label-mono text-label-mono font-semibold">
+            +18,4%
+          </span>
+</div>
+<div class="mt-md flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">R$ 18.450,00</span>
+<div class="flex items-center gap-xs mt-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+<span>34 pedidos entregues no período</span>
+</div>
+</div>
+</div>
+<!-- KPI 2: Previsto em Aberto -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-xs">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase tracking-wider">Previsto em Aberto</span>
+<span class="material-symbols-outlined text-outline text-[16px] cursor-help" title="Pedidos com entrega prevista dentro do mês selecionado">info</span>
+</div>
+<span class="px-xs py-0.5 rounded bg-primary-fixed-dim text-on-primary-fixed font-label-mono text-label-mono font-semibold">
+            A concluir
+          </span>
+</div>
+<div class="mt-md flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">R$ 6.820,00</span>
+<div class="flex items-center gap-xs mt-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-outline text-[18px]">schedule</span>
+<span>12 pedidos confirmados na fila</span>
+</div>
+</div>
+</div>
+<!-- KPI 3: Potencial do Período -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-xs">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase tracking-wider">Potencial do Período</span>
+<span class="material-symbols-outlined text-outline text-[16px] cursor-help" title="Não inclui orçamentos nem pedidos cancelados">info</span>
+</div>
+<span class="px-xs py-0.5 rounded bg-surface-container text-on-surface font-label-mono text-label-mono font-semibold">
+            100% projeção
+          </span>
+</div>
+<div class="mt-md flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">R$ 25.270,00</span>
+<div class="flex items-center gap-xs mt-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-outline text-[18px]">functions</span>
+<span>Realizado + Previsto em aberto</span>
+</div>
+</div>
+</div>
+<!-- KPI 4: Lucro Bruto do Período -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-xs">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase tracking-wider">Lucro Bruto Período</span>
+<span class="material-symbols-outlined text-outline text-[16px] cursor-help" title="Faturamento realizado menos custos diretos apurados. Não desconta despesas fixas.">info</span>
+</div>
+<span class="px-xs py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-mono text-label-mono font-semibold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[13px]">warning</span>
+            Parcial
+          </span>
+</div>
+<div class="mt-md flex flex-col">
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-md text-headline-md text-on-surface font-bold">R$ 10.915,00</span>
+<span class="font-label-mono text-label-mono text-primary font-semibold">43,2% margem</span>
+</div>
+<div class="flex items-center gap-xs mt-xs text-on-surface-variant font-body-sm text-body-sm truncate">
+<span class="text-tertiary font-semibold">2 pendentes</span>
+<span class="truncate">de custo fabril registrado</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 2: Real-time Factory Operations Status Stripe -->
+<div class="flex flex-col gap-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-outline font-semibold">
+          Esteira de Produção & Fábrica Agora
+        </span>
+<span class="font-label-mono text-label-mono text-on-surface-variant flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+          Tempo Real
+        </span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-md">
+<!-- Fila -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-sm flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-on-surface text-[22px]">queue</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-xs">
+<span class="font-label-mono text-label-mono font-semibold text-on-surface">Na Fila</span>
+<span class="font-label-mono text-label-mono px-1 rounded bg-surface-container text-on-surface">7</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">R$ 3.420,00</span>
+<span class="font-label-mono text-label-mono text-outline truncate">2 aguardando fatiamento</span>
+</div>
+</div>
+<!-- Em Produção -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-sm flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[22px]">precision_manufacturing</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-xs">
+<span class="font-label-mono text-label-mono font-semibold text-on-surface">Em Produção</span>
+<span class="font-label-mono text-label-mono px-1 rounded bg-primary/10 text-primary font-bold">5</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">6 impressoras ativas</span>
+<span class="font-label-mono text-label-mono text-primary font-semibold">83% OEE da frota</span>
+</div>
+</div>
+<!-- Prontos para Entrega -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-sm flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-secondary text-[22px]">package_2</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-xs">
+<span class="font-label-mono text-label-mono font-semibold text-on-surface">Prontos p/ Entrega</span>
+<span class="font-label-mono text-label-mono px-1 rounded bg-surface-container text-on-surface">4</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">R$ 1.950,00</span>
+<span class="font-label-mono text-label-mono text-outline truncate">Aguardando envio/retirada</span>
+</div>
+</div>
+<!-- Pedidos Atrasados -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-sm flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-error-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-error text-[22px]">alarm_on</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-xs">
+<span class="font-label-mono text-label-mono font-semibold text-error">Pedidos Atrasados</span>
+<span class="font-label-mono text-label-mono px-1 rounded bg-error-container text-on-error-container font-bold">2</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">R$ 840,00 crítico</span>
+<span class="font-label-mono text-label-mono text-error font-semibold truncate">Prazo estourado</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Section 3: Revenue Realized & Forecasted (Stacked Bar Chart by Week) -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col gap-lg">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-sm">
+<div class="flex flex-col">
+<h2 class="font-headline-md text-headline-md text-on-surface">Faturamento Realizado e Previsto no Mês</h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Progresso semanal baseado no vencimento dos pedidos</span>
+</div>
+<div class="flex items-center gap-md flex-wrap">
+<div class="flex items-center gap-xs font-label-mono text-label-mono">
+<span class="w-3 h-3 rounded-sm bg-primary inline-block"></span>
+<span class="text-on-surface">Realizado (R$ 18.450)</span>
+</div>
+<div class="flex items-center gap-xs font-label-mono text-label-mono">
+<span class="w-3 h-3 rounded-sm bg-inverse-primary inline-block"></span>
+<span class="text-on-surface-variant">Previsto em Aberto (R$ 6.820)</span>
+</div>
+</div>
+</div>
+<!-- Weekly Breakdown Stacked Graph -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md pt-sm">
+<!-- Sem 1 -->
+<div class="p-md rounded-xl bg-surface flex flex-col justify-between gap-md">
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono text-outline uppercase font-semibold">Sem 1</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant">01–07 Mar</span>
+</div>
+<span class="font-body-base text-body-base font-bold text-on-surface mt-xs">R$ 4.200,00</span>
+<span class="font-label-mono text-label-mono text-outline">8 pedidos concluídos</span>
+</div>
+<div class="flex flex-col gap-xs">
+<div class="w-full h-3 rounded-full bg-surface-container overflow-hidden flex">
+<div class="h-full bg-primary rounded-full" style="width: 100%;"></div>
+</div>
+<div class="flex justify-between font-label-mono text-label-mono">
+<span class="text-primary font-semibold">100% Realizado</span>
+<span class="text-outline">R$ 0 previsto</span>
+</div>
+</div>
+</div>
+<!-- Sem 2 -->
+<div class="p-md rounded-xl bg-surface flex flex-col justify-between gap-md">
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono text-outline uppercase font-semibold">Sem 2</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant">08–14 Mar</span>
+</div>
+<span class="font-body-base text-body-base font-bold text-on-surface mt-xs">R$ 5.850,00</span>
+<span class="font-label-mono text-label-mono text-outline">11 pedidos concluídos</span>
+</div>
+<div class="flex flex-col gap-xs">
+<div class="w-full h-3 rounded-full bg-surface-container overflow-hidden flex">
+<div class="h-full bg-primary rounded-full" style="width: 100%;"></div>
+</div>
+<div class="flex justify-between font-label-mono text-label-mono">
+<span class="text-primary font-semibold">100% Realizado</span>
+<span class="text-outline">R$ 0 previsto</span>
+</div>
+</div>
+</div>
+<!-- Sem 3 (Current) -->
+<div class="p-md rounded-xl bg-surface flex flex-col justify-between gap-md">
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<span class="font-label-mono text-label-mono text-primary uppercase font-bold">Sem 3</span>
+<span class="px-1 py-0.2 rounded bg-primary/10 text-primary font-label-mono text-label-mono font-semibold">Atual</span>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant">15–21 Mar</span>
+</div>
+<span class="font-body-base text-body-base font-bold text-on-surface mt-xs">R$ 8.500,00 total</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant">10 entregues • 4 em máquina</span>
+</div>
+<div class="flex flex-col gap-xs">
+<div class="w-full h-3 rounded-full bg-surface-container overflow-hidden flex">
+<div class="h-full bg-primary rounded-l-full" style="width: 71.7%;"></div>
+<div class="h-full bg-inverse-primary rounded-r-full" style="width: 28.3%;"></div>
+</div>
+<div class="flex justify-between font-label-mono text-label-mono">
+<span class="text-primary font-semibold">R$ 6.100 feito</span>
+<span class="text-on-surface-variant font-semibold">R$ 2.400 em prod</span>
+</div>
+</div>
+</div>
+<!-- Sem 4 -->
+<div class="p-md rounded-xl bg-surface flex flex-col justify-between gap-md">
+<div class="flex flex-col">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono text-outline uppercase font-semibold">Sem 4</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant">22–31 Mar</span>
+</div>
+<span class="font-body-base text-body-base font-bold text-on-surface mt-xs">R$ 6.720,00 total</span>
+<span class="font-label-mono text-label-mono text-outline">5 entregues • 8 na fila</span>
+</div>
+<div class="flex flex-col gap-xs">
+<div class="w-full h-3 rounded-full bg-surface-container overflow-hidden flex">
+<div class="h-full bg-primary rounded-l-full" style="width: 34.2%;"></div>
+<div class="h-full bg-inverse-primary rounded-r-full" style="width: 65.8%;"></div>
+</div>
+<div class="flex justify-between font-label-mono text-label-mono">
+<span class="text-primary font-semibold">R$ 2.300 feito</span>
+<span class="text-on-surface-variant font-semibold">R$ 4.420 na fila</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Out-of-bracket Callout Notice -->
+<div class="p-sm rounded-lg bg-surface-container-low flex items-center justify-between gap-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline text-[20px]">info</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+<strong>2 pedidos sem data de entrega definida (R$ 950,00)</strong> não constam nas barras semanais acima e exigem definição de cronograma.
+          </span>
+</div>
+<a class="font-label-mono text-label-mono text-primary font-semibold hover:underline whitespace-nowrap" href="#">
+          Ver pendentes →
+        </a>
+</div>
+</div>
+<!-- Section 4: Operational Twin Columns (2/3 Left vs 1/3 Right) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- LEFT COLUMN (8 cols): Attention Alerts & Material Depletion -->
+<div class="lg:col-span-8 flex flex-col gap-lg">
+<!-- Subsection A: Pedidos e Produção que Precisam de Atenção -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-tertiary-container text-[20px]">priority_high</span>
+<h3 class="font-headline-md text-headline-md text-on-surface text-[18px] leading-6">
+                Precisam de Atenção Imediata
+              </h3>
+</div>
+<span class="font-label-mono text-label-mono text-outline font-semibold">3 pendências críticas</span>
+</div>
+<div class="flex flex-col gap-sm">
+<!-- Alert Card 1 -->
+<div class="p-md rounded-xl bg-error-container/30 flex flex-col sm:flex-row sm:items-center justify-between gap-md">
+<div class="flex items-start gap-md">
+<div class="w-8 h-8 rounded-lg bg-error-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-error text-[18px]">running_with_errors</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-xs flex-wrap">
+<span class="font-label-mono text-label-mono font-bold text-on-surface">#PED-1042</span>
+<span class="text-outline">•</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Studio Alpha</span>
+<span class="px-1.5 py-0.5 rounded bg-error-container text-error font-label-mono text-label-mono font-bold">
+                      ATRASADO 1 DIA
+                    </span>
+</div>
+<div class="flex items-center gap-xs mt-xs text-on-surface-variant font-label-mono text-label-mono">
+<span>Entrega: Ontem, 18:00</span>
+<span>•</span>
+<span class="text-primary font-semibold">Bambu P1S-01</span>
+<span>•</span>
+<span class="font-bold text-on-surface">R$ 540,00</span>
+</div>
+</div>
+</div>
+<button class="px-md py-1.5 rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-mono text-label-mono font-semibold shadow-sm self-end sm:self-center transition-colors" type="button">
+                Repriorizar
+              </button>
+</div>
+<!-- Alert Card 2 -->
+<div class="p-md rounded-xl bg-tertiary-fixed/40 flex flex-col sm:flex-row sm:items-center justify-between gap-md">
+<div class="flex items-start gap-md">
+<div class="w-8 h-8 rounded-lg bg-tertiary-fixed flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-tertiary text-[18px]">hourglass_empty</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-xs flex-wrap">
+<span class="font-label-mono text-label-mono font-bold text-on-surface">#PED-1045</span>
+<span class="text-outline">•</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Construtora Moura</span>
+<span class="px-1.5 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-mono text-label-mono font-bold">
+                      URGENTE HOJE
+                    </span>
+</div>
+<div class="flex items-center gap-xs mt-xs text-on-surface-variant font-label-mono text-label-mono">
+<span>Entrega: Hoje, 17:00</span>
+<span>•</span>
+<span class="text-error font-semibold">Fila (Aguardando PETG)</span>
+<span>•</span>
+<span class="font-bold text-on-surface">R$ 1.250,00</span>
+</div>
+</div>
+</div>
+<button class="px-md py-1.5 rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-mono text-label-mono font-semibold shadow-sm self-end sm:self-center transition-colors" type="button">
+                Ver detalhes
+              </button>
+</div>
+<!-- Alert Card 3 -->
+<div class="p-md rounded-xl bg-surface-container-low flex flex-col sm:flex-row sm:items-center justify-between gap-md">
+<div class="flex items-start gap-md">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-outline text-[18px]">calendar_month</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-xs flex-wrap">
+<span class="font-label-mono text-label-mono font-bold text-on-surface">#PED-1050</span>
+<span class="text-outline">•</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Mariana S.</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-mono text-label-mono font-medium">
+                      Sem prazo definido
+                    </span>
+</div>
+<div class="flex items-center gap-xs mt-xs text-on-surface-variant font-label-mono text-label-mono">
+<span class="text-tertiary font-semibold">Definir prazo de produção</span>
+<span>•</span>
+<span class="font-bold text-on-surface">R$ 410,00</span>
+</div>
+</div>
+</div>
+<button class="px-md py-1.5 rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-mono text-label-mono font-semibold shadow-sm self-end sm:self-center transition-colors" type="button">
+                Agendar
+              </button>
+</div>
+</div>
+</div>
+<!-- Subsection B: Consumo de Filamento & Estoque Crítico -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col gap-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-xs">
+<div class="flex flex-col">
+<h3 class="font-headline-md text-headline-md text-on-surface text-[18px] leading-6">
+                Consumo de Filamento & Estoque Crítico
+              </h3>
+<span class="font-body-sm text-body-sm text-on-surface-variant">
+                14.850 g consumidos no período (Custo: R$ 1.584,20)
+              </span>
+</div>
+<a class="font-label-mono text-label-mono text-primary font-semibold hover:underline" href="#">
+              Gestão de Carretéis →
+            </a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-md pt-xs">
+<!-- Spool 1: Empty -->
+<div class="p-md rounded-xl bg-surface flex flex-col justify-between gap-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono font-bold text-on-surface truncate">PETG Cinza Sideral</span>
+<span class="px-1 py-0.5 rounded bg-error-container text-error font-label-mono text-label-mono font-bold">
+                  0%
+                </span>
+</div>
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close-up professional macro photography of an empty spool of grey 3D printing filament in a pristine technological laboratory with modern ambient light, minimalism." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3ATWeERx40KCRrwmLzmzVRWsdHJOSKb9s5CgFoR--HZGgZIYT-AD_7Fg3VBgZk-Kt9CeGi1WVr3FVGM3Oqv7ai1HmoEaA2c3Bu9XmkF5fy12KaPZydV6XEnycbbhgZPJq29k0ZhOqs5b0CQfC4_CdwBZG5TukYVooEY9i3bX3jtchH1XVInHl3D06P5CgIWeOUPNpJyrBnWIr9CrDNZNezdjmDUu6FZRz8IxzwYH62SKjHKyRvx8Y3w"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-error font-semibold">ESGOTADO</span>
+<span class="font-label-mono text-label-mono text-outline">Bambu Lab • 0g</span>
+</div>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-error" style="width: 0%;"></div>
+</div>
+</div>
+<!-- Spool 2: Low -->
+<div class="p-md rounded-xl bg-surface flex flex-col justify-between gap-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono font-bold text-on-surface truncate">PLA Matte Preto</span>
+<span class="px-1 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-mono text-label-mono font-bold">
+                  12%
+                </span>
+</div>
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Clean top-down studio shot of deep matte black PLA 3D printing filament on a transparent polycarbonate spool, soft dramatic rim lighting with high contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDf50J4lUDg_Qb7FDG6jzosU8_QYccraQbcgIpR80qS5Sr-ixHVZQD4ZEZOFU2sbKcE0ax79Whx756HaGDM5OgYVBlQxWyLkcdW77l7EEB4w0jP2zmrd0AgXFxbwa0_Lq_T-rufIqipyXNeARN5_XKtv4y37ukRgW0AWgGKbqZ3l4IYjewb9lJv0ewO6Gd9xUw9-r4EP5ZrYAzB0R6O2JnjidiY5h0v8MRpQMlH3s1luEtT41sg9XyGcQ"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-tertiary font-semibold">120g restantes</span>
+<span class="font-label-mono text-label-mono text-outline">Creality Hyper • Baixo</span>
+</div>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-tertiary-container" style="width: 12%;"></div>
+</div>
+</div>
+<!-- Spool 3: Low -->
+<div class="p-md rounded-xl bg-surface flex flex-col justify-between gap-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono font-bold text-on-surface truncate">ABS Branco Puro</span>
+<span class="px-1 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-mono text-label-mono font-bold">
+                  18%
+                </span>
+</div>
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Technical product shot of pure white ABS filament spool sitting neatly on a textured dark desk in a modern engineering makerspace studio with soft blue reflections." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlzmVlfSTfYYfZg50SMmWuz8muWduen2QmIjPZX4vKtIVV3O2o2QRjxBIKhw43PFaYzQRjNII7lPY6BX--1dIsKpwQ9RacBSkr8l3Jh8xE_qzdhIL0Yacf_QRszN2Qj2VgqEgBbAnfuyXCVTGVds8aHOGvK55XbeEh0pzFyw4KiUJWqpaWs7qpSzC0fuoeRWcHiC_ixMpSFhGExvRlg34A6bWKlIbpmgc84fi_k4-WYaRfPhLye5w4Kw"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-tertiary font-semibold">180g restantes</span>
+<span class="font-label-mono text-label-mono text-outline">3D Fila • Baixo</span>
+</div>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-tertiary-container" style="width: 18%;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN (4 cols): Quick Integrated Actions & Recent Calculations -->
+<div class="lg:col-span-4 flex flex-col gap-lg">
+<!-- Atalhos Rápidos Integrados -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col gap-md">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-outline font-semibold">
+            Ações Rápidas
+          </span>
+<div class="flex flex-col gap-xs">
+<a class="flex items-center justify-between p-sm rounded-lg bg-surface hover:bg-surface-container transition-colors group" href="#">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">precision_manufacturing</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Abrir Fila de Produção</span>
+</div>
+<span class="px-1.5 py-0.5 rounded bg-primary/10 text-primary font-label-mono text-label-mono font-bold">NOVO</span>
+</a>
+<a class="flex items-center justify-between p-sm rounded-lg bg-surface hover:bg-surface-container transition-colors group" href="#">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Ver todos os Pedidos (16)</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-sm rounded-lg bg-surface hover:bg-surface-container transition-colors group" href="#">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">scale</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Registrar consumo de carretel</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-sm rounded-lg bg-surface hover:bg-surface-container transition-colors group" href="#">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container text-on-surface flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">calculate</span>
+</div>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Nova precificação</span>
+</div>
+<span class="material-symbols-outlined text-outline text-[18px] group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+</a>
+</div>
+</div>
+<!-- Últimas Precificações Salvas -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-outline font-semibold">
+              Últimas Precificações
+            </span>
+<a class="font-label-mono text-label-mono text-primary font-semibold hover:underline" href="#">
+              Todas →
+            </a>
+</div>
+<div class="flex flex-col gap-sm">
+<!-- Item 1 -->
+<div class="p-sm rounded-lg bg-surface flex items-center justify-between gap-sm">
+<div class="flex flex-col min-w-0">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">
+                  Engrenagem Helicoidal v4
+                </span>
+<span class="font-label-mono text-label-mono text-outline">
+                  PLA Tough • 4h 12m
+                </span>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="font-label-mono text-label-mono font-bold text-on-surface">R$ 84,50</span>
+<span class="font-label-mono text-label-mono text-primary font-semibold">52% mg</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-sm rounded-lg bg-surface flex items-center justify-between gap-sm">
+<div class="flex flex-col min-w-0">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">
+                  Suporte Articulado Câmera
+                </span>
+<span class="font-label-mono text-label-mono text-outline">
+                  PETG Preto • 8h 40m
+                </span>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="font-label-mono text-label-mono font-bold text-on-surface">R$ 165,00</span>
+<span class="font-label-mono text-label-mono text-primary font-semibold">48% mg</span>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="p-sm rounded-lg bg-surface flex items-center justify-between gap-sm">
+<div class="flex flex-col min-w-0">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">
+                  Caixa Estanque IoT Sensor
+                </span>
+<span class="font-label-mono text-label-mono text-outline">
+                  ABS Laranja • 6h 15m
+                </span>
+</div>
+<div class="flex flex-col items-end shrink-0">
+<span class="font-label-mono text-label-mono font-bold text-on-surface">R$ 112,00</span>
+<span class="font-label-mono text-label-mono text-primary font-semibold">44% mg</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Fleet Quick Health Status Widget -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col gap-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-outline font-semibold">
+              Frota de Impressoras
+            </span>
+<span class="font-label-mono text-label-mono font-semibold text-on-surface">6/6 Online</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<div class="flex items-center gap-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span class="font-body-sm text-body-sm text-on-surface">5 Imprimindo</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-body-sm text-body-sm text-on-surface">1 Pronta/Ociosa</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

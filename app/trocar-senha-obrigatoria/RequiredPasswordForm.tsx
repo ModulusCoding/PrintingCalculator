@@ -3,6 +3,8 @@ import { useActionState, useEffect, useRef, useState, useTransition } from "reac
 import { useRouter } from "next/navigation";
 import { changeRequiredPasswordAction, type RequiredPasswordState } from "@/lib/auth/password-change";
 import { logoutAction } from "@/lib/auth/actions";
+import { AuthHeading, AuthNotice, AuthSubmit, authStyles } from "@/components/auth/AuthUI";
+import { PasswordField } from "@/components/auth/PasswordField";
 
 const initial: RequiredPasswordState = { status: "idle" };
 
@@ -36,52 +38,32 @@ export function RequiredPasswordForm() {
   };
 
   return (
-    <div className="w-full max-w-md space-y-4">
-      <form ref={formRef} action={action} className="w-full bg-white border rounded-xl p-8 shadow-sm space-y-5">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Defina uma nova senha</h1>
+    <div className="w-full">
+      <AuthHeading title="Defina uma nova senha" description="Por segurança, sua senha precisa ser alterada antes de continuar." />
+      <form ref={formRef} action={action} className="space-y-5">
+        <div className="flex justify-end">
           <button
             type="button"
             onClick={handleLogout}
             disabled={logoutPending}
-            className="text-sm text-gray-600 hover:text-red-600 underline disabled:opacity-50"
+            className={`${authStyles.link} text-sm disabled:opacity-50`}
           >
             {logoutPending ? "Saindo..." : "Sair"}
           </button>
         </div>
-        <p className="text-gray-600">Por segurança, sua senha precisa ser alterada antes de continuar.</p>
+        <PasswordField label="Senha atual" name="current" autoComplete="current-password" required error={fieldErrors?.current} />
+        <PasswordField label="Nova senha" name="next" autoComplete="new-password" required error={fieldErrors?.next} />
+        <PasswordField label="Confirme a nova senha" name="confirm" autoComplete="new-password" required error={fieldErrors?.confirm} />
         
-        <label className="block text-sm font-medium text-gray-700">
-          Senha atual
-          <input name="current" type="password" autoComplete="current-password" required className="mt-1 w-full border rounded p-3 text-base" aria-invalid={!!fieldErrors?.current} aria-describedby={fieldErrors?.current ? "current-error" : undefined} />
-          {fieldErrors?.current && <p id="current-error" className="text-red-600 text-sm mt-1" role="alert">{fieldErrors.current}</p>}
-        </label>
-        
-        <label className="block text-sm font-medium text-gray-700">
-          Nova senha
-          <input name="next" type="password" autoComplete="new-password" required className="mt-1 w-full border rounded p-3 text-base" aria-invalid={!!fieldErrors?.next} aria-describedby={fieldErrors?.next ? "next-error" : undefined} />
-          {fieldErrors?.next && <p id="next-error" className="text-red-600 text-sm mt-1" role="alert">{fieldErrors.next}</p>}
-        </label>
-        
-        <label className="block text-sm font-medium text-gray-700">
-          Confirme a nova senha
-          <input name="confirm" type="password" autoComplete="new-password" required className="mt-1 w-full border rounded p-3 text-base" aria-invalid={!!fieldErrors?.confirm} aria-describedby={fieldErrors?.confirm ? "confirm-error" : undefined} />
-          {fieldErrors?.confirm && <p id="confirm-error" className="text-red-600 text-sm mt-1" role="alert">{fieldErrors.confirm}</p>}
-        </label>
-        
-        {state.status === "error" && <p className="text-red-600 text-sm" role="alert">{state.message}</p>}
-        {state.status === "outcome_unknown" && <p className="text-red-600 text-sm" role="alert">{state.message}</p>}
-        {state.status === "partial" && <p className="text-yellow-700 text-sm" role="alert">{state.message}</p>}
-        {logoutError && <p className="text-red-600 text-sm" role="alert">{logoutError}</p>}
-        
+        {state.status === "error" && <AuthNotice type="error">{state.message}</AuthNotice>}
+        {state.status === "outcome_unknown" && <AuthNotice type="error">{state.message}</AuthNotice>}
+        {state.status === "partial" && <AuthNotice type="error">{state.message}</AuthNotice>}
+        {logoutError && <AuthNotice type="error">{logoutError}</AuthNotice>}
+
         {state.status === "success" ? (
-          <div className="space-y-3">
-            <p className="text-green-700 text-sm" role="status">{state.message}</p>
-          </div>
+          <AuthNotice type="success">{state.message}</AuthNotice>
         ) : (
-          <button disabled={pending} className="w-full rounded bg-indigo-600 text-white py-3 font-semibold disabled:opacity-60 hover:bg-indigo-700 transition">
-            {pending ? "Alterando..." : "Alterar senha"}
-          </button>
+          <AuthSubmit pending={pending} pendingText="Alterando...">Alterar senha</AuthSubmit>
         )}
       </form>
     </div>

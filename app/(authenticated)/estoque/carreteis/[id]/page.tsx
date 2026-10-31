@@ -2,7 +2,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SpoolControls } from "@/components/spools/SpoolForms";
 import { SpoolDeleteButton } from "@/components/spools/SpoolDeleteButton";
-import { getSpool } from "@/lib/spools/actions";
+import { getSpool, getSpoolConfig } from "@/lib/spools/actions";
+import { ROLE_PERMISSIONS, type Permission } from "@/lib/auth/context";
+import { SpoolDetail3D } from "@/components/spools/SpoolDetail3D";
+import styles from "@/components/spools/SpoolPages.module.css";
 import { formatCurrency, formatGrams, formatDate, formatPercent } from "@/lib/spools/format";
 import { normalizeReturnTo } from "@/lib/spools/navigation";
 
@@ -15,15 +18,19 @@ export default function PaidSpoolPage(props: Parameters<typeof SpoolPage>[0]) {
 }
 
 async function SpoolPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Query> }) {
-  const { id } = await params, q = await searchParams, page = Math.max(1, Number(q.page) || 1);
+  const { id } = await params, q = await searchParams, page = Math.min(5001, Math.max(1, Math.floor(Number(q.page) || 1)));
   const back = normalizeReturnTo(q.returnTo);
-  const r = await getSpool(id, page);
-  if (!r.spool) notFound();
+  const [r, config] = await Promise.all([getSpool(id, page), getSpoolConfig()]);
+  if (!r.spool) {
+    if (r.error === "spool_unavailable") notFound();
+    return <section className={styles.page}><Link className={styles.textLink} href={back}>Voltar aos carretéis</Link><div className={styles.panel} role="alert"><h1>Não foi possível carregar o carretel</h1><p>Falha ao consultar os dados e o histórico. Tente novamente; o registro não foi considerado inexistente.</p></div></section>;
+  }
+  const threshold = config.error ? null : config.config?.low_spool_threshold_percent ?? null;
 
   const s = r.spool, c = r.consumption, ctx = r.context;
   const deleted = Boolean((s as typeof s & { deleted_at?: string | null }).deleted_at);
   const pages = Math.max(1, Math.ceil(r.total / 20));
-  const canWrite = ctx.role !== "operator" || true; // spools.write is in operator
+  const canWrite = (ROLE_PERMISSIONS[ctx.role] as readonly Permission[]).includes("spools.write");
   const canArchive = ctx.role === "owner" || ctx.role === "admin";
   
   const costPerGram = Number(s.purchase_price) / Number(s.original_filament_grams);
@@ -32,25 +39,24 @@ async function SpoolPage({ params, searchParams }: { params: Promise<{ id: strin
   const translated: Record<string, string> = { opening: "Abertura", consumption: "Consumo", replenishment: "Reposição", adjustment: "Ajuste" };
 
   return (
-    <section className="grid gap-6 md:grid-cols-2">
+    <section className={`${styles.page} ${styles.detail}`}>
       <div className="space-y-4">
         <div>
-          <Link className="text-sm text-indigo-700 underline" href={back}>← Voltar</Link>
+          <Link className={styles.textLink} href={`${back}#spool-${s.id}`}>Fechar detalhes</Link>
           <h1 className="text-2xl font-bold">{s.internal_identifier}</h1>
           <p className="text-slate-600">
             {s.active ? "Ativo" : "Arquivado"} · {s.material_type ?? "tipo não informado"} {s.brand && `· ${s.brand}`} {s.color && `· ${s.color}`}
           </p>
         </div>
 
-        <div className="rounded border bg-white p-5 space-y-4">
-          <div className="flex items-end gap-2">
-            <span className="text-3xl font-bold">{formatPercent(pct)}</span>
-            <span className="text-slate-500 pb-1">restante</span>
-          </div>
+        <div className={styles.panel}>
+          <SpoolDetail3D remainingGrams={s.current_balance_grams} referenceGrams={s.original_filament_grams} lowThresholdPercent={threshold} colorHex={s.color} label={s.internal_identifier} />
+          {config.error && <p role="alert" className={styles.notice}>Limite de estoque baixo indisponível. Não foi aplicado um limite estimado.</p>}
+          <p className={styles.muted}>{formatPercent(pct)} restante{threshold !== null && ` · Alerta com saldo positivo de até ${threshold}% do peso original.`}</p>
           <dl className="grid grid-cols-2 gap-4 border-t pt-4">
             <div><dt className="text-xs font-semibold uppercase text-slate-500">Saldo atual</dt><dd className="text-lg font-medium">{formatGrams(s.current_balance_grams)}</dd></div>
             <div><dt className="text-xs font-semibold uppercase text-slate-500">Peso original</dt><dd className="text-lg">{formatGrams(s.original_filament_grams)}</dd></div>
-            <div><dt className="text-xs font-semibold uppercase text-slate-500">Custo/g</dt><dd className="text-lg">{formatCurrency(costPerGram)}</dd></div>
+            <div><dt className="text-xs font-semibold uppercase text-slate-500">Custo/g</dt><dd className="text-lg">{costPerGram.toLocaleString("pt-BR", { style: "currency", currency: "BRL", minimumFractionDigits: 2, maximumFractionDigits: 9 })}</dd></div>
             <div><dt className="text-xs font-semibold uppercase text-slate-500">Preço pago</dt><dd className="text-lg">{formatCurrency(s.purchase_price)}</dd></div>
             <div className="col-span-2 border-t pt-3 mt-1">
               <dt className="text-xs font-semibold uppercase text-slate-500">Consumo total acumulado</dt>
@@ -62,6 +68,7 @@ async function SpoolPage({ params, searchParams }: { params: Promise<{ id: strin
         <div className="rounded border bg-white p-5">
           <h2 className="font-semibold mb-3">Histórico · {r.total} movimento(s)</h2>
           <div className="space-y-4">
+            {r.movements.length === 0 && <p className={styles.muted}>Nenhuma movimentação nesta página.</p>}
             {r.movements.map(mov => (
               <div key={mov.id} className="text-sm border-b pb-3 last:border-0">
                 <div className="flex justify-between font-medium">
@@ -80,7 +87,7 @@ async function SpoolPage({ params, searchParams }: { params: Promise<{ id: strin
             ))}
           </div>
           {pages > 1 && (
-            <nav className="mt-4 flex gap-2">
+            <nav className={styles.pagination} aria-label="Paginação de movimentações">
               {page > 1 && <Link className="underline" href={`/estoque/carreteis/${s.id}?page=${page - 1}&returnTo=${encodeURIComponent(back)}`}>Anterior</Link>}
               <span>{page} / {pages}</span>
               {page < pages && <Link className="underline" href={`/estoque/carreteis/${s.id}?page=${page + 1}&returnTo=${encodeURIComponent(back)}`}>Próxima</Link>}
@@ -90,7 +97,7 @@ async function SpoolPage({ params, searchParams }: { params: Promise<{ id: strin
       </div>
 
       <div className="space-y-6">
-        {!deleted && <SpoolControls spool={s} canWrite={canWrite} canArchive={canArchive} />}
+        {!deleted && <SpoolControls key={`${s.id}:${s.version}`} spool={s} canWrite={canWrite} canArchive={canArchive} />}
         {canArchive && s.active && !deleted && <SpoolDeleteButton id={s.id} version={s.version} returnTo={back} />}
         <div className="rounded border bg-slate-50 p-5 text-sm">
           <h3 className="font-semibold mb-2">Dados próprios do filamento</h3>

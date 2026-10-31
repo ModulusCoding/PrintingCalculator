@@ -29,10 +29,17 @@ async function ProductInventoryListPage({ searchParams }: {
 
   return (
     <section className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Produtos prontos</h1>
-        <p className="mt-1 text-sm text-slate-600">Saldo de peças prontas por produto. Busca literal, filtros de saldo e situação do produto.</p>
+      <header className="space-y-3">
+        <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">Operação / Estoque</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">Produtos prontos</h1>
+          <span className="rounded-full bg-modulus-primary/10 px-3 py-1 text-xs font-semibold text-modulus-primary">Estoque físico</span>
+        </div>
+        <p className="max-w-2xl text-sm leading-relaxed text-slate-600">Acompanhe o saldo físico de peças prontas por produto. Consulte detalhes para registrar movimentações e acompanhar o histórico.</p>
       </header>
+      <div role="note" className="rounded-2xl border border-modulus-primary/15 bg-modulus-primary/5 px-5 py-4 text-sm leading-relaxed text-slate-700">
+        <strong className="text-modulus-primary">Saldo físico não é disponibilidade para venda.</strong> Esta consulta não apresenta quantidades reservadas nem saldo disponível.
+      </div>
       <ProductInventoryFilters key={`${search}:${balanceFilter}:${productStatus}`} search={search} balanceFilter={balanceFilter} productStatus={productStatus} />
       {error ? (
         <div role="alert" className="rounded border bg-red-50 p-4 text-sm text-red-700">

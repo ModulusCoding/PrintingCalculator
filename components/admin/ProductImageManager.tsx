@@ -44,7 +44,9 @@ export function ProductImageManager({ productId, version, active, canWrite, init
   const inFlight = useRef(false);
   const input = useRef<HTMLInputElement>(null);
   const editable = active && canWrite;
-  const disabled = pending || awaitingRefresh || Boolean(initialError);
+  const [needsReview, setNeedsReview] = useState(false);
+  const disabled = pending || awaitingRefresh || needsReview || Boolean(initialError);
+  const button = "min-h-11 min-w-11 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium transition motion-reduce:transition-none hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-modulus-primary focus-visible:ring-offset-2 disabled:opacity-40";
 
   function run(operation: () => Promise<ProductImageResult>) {
     if (!editable || disabled || inFlight.current) return;
@@ -54,6 +56,7 @@ export function ProductImageManager({ productId, version, active, canWrite, init
       try {
         const result = await operation();
         setMessage(messages[result.status] ?? messages.unknown);
+        if (["unknown", "technical", "version_conflict", "image_conflict", "image_unavailable"].includes(result.status)) setNeedsReview(true);
         if ((result.status === "success" || result.status === "cleanup_pending") && result.version !== undefined) {
           setCurrentVersion(result.version);
           setAwaitingRefresh(true);
@@ -65,6 +68,7 @@ export function ProductImageManager({ productId, version, active, canWrite, init
         }
       } catch {
         setMessage(messages.unknown);
+        setNeedsReview(true);
       } finally {
         inFlight.current = false;
       }
@@ -72,23 +76,23 @@ export function ProductImageManager({ productId, version, active, canWrite, init
   }
 
   return (
-    <section aria-labelledby="product-images-heading" className="space-y-3 border-t pt-5">
-      <h3 id="product-images-heading" className="font-semibold">Imagens do produto</h3>
-      <p className="text-sm text-slate-500">Até 3 imagens. A primeira imagem é a principal.</p>
+    <section aria-labelledby="product-images-heading" aria-busy={pending || awaitingRefresh} className="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+      <div className="flex flex-wrap items-center justify-between gap-2"><h3 id="product-images-heading" className="text-lg font-semibold tracking-tight">Galeria do produto</h3><span className="rounded-full bg-slate-100 px-3 py-1 font-mono text-xs text-slate-600">{initialImages.length}/3 imagens</span></div>
+      <p className="text-sm text-slate-500">Até 3 imagens. A primeira é a principal. As alterações na galeria são salvas separadamente.</p>
       {initialError ? <p role="alert" className="text-sm text-red-600">{initialError}</p> : initialImages.length === 0 ? (
         <p className="text-sm text-slate-500">Este produto ainda não tem imagens.</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {initialImages.map((image, index) => (
-            <li key={image.id} className="flex flex-wrap items-center gap-3 rounded border p-2">
+            <li key={image.id} className="min-w-0 space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
               {/* Signed private URLs expire; do not cache them through an image optimizer. */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={image.url} alt={`Imagem ${index + 1} do produto`} className="h-20 w-20 rounded object-cover" />
-              <span className="text-sm">{index === 0 ? "Principal" : `Imagem ${index + 1}`}</span>
+              <img src={image.url} alt={`Imagem ${index + 1} do produto`} className="aspect-square w-full rounded-lg bg-slate-100 object-contain" />
+              <span className={`inline-flex rounded-md px-2 py-1 text-xs font-semibold ${index === 0 ? "bg-modulus-primary text-white" : "bg-slate-200 text-slate-700"}`}>{index === 0 ? "Principal" : `Imagem ${index + 1}`}</span>
               {editable && <div className="flex flex-wrap gap-2">
-                <button type="button" disabled={disabled || index === 0} className="rounded border px-2 py-1 text-sm disabled:opacity-50" aria-label={`Mover imagem ${index + 1} para cima`} onClick={() => run(() => reorderInternalProductImage(productId, currentVersion, image.id, initialImages[index - 1].displayOrder))}>Subir</button>
-                <button type="button" disabled={disabled || index === initialImages.length - 1} className="rounded border px-2 py-1 text-sm disabled:opacity-50" aria-label={`Mover imagem ${index + 1} para baixo`} onClick={() => run(() => reorderInternalProductImage(productId, currentVersion, image.id, initialImages[index + 1].displayOrder))}>Descer</button>
-                <button type="button" disabled={disabled} className="rounded border px-2 py-1 text-sm text-red-600 disabled:opacity-50" onClick={() => {
+                <button type="button" disabled={disabled || index === 0} className={button} aria-label={`Mover imagem ${index + 1} para cima`} onClick={() => run(() => reorderInternalProductImage(productId, currentVersion, image.id, initialImages[index - 1].displayOrder))}>Subir</button>
+                <button type="button" disabled={disabled || index === initialImages.length - 1} className={button} aria-label={`Mover imagem ${index + 1} para baixo`} onClick={() => run(() => reorderInternalProductImage(productId, currentVersion, image.id, initialImages[index + 1].displayOrder))}>Descer</button>
+                <button type="button" disabled={disabled} aria-label={`Remover imagem ${index + 1}`} className={`${button} text-red-600`} onClick={() => {
                   if (window.confirm("Remover esta imagem do produto?")) run(() => removeInternalProductImage(productId, currentVersion, image.id));
                 }}>Remover</button>
               </div>}
@@ -96,20 +100,21 @@ export function ProductImageManager({ productId, version, active, canWrite, init
           ))}
         </ul>
       )}
-      {editable && initialImages.length < 3 && <div className="space-y-2">
+      {editable && initialImages.length < 3 && <div className="space-y-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
         <label className="block text-sm font-medium" htmlFor="product-image-file">Adicionar imagem (JPEG, PNG ou WebP, até 5 MB)</label>
-        <input ref={input} id="product-image-file" type="file" accept="image/jpeg,image/png,image/webp" disabled={disabled} onChange={(event) => setFile(event.target.files?.[0] ?? null)} className="block w-full text-sm" />
-        <button type="button" disabled={disabled || !file} className="rounded bg-blue-600 px-3 py-2 text-sm text-white disabled:opacity-50" onClick={() => {
+        <input ref={input} id="product-image-file" type="file" accept="image/jpeg,image/png,image/webp" disabled={disabled} onChange={(event) => setFile(event.target.files?.[0] ?? null)} aria-describedby="product-image-help" className="block min-h-11 w-full min-w-0 rounded-lg text-sm file:mr-3 file:min-h-11 file:rounded-lg file:border-0 file:bg-slate-200 file:px-3 file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-modulus-primary disabled:opacity-50" />
+        <button type="button" disabled={disabled || !file} className="min-h-11 rounded-xl bg-modulus-primary px-4 py-2 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-modulus-primary focus-visible:ring-offset-2 disabled:opacity-50" onClick={() => {
           if (!file) return;
           const formData = new FormData();
           formData.set("file", file);
           const freeOrder = [1, 2, 3].find((position) => !initialImages.some((image) => image.displayOrder === position));
           if (freeOrder) run(() => uploadInternalProductImage(productId, currentVersion, freeOrder, formData));
         }}>{pending ? "Processando..." : "Adicionar imagem"}</button>
+        <p id="product-image-help" className="text-xs leading-relaxed text-slate-500">Selecione um arquivo por vez. O envio só começa ao clicar em Adicionar imagem.</p>
       </div>}
       {!editable && <p className="text-sm text-slate-500">{active ? "Imagens disponíveis apenas para visualização." : "Produto arquivado: imagens disponíveis apenas para visualização."}</p>}
-      <div role="status" aria-live="polite" className="text-sm">{message}{awaitingRefresh && " Atualizando imagens; se necessário, recarregue a página."}</div>
-      <button type="button" disabled={pending} onClick={() => router.refresh()} className="text-sm underline disabled:opacity-50">Atualizar imagens</button>
+      <div role="status" aria-live="polite" className="text-sm text-slate-600">{pending ? "Processando a alteração. Aguarde..." : message}{awaitingRefresh && " Atualizando imagens; se necessário, use Atualizar imagens."}</div>
+      <button type="button" disabled={pending} onClick={() => router.refresh()} className={button}>Atualizar imagens</button>
     </section>
   );
 }

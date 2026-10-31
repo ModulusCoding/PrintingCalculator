@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"on-tertiary-fixed-variant":"#7b2f00","surface-container-lowest":"#ffffff","surface-container":"#edeeef","on-tertiary":"#ffffff","tertiary-container":"#ba4a00","on-secondary-fixed":"#1b1b1b","background":"#f8f9fa","secondary-fixed":"#e2e2e2","on-surface-variant":"#464556","primary-fixed-dim":"#c2c1ff","on-secondary":"#ffffff","tertiary-fixed-dim":"#ffb695","secondary-container":"#e2e2e2","inverse-primary":"#c2c1ff","on-error-container":"#93000a","tertiary-fixed":"#ffdbcc","surface":"#f8f9fa","surface-dim":"#d9dadb","on-error":"#ffffff","on-primary-fixed-variant":"#2c18d9","primary-container":"#5852ff","primary":"#3d32e6","surface-container-highest":"#e1e3e4","surface-variant":"#e1e3e4","surface-container-low":"#f3f4f5","on-tertiary-container":"#ffede6","surface-bright":"#f8f9fa","outline":"#777588","on-secondary-container":"#646464","primary-fixed":"#e2dfff","on-primary-container":"#f2eeff","on-background":"#191c1d","inverse-on-surface":"#f0f1f2","outline-variant":"#c7c4d9","on-primary":"#ffffff","surface-container-high":"#e7e8e9","on-primary-fixed":"#0c006a","inverse-surface":"#2e3132","tertiary":"#933900","on-tertiary-fixed":"#351000","surface-tint":"#483ff0","error":"#ba1a1a","on-surface":"#191c1d","secondary":"#5e5e5e","error-container":"#ffdad6","on-secondary-fixed-variant":"#474747","secondary-fixed-dim":"#c6c6c6"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"container-max-width":"1200px","lg":"24px","gutter":"24px","md":"16px","xs":"4px","margin-mobile":"16px","xl":"40px","sm":"8px","unit":"4px"},"fontFamily":{"label-mono":["Geist"],"display-lg":["Geist"],"display-lg-mobile":["Geist"],"body-sm":["Geist"],"body-base":["Geist"],"headline-md":["Geist"]},"fontSize":{"label-mono":["12px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"500"}],"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.04em","fontWeight":"700"}],"display-lg-mobile":["36px",{"lineHeight":"42px","letterSpacing":"-0.03em","fontWeight":"700"}],"body-sm":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"body-base":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"600"}]}}}};</script></head><body class="bg-background text-on-surface font-body-base text-body-base antialiased"><header class="fixed top-0 left-0 right-0 h-16 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex items-center justify-between px-gutter"><div class="flex items-center gap-md"><img alt="logo_Horizontal.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WdJbq4SklBPIaTEsr1iqe6GDy2hyW3008am_fPDawEkDDY3tbkoM0Zo8PwARnZ_fRFBZUtMImHGNxQebo_t7GEzRaCkTTuEEuC1yba2ZbXwa4KiNLWKSok5E539RMwlsPmzeh_OHsPIMnTdPOdfowEG6Us99561PfgH_WS6Lm0Ekkqb8RG1WHjQIihrXbKpoNJwJTjLZc8ttZfFO28gwBWQtV1EF8Nvzx-ym19ApOReNujJMOg4s7oAlia_n8j1wxCo7DXgLkRhA"/><span class="font-headline-md text-headline-md tracking-tight text-on-surface hidden sm:inline-block">Modulus Hub</span></div><div class="flex-1 max-w-lg mx-lg hidden md:block"><div class="relative flex items-center w-full"><span class="material-symbols-outlined absolute left-sm text-outline text-[20px] pointer-events-none">search</span><input class="w-full bg-surface-container-low text-on-surface pl-xl pr-md py-xs rounded-xl font-body-sm text-body-sm placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Buscar pedidos, produtos ou clientes..." type="text"/></div></div><div class="flex items-center gap-md"><button class="w-9 h-9 rounded-xl flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">help_outline</span></button><button class="relative w-9 h-9 rounded-xl flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary"></span></button><div class="flex items-center gap-sm pl-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><aside class="fixed left-0 top-16 bottom-0 w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex flex-col justify-between overflow-y-auto"><div class="py-md px-sm"><nav class="flex flex-col gap-xs" data-active-classes="bg-primary text-on-primary font-bold"><div class="px-md pt-xs pb-xs font-label-mono text-label-mono text-outline uppercase tracking-wider">Visão Geral</div><a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span>Dashboard</span></a><div class="px-md pt-md pb-xs font-label-mono text-label-mono text-outline uppercase tracking-wider">Operação</div><a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="produtos" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span>Produtos</span></a><a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="precificadora" href="#"><span class="material-symbols-outlined text-[20px]">calculate</span><span>Precificadora</span></a><a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="estoque" href="#"><span class="material-symbols-outlined text-[20px]">warehouse</span><span>Estoque</span></a><a aria-current="page" class="flex items-center gap-sm px-md py-xs rounded-lg transition-colors bg-primary text-on-primary font-bold" data-path="pedidos" href="#"><span class="material-symbols-outlined text-[20px]">shopping_bag</span><span>Pedidos</span></a><a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="producao" href="#"><span class="material-symbols-outlined text-[20px]">precision_manufacturing</span><span>Produção</span></a><div class="px-md pt-md pb-xs font-label-mono text-label-mono text-outline uppercase tracking-wider">Recursos</div><a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="impressoras" href="#"><span class="material-symbols-outlined text-[20px]">print</span><span>Impressoras</span></a><a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="materiais" href="#"><span class="material-symbols-outlined text-[20px]">layers</span><span>Materiais</span></a><div class="px-md pt-md pb-xs font-label-mono text-label-mono text-outline uppercase tracking-wider">Gestão</div><a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="empresa" href="#"><span class="material-symbols-outlined text-[20px]">store</span><span>Empresa</span></a><a class="flex items-center gap-sm px-md py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="equipe" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span>Equipe</span></a></nav></div><div class="p-md m-sm bg-surface-container-low rounded-xl flex flex-col gap-xs"><div class="flex items-center gap-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="flex flex-col min-w-0"><span class="font-body-sm text-body-sm font-bold text-on-surface truncate">Rafael Moura</span><span class="font-label-mono text-label-mono text-on-surface-variant truncate">Proprietário</span></div></div><div class="pt-xs mt-xs text-on-surface-variant font-label-mono text-label-mono flex items-center gap-xs truncate"><span class="material-symbols-outlined text-[16px] text-outline shrink-0">business</span><span class="truncate">Oficina 3D Criativa</span></div></div></aside><div class="pl-64"><main class="w-full pt-16 px-gutter bg-background min-h-screen"><div class="flex flex-col w-full pb-xl">
+<!-- Top Command & Action Bar -->
+<header class="flex flex-col gap-md mb-lg">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-md">
+<!-- Title & Breadcrumb -->
+<div class="flex flex-col">
+<nav class="flex items-center gap-xs font-label-mono text-label-mono text-outline mb-xs">
+<span>Operação</span>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface-variant font-medium">Pedidos</span>
+</nav>
+<div class="flex items-center gap-md">
+<h1 class="font-headline-md text-headline-md text-on-surface tracking-tight">Pedidos</h1>
+<a class="font-body-sm text-body-sm text-outline hover:text-on-surface transition-colors flex items-center gap-xs ml-xs" href="#">
+<span>Ver cancelados</span>
+<span class="bg-surface-container-high px-1.5 py-0.5 rounded-full text-on-surface-variant font-label-mono text-label-mono">3</span>
+</a>
+</div>
+</div>
+<!-- Actions & Search -->
+<div class="flex items-center gap-sm flex-wrap sm:flex-nowrap">
+<!-- Search Input -->
+<div class="relative flex items-center min-w-[280px] md:w-80">
+<span class="material-symbols-outlined absolute left-sm text-outline text-[18px] pointer-events-none">search</span>
+<input class="w-full bg-surface-container-lowest text-on-surface pl-9 pr-14 py-2 rounded-xl font-body-sm text-body-sm shadow-sm placeholder:text-outline focus:outline-none focus:ring-2 focus:ring-primary/25 transition-all" placeholder="Buscar pedido ou cliente... (Ctrl+K)" type="text"/>
+<kbd class="absolute right-sm text-[10px] font-label-mono text-outline bg-surface-container-low px-1.5 py-0.5 rounded pointer-events-none">⌘K</kbd>
+</div>
+<!-- Filter Trigger Button -->
+<div class="relative">
+<button class="flex items-center gap-xs px-md py-2 rounded-xl bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-all shadow-sm font-body-sm text-body-sm font-medium" id="filterBtn" onclick="toggleFilterDropdown()">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">tune</span>
+<span>Filtros</span>
+<span class="w-2 h-2 rounded-full bg-primary ml-0.5" id="filterActiveBadge"></span>
+</button>
+<!-- Filter Dropdown Popover -->
+<div class="hidden absolute right-0 top-full mt-2 w-72 bg-surface-container-lowest rounded-xl shadow-xl z-30 p-md flex flex-col gap-md" id="filterPanel">
+<div class="flex items-center justify-between pb-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">Filtros Rápidos</span>
+<button class="font-label-mono text-label-mono text-primary hover:underline" onclick="resetFilters()">Limpar</button>
+</div>
+<!-- Filter: Cliente -->
+<div class="flex flex-col gap-1">
+<label class="font-label-mono text-label-mono text-outline">Cliente</label>
+<select class="w-full bg-surface-container-low text-on-surface px-sm py-1.5 rounded-lg font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
+<option value="">Todos os clientes</option>
+<option value="studio-alpha">Studio Alpha Arquitetura</option>
+<option value="techcorp">TechCorp Soluções</option>
+<option value="moura">Construtora Moura</option>
+<option value="mariana">Mariana Siqueira Decor</option>
+</select>
+</div>
+<!-- Filter: Periodo -->
+<div class="flex flex-col gap-1">
+<label class="font-label-mono text-label-mono text-outline">Entrega Prevista</label>
+<select class="w-full bg-surface-container-low text-on-surface px-sm py-1.5 rounded-lg font-body-sm text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20">
+<option value="all">Qualquer data</option>
+<option value="today">Hoje</option>
+<option value="week">Esta semana</option>
+<option value="month">Este mês</option>
+</select>
+</div>
+<!-- Filter: Somente Atrasados -->
+<label class="flex items-center gap-sm cursor-pointer select-none pt-xs">
+<input class="w-4 h-4 rounded text-primary focus:ring-primary/30 accent-primary" id="lateCheckbox" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface">Somente atrasados</span>
+</label>
+</div>
+</div>
+<!-- Primary CTA: Novo Pedido -->
+<button class="flex items-center gap-xs px-md py-2 rounded-xl bg-primary text-on-primary hover:bg-primary/90 transition-all shadow-sm font-body-sm text-body-sm font-semibold shrink-0">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Novo pedido</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Kanban Viewport Container (5 Columns) -->
+<div class="w-full overflow-x-auto pb-lg">
+<div class="grid grid-cols-5 gap-md min-w-[1140px]">
+<!-- COLUMN 1: Rascunho -->
+<div class="flex flex-col bg-surface-container-low rounded-xl p-sm min-h-[640px]">
+<!-- Column Header -->
+<div class="flex items-center justify-between px-xs py-sm mb-xs">
+<div class="flex items-center gap-xs">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Rascunho</span>
+<span class="font-label-mono text-label-mono px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-medium">2</span>
+</div>
+<button class="text-outline hover:text-on-surface transition-colors p-0.5 rounded">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+<!-- Cards List -->
+<div class="flex flex-col gap-sm flex-1">
+<!-- Card: PED-1056 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1056</span>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Mariana Siqueira Decor</h4>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span class="truncate">22 de Março</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 320,00</span>
+</div>
+</div>
+<!-- Card: PED-1057 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1057</span>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Lucas Mendes</h4>
+</div>
+<div class="flex items-center gap-xs text-outline font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">event_busy</span>
+<span class="truncate">Sem prazo definido</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 145,00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- COLUMN 2: Confirmado -->
+<div class="flex flex-col bg-surface-container-low rounded-xl p-sm min-h-[640px]">
+<!-- Column Header -->
+<div class="flex items-center justify-between px-xs py-sm mb-xs">
+<div class="flex items-center gap-xs">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Confirmado</span>
+<span class="font-label-mono text-label-mono px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-medium">3</span>
+</div>
+<button class="text-outline hover:text-on-surface transition-colors p-0.5 rounded">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+<!-- Cards List -->
+<div class="flex flex-col gap-sm flex-1">
+<!-- Card: PED-1052 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1052</span>
+<span class="bg-surface-container-high text-on-surface-variant font-label-mono text-[10px] px-1.5 py-0.5 rounded">Reserva Parcial</span>
+</div>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Studio Alpha Arquitetura</h4>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span class="truncate">18 de Março, 12:00</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 1.198,50</span>
+</div>
+</div>
+<!-- Card: PED-1054 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1054</span>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">TechCorp Soluções</h4>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span class="truncate">20 de Março</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 680,00</span>
+</div>
+</div>
+<!-- Card: PED-1055 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1055</span>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Arquiteta Luísa Pontes</h4>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span class="truncate">21 de Março</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 410,00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- COLUMN 3: Em produção -->
+<div class="flex flex-col bg-surface-container-low rounded-xl p-sm min-h-[640px]">
+<!-- Column Header -->
+<div class="flex items-center justify-between px-xs py-sm mb-xs">
+<div class="flex items-center gap-xs">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Em produção</span>
+<span class="font-label-mono text-label-mono px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-medium">4</span>
+</div>
+<button class="text-outline hover:text-on-surface transition-colors p-0.5 rounded">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+<!-- Cards List -->
+<div class="flex flex-col gap-sm flex-1">
+<!-- Card: PED-1048 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1048</span>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Camila Vasconcelos</h4>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span class="truncate">Amanhã, 17:00</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 480,00</span>
+</div>
+</div>
+<!-- Card: PED-1042 (Atrasado) -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1042</span>
+<!-- Subtle Alert Pill -->
+<span class="bg-error-container text-on-error-container font-label-mono text-[10px] px-1.5 py-0.5 rounded font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]">warning</span>
+                  Atrasado 1 dia
+                </span>
+</div>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Studio Alpha</h4>
+</div>
+<div class="flex items-center gap-xs text-error font-body-sm text-body-sm font-medium">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+<span class="truncate">Ontem, 18:00</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 540,00</span>
+</div>
+</div>
+<!-- Card: PED-1045 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1045</span>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Construtora Moura</h4>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span class="truncate">Hoje, 17:00</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 1.250,00</span>
+</div>
+</div>
+<!-- Card: PED-1049 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1049</span>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Agência Vanguard</h4>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span class="truncate">24 de Março</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 890,00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- COLUMN 4: Pronto para entrega -->
+<div class="flex flex-col bg-surface-container-low rounded-xl p-sm min-h-[640px]">
+<!-- Column Header -->
+<div class="flex items-center justify-between px-xs py-sm mb-xs">
+<div class="flex items-center gap-xs">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Pronto p/ entrega</span>
+<span class="font-label-mono text-label-mono px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-medium">2</span>
+</div>
+<button class="text-outline hover:text-on-surface transition-colors p-0.5 rounded">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</div>
+<!-- Cards List -->
+<div class="flex flex-col gap-sm flex-1">
+<!-- Card: PED-1039 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1039</span>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Dra. Juliana Paes</h4>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span class="truncate">Hoje</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 390,00</span>
+</div>
+</div>
+<!-- Card: PED-1038 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1038</span>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Roberto Freire</h4>
+</div>
+<div class="flex items-center gap-xs text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+<span class="truncate">Amanhã</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 210,00</span>
+</div>
+</div>
+</div>
+</div>
+<!-- COLUMN 5: Concluído -->
+<div class="flex flex-col bg-surface-container-low rounded-xl p-sm min-h-[640px]">
+<!-- Column Header -->
+<div class="flex items-center justify-between px-xs py-sm mb-xs">
+<div class="flex items-center gap-xs">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Concluído</span>
+<span class="font-label-mono text-label-mono px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-medium">8</span>
+</div>
+<button class="text-outline hover:text-on-surface transition-colors p-0.5 rounded">
+<span class="material-symbols-outlined text-[18px]">done_all</span>
+</button>
+</div>
+<!-- Cards List -->
+<div class="flex flex-col gap-sm flex-1">
+<!-- Card: PED-1035 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm opacity-90 hover:opacity-100">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1035</span>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Oficina Gourmet</h4>
+</div>
+<div class="flex items-center gap-xs text-outline font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">check_circle</span>
+<span class="truncate">Entregue 12/03</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 1.840,00</span>
+</div>
+</div>
+<!-- Card: PED-1031 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm opacity-90 hover:opacity-100">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1031</span>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Casa & Design</h4>
+</div>
+<div class="flex items-center gap-xs text-outline font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">check_circle</span>
+<span class="truncate">Entregue 10/03</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 790,00</span>
+</div>
+</div>
+<!-- Card: PED-1028 -->
+<div class="group bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col justify-between gap-sm opacity-90 hover:opacity-100">
+<div class="flex flex-col gap-0.5">
+<span class="font-label-mono text-label-mono text-outline font-medium tracking-wide">#PED-1028</span>
+<h4 class="font-body-base text-body-base font-semibold text-on-surface truncate group-hover:text-primary transition-colors">Espaço Criativo 3D</h4>
+</div>
+<div class="flex items-center gap-xs text-outline font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">check_circle</span>
+<span class="truncate">Entregue 08/03</span>
+</div>
+<div class="flex items-center justify-between pt-xs">
+<span class="font-body-sm text-body-sm font-bold text-on-surface">R$ 620,00</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  function toggleFilterDropdown() {
+    const panel = document.getElementById('filterPanel');
+    if (panel) {
+      panel.classList.toggle('hidden');
+    }
+  }
+
+  function resetFilters() {
+    const lateCheckbox = document.getElementById('lateCheckbox');
+    if (lateCheckbox) lateCheckbox.checked = false;
+    const badge = document.getElementById('filterActiveBadge');
+    if (badge) badge.classList.add('hidden');
+    toggleFilterDropdown();
+  }
+
+  // Close filter dropdown on outside click
+  document.addEventListener('click', function(event) {
+    const panel = document.getElementById('filterPanel');
+    const btn = document.getElementById('filterBtn');
+    if (panel && btn && !panel.contains(event.target) && !btn.contains(event.target)) {
+      panel.classList.add('hidden');
+    }
+  });
+
+  // Keyboard shortcut Ctrl+K / Cmd+K focus
+  window.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      const input = document.querySelector('input[placeholder*="Buscar"]');
+      if (input) input.focus();
+    }
+  });
+</script></main></div></body></html>

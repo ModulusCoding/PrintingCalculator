@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { selectInitialFreePlan, type SelectFreePlanResult } from "@/lib/plans/actions";
+import styles from "./Plans.module.css";
 
 export function FreePlanChoice() {
   const router = useRouter();
@@ -25,15 +26,16 @@ export function FreePlanChoice() {
   }
 
   return (
-    <div className="mt-6 space-y-3">
-      <button type="button" disabled={pending || success} onClick={choose}
-        className="w-full rounded-xl bg-indigo-600 px-4 py-3 font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60">
-        {pending ? "Confirmando escolha…" : success ? "Escolha registrada" : "Escolher Aprendiz grátis"}
+    <div className={styles.choice}>
+      <button type="button" disabled={pending || success} aria-busy={pending} onClick={choose}
+        className={`${styles.button} ${styles.secondary}`}>
+        {pending ? "Confirmando escolha…" : success ? "Escolha registrada" : "Começar grátis"}
       </button>
-      {result && <p role={success ? "status" : "alert"} className={`text-sm ${success ? "text-emerald-700" : "text-amber-800"}`}>{result.message}</p>}
-      {result && <div className="flex flex-wrap gap-4 text-sm font-semibold">
-        <Link className="underline" href="/meu-plano">Consultar Meu plano</Link>
-        {success && <Link className="underline" href="/home">Ir para o início</Link>}
+      {pending && <p role="status" className={styles.feedback}>Registrando sua escolha com segurança…</p>}
+      {result && <p role={success ? "status" : "alert"} className={`${styles.feedback} ${success ? styles.success : styles.error}`}>{result.message}</p>}
+      {result && <div className={styles.choiceLinks}>
+        <Link className={styles.textLink} href="/meu-plano">Consultar Meu plano</Link>
+        {success && <Link className={styles.textLink} href="/home">Ir para o início</Link>}
       </div>}
     </div>
   );

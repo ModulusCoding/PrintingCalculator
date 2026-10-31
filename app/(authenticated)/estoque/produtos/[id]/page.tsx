@@ -49,9 +49,9 @@ async function ProductInventoryDetailPage({
 
   return (
     <section className="space-y-6">
-      <header>
-        <Link href={returnTo} className="text-sm text-indigo-700 hover:underline">
-          ← Voltar ao estoque
+      <header className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <Link href={returnTo} className="inline-flex min-h-11 items-center text-sm font-medium text-modulus-primary hover:underline">
+          Voltar ao estoque
         </Link>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -60,19 +60,20 @@ async function ProductInventoryDetailPage({
               {detail.product_active ? "Produto ativo" : "Produto arquivado"}
             </p>
           </div>
-          <Link href={`/admin/products/${detail.product_id}`} className="text-sm text-indigo-700 hover:underline">
+          <Link href={`/admin/products/${detail.product_id}`} className="inline-flex min-h-11 items-center text-sm font-medium text-modulus-primary hover:underline">
             Consultar cadastro do produto
           </Link>
         </div>
       </header>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded border bg-white p-5">
-          <p className="text-sm text-slate-600">Saldo atual</p>
-          <p className="text-3xl font-bold tabular-nums">
+        <div className="rounded-2xl border border-slate-200 border-b-modulus-primary bg-white p-6 shadow-sm">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Saldo físico atual</p>
+          <p className="mt-3 text-4xl font-bold tracking-tight tabular-nums text-slate-900">
             {detail.balance.toLocaleString("pt-BR")} <span className="text-base font-normal">unidades</span>
           </p>
-          <p className="mt-1 text-xs text-slate-500">Versão do estoque: {detail.inventory_version}</p>
+          <p className="mt-3 text-sm leading-relaxed text-slate-600">Saldo físico, não disponibilidade para venda. Reservas e saldo disponível não são apresentados nesta consulta.</p>
+          <p className="mt-3 text-xs text-slate-500">Versão do estoque: {detail.inventory_version}</p>
         </div>
         {!detail.product_active && (
           <div className="rounded border bg-amber-50 p-5 text-amber-900">
@@ -87,8 +88,26 @@ async function ProductInventoryDetailPage({
       )}
 
       <section aria-labelledby="history-heading">
-        <h2 id="history-heading" className="mb-3 text-lg font-semibold">Histórico</h2>
-        <div className="overflow-x-auto rounded border bg-white">
+        <div className="mb-4"><p className="mb-1 text-xs font-medium uppercase tracking-wider text-slate-500">Rastreabilidade</p><h2 id="history-heading" className="text-lg font-semibold text-slate-900">Histórico de movimentações</h2></div>
+        <div className="space-y-3 xl:hidden">
+          {data.movements.map((movement) => (
+            <article key={movement.movement_id} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="rounded-lg bg-modulus-primary/10 px-3 py-1 text-xs font-semibold text-modulus-primary">{movementLabels[movement.movement_type]}</span>
+                <time dateTime={movement.movement_at} className="text-xs text-slate-500">{new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(movement.movement_at))}</time>
+              </div>
+              <dl className="mt-4 grid grid-cols-2 gap-4 text-sm">
+                <div className="col-span-2"><dt className="text-xs text-slate-500">Quantidade</dt><dd className="mt-1 text-xl font-bold tabular-nums">{movement.quantity > 0 ? "+" : ""}{movement.quantity}</dd></div>
+                <div><dt className="text-xs text-slate-500">Saldo físico antes</dt><dd className="mt-1 font-medium tabular-nums">{movement.balance_before}</dd></div>
+                <div><dt className="text-xs text-slate-500">Saldo físico depois</dt><dd className="mt-1 font-medium tabular-nums">{movement.balance_after}</dd></div>
+                <div className="col-span-2 border-t border-slate-100 pt-3"><dt className="text-xs text-slate-500">Motivo</dt><dd className="mt-1 whitespace-pre-wrap break-words text-slate-700">{movement.reason ?? "—"}</dd></div>
+                <div className="col-span-2"><dt className="text-xs text-slate-500">Responsável</dt><dd className="mt-1 text-slate-700">{movement.actor_id === detail.userId ? "Você" : "Membro da equipe"}</dd></div>
+              </dl>
+            </article>
+          ))}
+          {data.movements.length === 0 && <p className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">Nenhuma movimentação nesta página.</p>}
+        </div>
+        <div className="hidden overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm xl:block">
           <table className="w-full text-sm">
             <caption className="sr-only">Histórico de movimentações de {detail.product_name}</caption>
             <thead>
@@ -110,7 +129,7 @@ async function ProductInventoryDetailPage({
                   <td className="p-3 text-right tabular-nums">{movement.quantity > 0 ? "+" : ""}{movement.quantity}</td>
                   <td className="p-3 text-right tabular-nums">{movement.balance_before}</td>
                   <td className="p-3 text-right tabular-nums">{movement.balance_after}</td>
-                  <td className="p-3">{movement.reason ?? "—"}</td>
+                  <td className="max-w-xs whitespace-pre-wrap break-words p-3">{movement.reason ?? "—"}</td>
                   <td className="p-3">{movement.actor_id === detail.userId ? "Você" : "Membro da equipe"}</td>
                 </tr>
               ))}
@@ -120,10 +139,10 @@ async function ProductInventoryDetailPage({
             </tbody>
           </table>
         </div>
-        <nav className="mt-3 flex justify-end gap-2" aria-label="Paginação do histórico">
-          <Link aria-disabled={page <= 1} className={`rounded border px-3 py-2 ${page <= 1 ? "pointer-events-none opacity-50" : ""}`} href={historyHref(Math.max(1, page - 1))}>Anterior</Link>
+        <nav className="mt-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-200 bg-white p-3 text-sm sm:justify-end" aria-label="Paginação do histórico">
+          {page <= 1 ? <span aria-disabled="true" className="inline-flex min-h-11 items-center rounded-xl border border-slate-200 px-3 py-2 text-slate-400">Anterior</span> : <Link className="inline-flex min-h-11 items-center rounded-xl border border-slate-200 px-3 py-2 font-medium text-modulus-primary hover:bg-slate-50" href={historyHref(Math.max(1, page - 1))}>Anterior</Link>}
           <span className="p-2">Página {page} de {totalPages}</span>
-          <Link aria-disabled={page >= totalPages} className={`rounded border px-3 py-2 ${page >= totalPages ? "pointer-events-none opacity-50" : ""}`} href={historyHref(Math.min(totalPages, page + 1))}>Próxima</Link>
+          {page >= totalPages ? <span aria-disabled="true" className="inline-flex min-h-11 items-center rounded-xl border border-slate-200 px-3 py-2 text-slate-400">Próxima</span> : <Link className="inline-flex min-h-11 items-center rounded-xl border border-slate-200 px-3 py-2 font-medium text-modulus-primary hover:bg-slate-50" href={historyHref(Math.min(totalPages, page + 1))}>Próxima</Link>}
         </nav>
       </section>
     </section>

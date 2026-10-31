@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"on-secondary":"#ffffff","on-tertiary-fixed-variant":"#7b2f00","secondary":"#5e5e5e","surface-container":"#edeeef","inverse-primary":"#c2c1ff","on-primary-container":"#f2eeff","on-primary":"#ffffff","on-tertiary":"#ffffff","on-primary-fixed":"#0c006a","surface-container-lowest":"#ffffff","on-surface":"#191c1d","error-container":"#ffdad6","outline-variant":"#c7c4d9","surface-variant":"#e1e3e4","tertiary-fixed":"#ffdbcc","secondary-fixed-dim":"#c6c6c6","surface":"#f8f9fa","primary-fixed":"#e2dfff","primary":"#3d32e6","surface-container-high":"#e7e8e9","outline":"#777588","tertiary-container":"#ba4a00","secondary-fixed":"#e2e2e2","tertiary-fixed-dim":"#ffb695","inverse-on-surface":"#f0f1f2","tertiary":"#933900","on-secondary-fixed":"#1b1b1b","on-secondary-fixed-variant":"#474747","on-tertiary-fixed":"#351000","surface-container-highest":"#e1e3e4","surface-container-low":"#f3f4f5","inverse-surface":"#2e3132","on-error-container":"#93000a","primary-fixed-dim":"#c2c1ff","error":"#ba1a1a","primary-container":"#5852ff","on-primary-fixed-variant":"#2c18d9","secondary-container":"#e2e2e2","on-tertiary-container":"#ffede6","surface-tint":"#483ff0","surface-dim":"#d9dadb","background":"#f8f9fa","on-surface-variant":"#464556","surface-bright":"#f8f9fa","on-secondary-container":"#646464","on-background":"#191c1d","on-error":"#ffffff"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"margin-mobile":"16px","xs":"4px","xl":"40px","unit":"4px","gutter":"24px","md":"16px","sm":"8px","container-max-width":"1200px","lg":"24px"},"fontFamily":{"headline-md":["Geist"],"display-lg":["Geist"],"display-lg-mobile":["Geist"],"body-sm":["Geist"],"body-base":["Geist"],"label-mono":["Geist"]},"fontSize":{"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"600"}],"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.04em","fontWeight":"700"}],"display-lg-mobile":["36px",{"lineHeight":"42px","letterSpacing":"-0.03em","fontWeight":"700"}],"body-sm":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"body-base":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"label-mono":["12px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"500"}]}}}}</script></head><body class="bg-background font-body-base text-body-base text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col"><div class="h-16 px-md flex items-center gap-sm"><img alt="logo_Horizontal.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UUZXPHofwvqvsOQEg5HfjWzCJFZoukHNEdKLk9fcRe8f8Wq8tMta95Uni1sQEIp1xgSSmF_TVIYOFFzieBxZNxzyF2g6OZF6rdXV-a0T58jLjICIbAq4e5KeAmzDE6ayezRvAk5XmLNqy-RN-NI3N8X0XVEnPTU5IiKKcxH-w9fYMKwyTfvQogZhILZsrzNv-MmkVCkYa3Av9DNdlrxpcKy2xziPLGhYQYgLsxfncaipKOLJeEE69Dv6hLx5f4jBQNNR2peaT6BQ"/><span class="font-headline-md text-headline-md tracking-tight text-on-surface">Modulus Hub</span></div><nav class="px-sm flex flex-col gap-xs mt-sm" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg"><div class="px-sm pt-sm pb-xs font-label-mono text-label-mono uppercase text-outline tracking-wider">Visão Geral</div><a aria-current="page" class="flex items-center gap-sm px-sm py-xs transition-colors bg-primary-container text-on-primary-container font-semibold rounded-lg" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-body-sm text-body-sm">Dashboard</span></a><div class="px-sm pt-md pb-xs font-label-mono text-label-mono uppercase text-outline tracking-wider">Operação</div><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="produtos" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span class="font-body-sm text-body-sm">Produtos</span></a><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="precificadora" href="#"><span class="material-symbols-outlined text-[20px]">calculate</span><span class="font-body-sm text-body-sm">Precificadora</span></a><div class="px-sm pt-md pb-xs font-label-mono text-label-mono uppercase text-outline tracking-wider">Recursos</div><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="impressoras" href="#"><span class="material-symbols-outlined text-[20px]">print</span><span class="font-body-sm text-body-sm">Impressoras</span></a><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="materiais" href="#"><span class="material-symbols-outlined text-[20px]">layers</span><span class="font-body-sm text-body-sm">Materiais</span></a><div class="px-sm pt-md pb-xs font-label-mono text-label-mono uppercase text-outline tracking-wider">Gestão</div><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="empresa" href="#"><span class="material-symbols-outlined text-[20px]">apartment</span><span class="font-body-sm text-body-sm">Empresa</span></a><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="equipe" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span class="font-body-sm text-body-sm">Equipe</span></a></nav></div><div class="p-sm bg-surface-container-low"><div class="flex items-center justify-between p-sm rounded-lg bg-surface-container-lowest"><div class="flex flex-col min-w-0 pr-xs"><span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Oficina 3D Criativa</span><div class="flex items-center gap-xs mt-xs"><span class="w-2 h-2 rounded-full bg-primary inline-block"></span><span class="font-label-mono text-label-mono text-on-surface-variant">Ativo</span></div></div><a class="p-xs rounded-lg text-on-surface-variant hover:text-error hover:bg-error-container transition-colors" data-path="logout" href="#" title="Sair"><span class="material-symbols-outlined text-[20px]">logout</span></a></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/80 backdrop-blur-xl z-40 px-lg flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center w-80"><div class="flex items-center w-full px-sm py-xs rounded-lg bg-surface-container-lowest shadow-[0_1px_4px_rgba(0,0,0,0.02)]"><span class="material-symbols-outlined text-outline text-[18px] mr-xs">search</span><span class="font-body-sm text-body-sm text-outline flex-1 select-none">Buscar...</span><kbd class="font-label-mono text-label-mono px-xs py-0.5 rounded bg-surface-container text-on-surface-variant">Ctrl+K</kbd></div></div><div class="flex items-center gap-md"><button class="p-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span></button><button class="p-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">help</span></button><div class="flex items-center gap-sm pl-sm"><div class="flex flex-col text-right hidden sm:flex"><span class="font-body-sm text-body-sm font-semibold text-on-surface leading-tight">Rafael Moura</span><span class="font-label-mono text-label-mono text-on-surface-variant leading-tight">Proprietário</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<div class="max-w-[1400px] w-full mx-auto px-lg py-md flex flex-col gap-lg">
+<!-- HEADER & PERIOD SELECTOR -->
+<header class="flex flex-col gap-md">
+<!-- Breadcrumb & Workspace Badge -->
+<div class="flex items-center justify-between flex-wrap gap-sm">
+<div class="flex items-center gap-xs font-label-mono text-label-mono text-outline uppercase tracking-wider">
+<a class="hover:text-primary transition-colors" href="#">Visão Geral</a>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold">Dashboard</span>
+</div>
+<div class="inline-flex items-center gap-xs px-sm py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-mono text-label-mono">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+<span>Oficina 3D Criativa • FDM Hub</span>
+</div>
+</div>
+<!-- Title & Time Navigator Row -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-md">
+<div>
+<h1 class="font-headline-md text-headline-md text-on-surface tracking-tight">Dashboard Inicial</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+            Métricas de produção, estoque de filamento e precificações recentes.
+          </p>
+</div>
+<!-- Period Segmented Control -->
+<div class="flex flex-wrap items-center gap-xs bg-surface-container-low p-1 rounded-xl shadow-sm">
+<button class="px-sm py-1 rounded-lg text-body-sm font-body-sm font-semibold bg-surface-container-lowest text-primary shadow-sm transition-all" data-period="mes" type="button">
+            Mês atual
+          </button>
+<button class="px-sm py-1 rounded-lg text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-period="hoje" type="button">
+            Hoje
+          </button>
+<button class="px-sm py-1 rounded-lg text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-period="30d" type="button">
+            Últimos 30 dias
+          </button>
+<button class="flex items-center gap-1 px-sm py-1 rounded-lg text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-period="custom" type="button">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span>
+<span>Personalizado</span>
+</button>
+</div>
+</div>
+<!-- Realtime Context Notice Banner -->
+<div class="flex items-center gap-sm px-md py-sm bg-surface-container-lowest rounded-xl shadow-sm">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0">info</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+<strong class="font-semibold text-on-surface">Aviso de contexto:</strong> O consumo e custos referem-se ao período selecionado (Mês Atual). Já os saldos métricos e status de carretéis refletem o estado <span class="text-primary font-medium">em tempo real</span>.
+        </p>
+</div>
+</header>
+<!-- SECTION 1: TOP 4 KEY METRIC CARDS -->
+<section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-md">
+<!-- Card 1: Filamento Consumido -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Filamento Consumido</span>
+<div class="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">scale</span>
+</div>
+</div>
+<div class="mt-sm">
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">14.850</span>
+<span class="font-label-mono text-label-mono text-on-surface-variant font-semibold">g (14,85 kg)</span>
+</div>
+<div class="flex items-center gap-xs mt-xs flex-wrap">
+<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary-container/20 text-primary font-label-mono text-label-mono font-semibold">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+              +12%
+            </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[13px]">vs mês anterior</span>
+</div>
+</div>
+<div class="mt-md pt-xs bg-surface-container-low/50 -mx-md -mb-md px-md py-xs rounded-b-xl">
+<span class="font-label-mono text-label-mono text-outline">58 registros computados</span>
+</div>
+</div>
+<!-- Card 2: Custo do Filamento -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-1">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Custo Matéria-Prima</span>
+<span class="material-symbols-outlined text-outline text-[16px] cursor-help" title="Reflete exclusivamente o valor dos filamentos consumidos, sem energia ou depreciação.">help</span>
+</div>
+<div class="w-9 h-9 rounded-lg bg-surface-container text-on-surface-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+</div>
+</div>
+<div class="mt-sm">
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">R$ 1.584,20</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs text-[13px]">
+            Custo médio de R$ 0,106 por grama
+          </p>
+</div>
+<div class="mt-md pt-xs bg-surface-container-low/50 -mx-md -mb-md px-md py-xs rounded-b-xl flex items-center justify-between">
+<span class="font-label-mono text-label-mono text-outline">Meta mensal: R$ 2.400</span>
+<span class="font-label-mono text-label-mono text-primary font-medium">66% usado</span>
+</div>
+</div>
+<!-- Card 3: Saldo Baixo -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Saldo Baixo (< 20%)</span>
+<div class="w-9 h-9 rounded-lg bg-tertiary-fixed text-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">warning_amber</span>
+</div>
+</div>
+<div class="mt-sm">
+<div class="flex items-center gap-sm">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">3</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">carretéis</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-mono text-label-mono font-semibold">
+              Atenção
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs text-[13px]">
+            Em risco de interrupção de impressão
+          </p>
+</div>
+<div class="mt-md pt-xs bg-surface-container-low/50 -mx-md -mb-md px-md py-xs rounded-b-xl flex items-center justify-between">
+<span class="font-label-mono text-label-mono text-outline">Gatilho: 20%</span>
+<button class="font-label-mono text-label-mono text-primary hover:underline font-semibold" onclick="document.getElementById('modal-limite').classList.remove('hidden')" type="button">
+            Configurar alerta →
+          </button>
+</div>
+</div>
+<!-- Card 4: Carretéis Esgotados -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Carretéis Esgotados</span>
+<div class="w-9 h-9 rounded-lg bg-error-container text-error flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">remove_circle_outline</span>
+</div>
+</div>
+<div class="mt-sm">
+<div class="flex items-center gap-sm">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">2</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">unidades</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-mono text-label-mono">
+              0 g restante
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs text-[13px]">
+            Prontos para reposição ou descarte
+          </p>
+</div>
+<div class="mt-md pt-xs bg-surface-container-low/50 -mx-md -mb-md px-md py-xs rounded-b-xl flex items-center justify-between">
+<span class="font-label-mono text-label-mono text-outline">Estoque inativo</span>
+<a class="font-label-mono text-label-mono text-on-surface-variant hover:text-on-surface" data-path="materiais" href="#">Limpar lista</a>
+</div>
+</div>
+</section>
+<!-- SECTION 2: TWO-COLUMN MAIN WORKSPACE (2/3 + 1/3) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg items-start">
+<!-- LEFT COLUMN (8 of 12 columns) -->
+<div class="lg:col-span-8 flex flex-col gap-lg min-w-0">
+<!-- A) CONSUMPTION OVER TIME CHART -->
+<div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col gap-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-sm">
+<div>
+<div class="flex items-center gap-sm">
+<h2 class="font-headline-md text-headline-md text-on-surface text-[18px]">Consumo ao longo do tempo</h2>
+<span class="font-label-mono text-label-mono px-2 py-0.5 bg-surface-container rounded text-outline uppercase">Março 2025</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                Total acumulado: <strong class="text-on-surface font-semibold" id="total-chart-label">14.850 g</strong> • Média diária: <span id="daily-avg-label">495 g/dia</span>
+</p>
+</div>
+<!-- Unit Toggle Switch (Gramas / Custo) -->
+<div class="inline-flex p-0.5 bg-surface-container rounded-lg self-start sm:self-auto" id="chart-toggle-group">
+<button class="px-sm py-1 rounded text-body-sm font-body-sm font-semibold bg-surface-container-lowest text-primary shadow-xs transition-colors" id="btn-toggle-grams" type="button">
+                Gramas (g)
+              </button>
+<button class="px-sm py-1 rounded text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface transition-colors" id="btn-toggle-cost" type="button">
+                Custo (R$)
+              </button>
+</div>
+</div>
+<!-- SVG Chart Container with dynamic feedback tooltip -->
+<div class="relative w-full pt-sm">
+<!-- Chart Visual Canvas -->
+<div class="w-full h-64 flex flex-col justify-between">
+<!-- Grid background guides -->
+<div class="absolute inset-0 flex flex-col justify-between pointer-events-none opacity-40">
+<div class="w-full h-px bg-surface-container-high"></div>
+<div class="w-full h-px bg-surface-container-high"></div>
+<div class="w-full h-px bg-surface-container-high"></div>
+<div class="w-full h-px bg-surface-container-high"></div>
+<div class="w-full h-px bg-surface-container-high"></div>
+</div>
+<!-- SVG Interactive Bar & Area Visualization -->
+<svg class="w-full h-full overflow-visible z-10" preserveaspectratio="none" viewbox="0 0 760 220">
+<defs>
+<lineargradient id="primaryBarGrad" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#3d32e6" stop-opacity="0.95"></stop>
+<stop offset="100%" stop-color="#5852ff" stop-opacity="0.75"></stop>
+</lineargradient>
+<lineargradient id="areaGlow" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#3d32e6" stop-opacity="0.18"></stop>
+<stop offset="100%" stop-color="#3d32e6" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Soft Spline fill underneath -->
+<path d="M 60 170 Q 180 80, 260 110 T 460 70 T 660 140 L 660 210 L 60 210 Z" fill="url(#areaGlow)"></path>
+<!-- Trend Line -->
+<path class="opacity-40" d="M 60 170 Q 180 80, 260 110 T 460 70 T 660 140" fill="none" stroke="#3d32e6" stroke-dasharray="4 4" stroke-linecap="round" stroke-width="2"></path>
+<!-- Week 1 Bar Group -->
+<g class="cursor-pointer group" onmouseenter="showTooltip('Semana 1 (01 - 07 Mar)', '3.200 g', 'R$ 342,00', '11 impressões')" onmouseleave="hideTooltip()">
+<rect class="transition-all duration-200 group-hover:brightness-110 group-hover:opacity-100 opacity-90" fill="url(#primaryBarGrad)" height="130" rx="4" width="60" x="90" y="80"></rect>
+<circle cx="120" cy="80" fill="#ffffff" r="4" stroke="#3d32e6" stroke-width="2"></circle>
+</g>
+<!-- Week 2 Bar Group -->
+<g class="cursor-pointer group" onmouseenter="showTooltip('Semana 2 (08 - 14 Mar)', '4.150 g', 'R$ 442,50', '18 impressões')" onmouseleave="hideTooltip()">
+<rect class="transition-all duration-200 group-hover:brightness-110 group-hover:opacity-100 opacity-90" fill="url(#primaryBarGrad)" height="166" rx="4" width="60" x="250" y="44"></rect>
+<circle cx="280" cy="44" fill="#ffffff" r="4" stroke="#3d32e6" stroke-width="2"></circle>
+</g>
+<!-- Week 3 Bar Group (Peak) -->
+<g class="cursor-pointer group" onmouseenter="showTooltip('Semana 3 (15 - 21 Mar)', '4.600 g', 'R$ 490,00', '22 impressões - Pico do Mês')" onmouseleave="hideTooltip()">
+<rect class="transition-all duration-200 group-hover:brightness-125 shadow-sm" fill="#3d32e6" height="184" rx="4" width="60" x="410" y="26"></rect>
+<circle cx="440" cy="26" fill="#ffffff" r="5" stroke="#3d32e6" stroke-width="2.5"></circle>
+<!-- Peak Tag -->
+<text fill="#3d32e6" font-size="10" font-weight="600" text-anchor="middle" x="440" y="16">PICO (4,6 kg)</text>
+</g>
+<!-- Week 4 Bar Group -->
+<g class="cursor-pointer group" onmouseenter="showTooltip('Semana 4 (22 - 31 Mar)', '2.900 g', 'R$ 309,70', '14 impressões')" onmouseleave="hideTooltip()">
+<rect class="transition-all duration-200 group-hover:brightness-110 group-hover:opacity-100 opacity-90" fill="url(#primaryBarGrad)" height="116" rx="4" width="60" x="570" y="94"></rect>
+<circle cx="600" cy="94" fill="#ffffff" r="4" stroke="#3d32e6" stroke-width="2"></circle>
+</g>
+</svg>
+</div>
+<!-- Dynamic Floating Info Tooltip -->
+<div class="hidden absolute top-4 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-md py-xs rounded-xl shadow-lg pointer-events-none transition-all flex items-center gap-md z-20" id="chart-tooltip">
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-inverse-primary" id="tt-title">Semana 3</span>
+<span class="font-headline-md text-headline-md text-[16px] font-bold" id="tt-weight">4.600 g</span>
+</div>
+<div class="h-6 w-px bg-outline/40"></div>
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-inverse-on-surface/70">Custo calculado</span>
+<span class="font-body-sm text-body-sm font-semibold text-inverse-on-surface" id="tt-cost">R$ 490,00</span>
+</div>
+<div class="text-[11px] font-label-mono text-inverse-on-surface/60 max-w-[120px] truncate" id="tt-extra">22 impressões</div>
+</div>
+<!-- Axis Labels -->
+<div class="grid grid-cols-4 pt-sm text-center font-label-mono text-label-mono text-on-surface-variant">
+<div>Semana 1 <span class="block text-outline text-[10px]">01 a 07 Mar</span></div>
+<div>Semana 2 <span class="block text-outline text-[10px]">08 a 14 Mar</span></div>
+<div>Semana 3 <span class="block text-outline text-[10px]">15 a 21 Mar</span></div>
+<div>Semana 4 <span class="block text-outline text-[10px]">22 a 31 Mar</span></div>
+</div>
+</div>
+</div>
+<!-- B) CARRETÉIS QUE PRECISAM DE ATENÇÃO -->
+<div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col gap-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-sm">
+<div class="flex items-center gap-sm flex-wrap">
+<h2 class="font-headline-md text-headline-md text-on-surface text-[18px]">Materiais que precisam de atenção</h2>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-mono text-label-mono font-semibold">
+                4 carretéis
+              </span>
+</div>
+<a class="inline-flex items-center gap-1 font-body-sm text-body-sm text-primary hover:text-primary-container font-semibold transition-colors" data-path="materiais" href="#">
+              Ver todos os carretéis
+              <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</a>
+</div>
+<div class="p-xs bg-surface-container-low rounded-lg flex items-center justify-between text-body-sm">
+<div class="flex items-center gap-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-outline text-[18px]">tune</span>
+<span class="font-label-mono text-label-mono">Limite de saldo baixo configurado em <strong>20%</strong> para sua oficina.</span>
+</div>
+<button class="font-label-mono text-label-mono text-primary font-semibold hover:underline" onclick="document.getElementById('modal-limite').classList.remove('hidden')" type="button">
+              Alterar
+            </button>
+</div>
+<!-- Spool List Grid / Stacked Items -->
+<div class="flex flex-col gap-sm">
+<!-- Item 1: PLA Silk Azul -->
+<div class="p-md rounded-xl bg-surface-container-low/70 hover:bg-surface-container-low transition-colors flex flex-col md:flex-row md:items-center justify-between gap-md">
+<div class="flex items-center gap-md min-w-0">
+<!-- Spool Graphic Icon (Blue) -->
+<div class="relative w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center shrink-0 shadow-xs">
+<svg class="text-primary" fill="none" height="28" viewbox="0 0 24 24" width="28">
+<circle cx="12" cy="12" fill="#e2dfff" r="9" stroke="currentColor" stroke-width="2.5"></circle>
+<circle cx="12" cy="12" fill="#3d32e6" r="4" stroke="currentColor" stroke-width="2.5"></circle>
+<path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke="#3d32e6" stroke-width="1.5"></path>
+</svg>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-xs flex-wrap">
+<span class="font-body-base text-body-base font-semibold text-on-surface truncate">PLA Silk Azul — 01</span>
+<span class="font-label-mono text-label-mono px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Sunlu</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-mono text-label-mono font-medium">
+                      Saldo baixo (14.5%)
+                    </span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                    Saldo atual: <strong class="text-on-surface font-semibold">145 g</strong> de 1.000 g originais
+                  </span>
+</div>
+</div>
+<!-- Progress bar & Quick action -->
+<div class="flex items-center gap-md shrink-0 w-full md:w-auto justify-between md:justify-end">
+<div class="w-32 flex flex-col gap-1">
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-tertiary-container rounded-full" style="width: 14.5%"></div>
+</div>
+<div class="flex justify-between font-label-mono text-[10px] text-outline">
+<span>145 g</span>
+<span>14.5%</span>
+</div>
+</div>
+<div class="flex items-center gap-xs">
+<button class="px-sm py-1.5 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary-container transition-colors shadow-xs" type="button">
+                    Registrar uso
+                  </button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" title="Ver detalhes" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 2: TPU 95A Flexível Laranja -->
+<div class="p-md rounded-xl bg-surface-container-low/70 hover:bg-surface-container-low transition-colors flex flex-col md:flex-row md:items-center justify-between gap-md">
+<div class="flex items-center gap-md min-w-0">
+<!-- Spool Graphic Icon (Orange/Exhausted) -->
+<div class="relative w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center shrink-0 shadow-xs">
+<svg class="text-tertiary-container" fill="none" height="28" viewbox="0 0 24 24" width="28">
+<circle cx="12" cy="12" fill="#ffdbcc" r="9" stroke="currentColor" stroke-width="2.5"></circle>
+<circle cx="12" cy="12" fill="#ba4a00" r="4" stroke="currentColor" stroke-width="2.5"></circle>
+</svg>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-xs flex-wrap">
+<span class="font-body-base text-body-base font-semibold text-on-surface truncate">TPU 95A Flexível Laranja — 01</span>
+<span class="font-label-mono text-label-mono px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">GTMax3D</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-outline font-label-mono text-label-mono font-medium">
+                      Esgotado (0%)
+                    </span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                    Saldo atual: <strong class="text-error font-semibold">0 g</strong> de 800 g originais
+                  </span>
+</div>
+</div>
+<!-- Empty progress bar & Archive action -->
+<div class="flex items-center gap-md shrink-0 w-full md:w-auto justify-between md:justify-end">
+<div class="w-32 flex flex-col gap-1">
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 0%"></div>
+</div>
+<div class="flex justify-between font-label-mono text-[10px] text-outline">
+<span>0 g</span>
+<span>Vazio</span>
+</div>
+</div>
+<div class="flex items-center gap-xs">
+<button class="px-sm py-1.5 rounded-lg bg-surface-container text-on-surface font-body-sm text-body-sm font-medium hover:bg-surface-variant transition-colors" type="button">
+                    Arquivar
+                  </button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" title="Ver detalhes" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 3: PETG Cristal -->
+<div class="p-md rounded-xl bg-surface-container-low/70 hover:bg-surface-container-low transition-colors flex flex-col md:flex-row md:items-center justify-between gap-md">
+<div class="flex items-center gap-md min-w-0">
+<!-- Spool Graphic Icon (Cyan/Translucid) -->
+<div class="relative w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center shrink-0 shadow-xs">
+<svg class="text-primary-fixed-dim" fill="none" height="28" viewbox="0 0 24 24" width="28">
+<circle cx="12" cy="12" fill="#f8f9fa" r="9" stroke="#777588" stroke-width="2.5"></circle>
+<circle cx="12" cy="12" fill="#c2c1ff" r="4" stroke="#777588" stroke-width="2.5"></circle>
+</svg>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-xs flex-wrap">
+<span class="font-body-base text-body-base font-semibold text-on-surface truncate">PETG Cristal — 02</span>
+<span class="font-label-mono text-label-mono px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">3D Fila</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-mono text-label-mono font-medium">
+                      Saldo baixo (18.0%)
+                    </span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                    Saldo atual: <strong class="text-on-surface font-semibold">180 g</strong> de 1.000 g originais
+                  </span>
+</div>
+</div>
+<!-- Progress bar & Action -->
+<div class="flex items-center gap-md shrink-0 w-full md:w-auto justify-between md:justify-end">
+<div class="w-32 flex flex-col gap-1">
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-tertiary-container rounded-full" style="width: 18%"></div>
+</div>
+<div class="flex justify-between font-label-mono text-[10px] text-outline">
+<span>180 g</span>
+<span>18.0%</span>
+</div>
+</div>
+<div class="flex items-center gap-xs">
+<button class="px-sm py-1.5 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary-container transition-colors shadow-xs" type="button">
+                    Registrar uso
+                  </button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" title="Ver detalhes" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 4: ABS Industrial Cinza -->
+<div class="p-md rounded-xl bg-surface-container-low/70 hover:bg-surface-container-low transition-colors flex flex-col md:flex-row md:items-center justify-between gap-md">
+<div class="flex items-center gap-md min-w-0">
+<div class="relative w-12 h-12 rounded-xl bg-surface-container-lowest flex items-center justify-center shrink-0 shadow-xs">
+<svg class="text-secondary" fill="none" height="28" viewbox="0 0 24 24" width="28">
+<circle cx="12" cy="12" fill="#e1e3e4" r="9" stroke="currentColor" stroke-width="2.5"></circle>
+<circle cx="12" cy="12" fill="#5e5e5e" r="4" stroke="currentColor" stroke-width="2.5"></circle>
+</svg>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-xs flex-wrap">
+<span class="font-body-base text-body-base font-semibold text-on-surface truncate">ABS Industrial Cinza — 02</span>
+<span class="font-label-mono text-label-mono px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant">Cliever</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-outline font-label-mono text-label-mono font-medium">
+                      Esgotado (0%)
+                    </span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                    Saldo atual: <strong class="text-error font-semibold">0 g</strong> de 1.000 g originais
+                  </span>
+</div>
+</div>
+<!-- Action -->
+<div class="flex items-center gap-md shrink-0 w-full md:w-auto justify-between md:justify-end">
+<div class="w-32 flex flex-col gap-1">
+<div class="w-full h-2 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 0%"></div>
+</div>
+<div class="flex justify-between font-label-mono text-[10px] text-outline">
+<span>0 g</span>
+<span>Vazio</span>
+</div>
+</div>
+<div class="flex items-center gap-xs">
+<button class="px-sm py-1.5 rounded-lg bg-surface-container text-on-surface font-body-sm text-body-sm font-medium hover:bg-surface-variant transition-colors" type="button">
+                    Arquivar
+                  </button>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors" title="Ver detalhes" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN (4 of 12 columns) -->
+<div class="lg:col-span-4 flex flex-col gap-lg">
+<!-- A) AÇÕES RÁPIDAS (ATALHOS OPERACIONAIS) -->
+<div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-on-surface text-[18px]">Ações Rápidas</h2>
+<span class="material-symbols-outlined text-outline text-[20px]">bolt</span>
+</div>
+<div class="flex flex-col gap-sm">
+<!-- Primary CTA -->
+<button class="w-full flex items-center justify-center gap-sm px-md py-sm rounded-xl bg-primary text-on-primary font-body-base text-body-base font-semibold hover:bg-primary-container transition-all shadow-sm" onclick="openConsumoDrawer()" type="button">
+<span class="material-symbols-outlined text-[20px]">scale</span>
+<span>+ Registrar consumo</span>
+</button>
+<!-- Secondary Shortcuts -->
+<a class="w-full flex items-center justify-between px-md py-sm rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors group" data-path="precificadora" href="#">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">calculate</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Nova precificação</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-0.5 transition-transform text-[18px]">chevron_right</span>
+</a>
+<a class="w-full flex items-center justify-between px-md py-sm rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors group" data-path="produtos" href="#">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline text-[20px]">inventory_2</span>
+<span class="font-body-sm text-body-sm font-medium text-on-surface">Consultar catálogo</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-0.5 transition-transform text-[18px]">chevron_right</span>
+</a>
+<a class="w-full flex items-center justify-between px-md py-sm rounded-xl bg-surface-container-low hover:bg-surface-container transition-colors group" data-path="materiais" href="#">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-outline text-[20px]">add_circle_outline</span>
+<span class="font-body-sm text-body-sm font-medium text-on-surface">Adicionar novo carretel</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:translate-x-0.5 transition-transform text-[18px]">chevron_right</span>
+</a>
+</div>
+<!-- Quick Printer Status Summary Strip -->
+<div class="mt-xs pt-md bg-surface-container-lowest flex items-center justify-between border-t border-surface-container">
+<div class="flex items-center gap-xs">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-label-mono text-label-mono text-on-surface-variant">Impressoras ativas:</span>
+</div>
+<span class="font-label-mono text-label-mono font-semibold text-on-surface">3 de 4 online</span>
+</div>
+</div>
+<!-- B) ÚLTIMAS PRECIFICAÇÕES SALVAS -->
+<div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface text-[18px]">Últimas precificações</h2>
+<span class="font-label-mono text-label-mono text-outline">Simulações recentes de custos</span>
+</div>
+<a class="font-label-mono text-label-mono text-primary font-semibold hover:underline" data-path="precificadora" href="#">
+              Ver histórico (24) →
+            </a>
+</div>
+<!-- Pricing Feed Items -->
+<div class="flex flex-col gap-sm">
+<!-- Feed Item 1 -->
+<div class="p-sm rounded-xl bg-surface-container-low/70 hover:bg-surface-container transition-colors flex flex-col gap-xs">
+<div class="flex items-start justify-between gap-xs">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Vaso Voronoi 18cm</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-mono text-[10px] font-semibold shrink-0">
+                  Preço Aplicado
+                </span>
+</div>
+<div class="flex items-center justify-between font-label-mono text-label-mono text-on-surface-variant">
+<span>Hoje, 14:32 • Lote: 10 un</span>
+<span class="font-bold text-on-surface">R$ 39,26<span class="font-normal text-outline">/un</span></span>
+</div>
+</div>
+<!-- Feed Item 2 -->
+<div class="p-sm rounded-xl bg-surface-container-low/70 hover:bg-surface-container transition-colors flex flex-col gap-xs">
+<div class="flex items-start justify-between gap-xs">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Luminária Lua 20cm</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-mono text-[10px] font-medium shrink-0">
+                  Pendente
+                </span>
+</div>
+<div class="flex items-center justify-between font-label-mono text-label-mono text-on-surface-variant">
+<span>Ontem, 16:15 • Lote: 1 un</span>
+<span class="font-bold text-on-surface">R$ 77,12<span class="font-normal text-outline">/un</span></span>
+</div>
+</div>
+<!-- Feed Item 3 -->
+<div class="p-sm rounded-xl bg-surface-container-low/70 hover:bg-surface-container transition-colors flex flex-col gap-xs">
+<div class="flex items-start justify-between gap-xs">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Suporte Articulado Baia 01</span>
+<span class="px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-mono text-[10px] font-semibold shrink-0">
+                  Preço Aplicado
+                </span>
+</div>
+<div class="flex items-center justify-between font-label-mono text-label-mono text-on-surface-variant">
+<span>28/02, 09:40 • Lote: 25 un</span>
+<span class="font-bold text-on-surface">R$ 22,50<span class="font-normal text-outline">/un</span></span>
+</div>
+</div>
+<!-- Feed Item 4 -->
+<div class="p-sm rounded-xl bg-surface-container-low/70 hover:bg-surface-container transition-colors flex flex-col gap-xs">
+<div class="flex items-start justify-between gap-xs">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Case Protetor Bambu P1S</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-label-mono text-[10px] font-medium shrink-0">
+                  Pendente
+                </span>
+</div>
+<div class="flex items-center justify-between font-label-mono text-label-mono text-on-surface-variant">
+<span>22/02, 18:05 • Lote: 5 un</span>
+<span class="font-bold text-on-surface">R$ 49,90<span class="font-normal text-outline">/un</span></span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- MODAL: CONFIGURAR LIMITE DE SALDO BAIXO -->
+<div class="fixed inset-0 z-50 bg-on-surface/40 backdrop-blur-xs flex items-center justify-center p-md hidden" id="modal-limite">
+<div class="bg-surface-container-lowest rounded-xl max-w-md w-full p-lg shadow-xl flex flex-col gap-md animate-in fade-in zoom-in-95 duration-150">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-xl bg-tertiary-fixed text-tertiary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">tune</span>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface text-[18px]">Limite de Saldo Baixo</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Alerta operacional da oficina</p>
+</div>
+</div>
+<button class="p-1 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" onclick="document.getElementById('modal-limite').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+        Defina a porcentagem residual mínima para que um carretel seja sinalizado como <strong class="text-tertiary-container">Saldo Baixo</strong> no painel de controle e nas filas de impressão.
+      </p>
+<div class="flex flex-col gap-xs">
+<label class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Limite de ativação (%)</label>
+<div class="relative flex items-center">
+<input class="w-full px-md py-sm bg-surface-container-low rounded-lg font-headline-md text-headline-md text-on-surface text-[18px] focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" id="input-limite-val" max="50" min="5" step="1" type="number" value="20"/>
+<span class="absolute right-md font-headline-md text-headline-md text-[18px] text-outline font-normal">%</span>
+</div>
+<span class="font-label-mono text-[11px] text-outline">Padrão sugerido pela indústria: 15% a 25%</span>
+</div>
+<div class="flex items-center justify-end gap-sm pt-sm border-t border-surface-container">
+<button class="px-md py-sm rounded-lg text-body-sm font-body-sm font-medium text-on-surface-variant hover:bg-surface-container transition-colors" onclick="document.getElementById('modal-limite').classList.add('hidden')" type="button">
+          Cancelar
+        </button>
+<button class="px-md py-sm rounded-lg bg-primary text-on-primary text-body-sm font-body-sm font-semibold hover:bg-primary-container transition-colors shadow-xs" onclick="salvarLimite()" type="button">
+          Salvar limite
+        </button>
+</div>
+</div>
+</div>
+<!-- QUICK ACTION SLIDE-OVER: REGISTRAR CONSUMO -->
+<div class="fixed inset-0 z-50 bg-on-surface/30 backdrop-blur-xs flex justify-end hidden" id="drawer-consumo">
+<div class="w-full max-w-md bg-surface-container-lowest h-full shadow-2xl flex flex-col justify-between p-lg overflow-y-auto">
+<div class="flex flex-col gap-md">
+<div class="flex items-center justify-between pb-sm border-b border-surface-container">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[24px]">scale</span>
+<h3 class="font-headline-md text-headline-md text-[20px] text-on-surface">Registrar Consumo</h3>
+</div>
+<button class="p-1 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container" onclick="closeConsumoDrawer()" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Spool Selector -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-mono text-label-mono uppercase text-outline">Selecione o Carretel</label>
+<select class="w-full p-sm rounded-lg bg-surface-container-low font-body-sm text-body-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20">
+<option>PLA Silk Azul — 01 (Sunlu) • 145 g restante</option>
+<option>PETG Cristal — 02 (3D Fila) • 180 g restante</option>
+<option>PLA Matte Preto — 04 (eSun) • 720 g restante</option>
+<option>PETG Carbon — 01 (Voolt3D) • 910 g restante</option>
+</select>
+</div>
+<!-- Grams Used -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-mono text-label-mono uppercase text-outline">Peso Utilizado (Gramas)</label>
+<div class="relative flex items-center">
+<input class="w-full p-sm bg-surface-container-low rounded-lg font-body-base text-body-base text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20" placeholder="Ex: 85" type="number"/>
+<span class="absolute right-sm font-label-mono text-label-mono text-outline">g</span>
+</div>
+</div>
+<!-- Optional Job Ref -->
+<div class="flex flex-col gap-xs">
+<label class="font-label-mono text-label-mono uppercase text-outline">Vincular a Peça / Pedido (Opcional)</label>
+<input class="w-full p-sm bg-surface-container-low rounded-lg font-body-sm text-body-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20" placeholder="Ex: Vaso Voronoi Lote #14" type="text"/>
+</div>
+</div>
+<div class="flex items-center justify-end gap-sm pt-md border-t border-surface-container">
+<button class="px-md py-sm rounded-lg text-body-sm font-body-sm text-on-surface-variant hover:bg-surface-container" onclick="closeConsumoDrawer()" type="button">
+          Cancelar
+        </button>
+<button class="px-md py-sm rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-semibold hover:bg-primary-container" onclick="confirmarConsumo()" type="button">
+          Confirmar Baixa
+        </button>
+</div>
+</div>
+</div>
+<!-- INTERACTIVE SCRIPTS -->
+<script>
+    // Segmented unit toggle (Gramas vs Reais)
+    const btnGrams = document.getElementById('btn-toggle-grams');
+    const btnCost = document.getElementById('btn-toggle-cost');
+    const totalChartLabel = document.getElementById('total-chart-label');
+    const dailyAvgLabel = document.getElementById('daily-avg-label');
+
+    btnGrams?.addEventListener('click', () => {
+      btnGrams.className = "px-sm py-1 rounded text-body-sm font-body-sm font-semibold bg-surface-container-lowest text-primary shadow-xs transition-colors";
+      btnCost.className = "px-sm py-1 rounded text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface transition-colors";
+      totalChartLabel.innerText = "14.850 g";
+      dailyAvgLabel.innerText = "495 g/dia";
+    });
+
+    btnCost?.addEventListener('click', () => {
+      btnCost.className = "px-sm py-1 rounded text-body-sm font-body-sm font-semibold bg-surface-container-lowest text-primary shadow-xs transition-colors";
+      btnGrams.className = "px-sm py-1 rounded text-body-sm font-body-sm text-on-surface-variant hover:text-on-surface transition-colors";
+      totalChartLabel.innerText = "R$ 1.584,20";
+      dailyAvgLabel.innerText = "R$ 52,80/dia";
+    });
+
+    // Tooltip handling for Chart SVG
+    const tooltip = document.getElementById('chart-tooltip');
+    const ttTitle = document.getElementById('tt-title');
+    const ttWeight = document.getElementById('tt-weight');
+    const ttCost = document.getElementById('tt-cost');
+    const ttExtra = document.getElementById('tt-extra');
+
+    function showTooltip(title, weight, cost, extra) {
+      if (!tooltip) return;
+      ttTitle.innerText = title;
+      ttWeight.innerText = weight;
+      ttCost.innerText = cost;
+      ttExtra.innerText = extra;
+      tooltip.classList.remove('hidden');
+    }
+
+    function hideTooltip() {
+      if (!tooltip) return;
+      tooltip.classList.add('hidden');
+    }
+
+    // Modal threshold actions
+    function salvarLimite() {
+      const val = document.getElementById('input-limite-val')?.value || '20';
+      document.getElementById('modal-limite')?.classList.add('hidden');
+    }
+
+    // Drawer helpers
+    function openConsumoDrawer() {
+      document.getElementById('drawer-consumo')?.classList.remove('hidden');
+    }
+
+    function closeConsumoDrawer() {
+      document.getElementById('drawer-consumo')?.classList.add('hidden');
+    }
+
+    function confirmarConsumo() {
+      closeConsumoDrawer();
+    }
+  </script>
+</div></main></div></body></html>

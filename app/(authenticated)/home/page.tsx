@@ -1,9 +1,20 @@
-import Link from "next/link";
+import { unstable_rethrow } from "next/navigation";
 import { requirePlanBusinessAccess } from "@/lib/plans";
 import { planAccessNotice } from "@/components/plans/PlanAccessNotice";
+import { HomeDashboard } from "@/components/dashboard/HomeDashboard";
+import { loadHomeDashboard } from "@/lib/dashboard/reader";
+
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  try { await requirePlanBusinessAccess(); }
-  catch (error) { return planAccessNotice(error); }
-  return <section className="space-y-5"><h1 className="text-2xl font-bold tracking-tight">Modulus Hub</h1><p>Bem-vindo ao seu espaço de produção.</p><Link href="/precificadora" className="inline-block rounded-xl bg-[#5852ff] px-5 py-3 font-semibold text-white">Abrir precificadora</Link></section>;
+  let plan;
+  let dashboard;
+  try {
+    plan = await requirePlanBusinessAccess();
+    dashboard = await loadHomeDashboard(plan);
+  } catch (error) {
+    unstable_rethrow(error);
+    return planAccessNotice(error);
+  }
+  return <HomeDashboard {...dashboard} downgraded={plan.access_state === "expired" || plan.access_state === "cancelled"} />;
 }

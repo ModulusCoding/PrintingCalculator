@@ -1,13 +1,39 @@
 "use client";
 import { FormEvent, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { Building2, User } from "lucide-react";
 import { completePublicOnboardingAction } from "@/lib/auth/onboarding";
 import { LogoutButton } from "@/app/conta/LogoutButton";
 import type { OnboardingField } from "@/lib/auth/onboarding-errors";
+import { AuthField, AuthHeading, AuthNotice, AuthShell, AuthSubmit } from "@/components/auth/AuthUI";
 
 export function CompletionForm() {
-  const router = useRouter(); const [pending, startTransition] = useTransition(); const [error, setError] = useState<string | null>(null); const [fieldErrors, setFieldErrors] = useState<Partial<Record<OnboardingField, string>>>({});
-  function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); if (pending) return; setError(null); setFieldErrors({}); const form = new FormData(event.currentTarget); startTransition(async () => { try { const result = await completePublicOnboardingAction(form); if (result.status === "error") { setError(result.message); setFieldErrors(result.fieldErrors ?? {}); } else if (result.status === "outcome_unknown") setError(result.message); else if (result.status === "success") { router.replace("/home"); router.refresh(); } } catch { setError("Não foi possível confirmar o resultado da conclusão. Tente novamente."); } }); }
-  return <main className="relative w-full max-w-md rounded-xl border bg-white p-8 shadow-sm"><h1 className="text-3xl font-bold text-black">Conclua seu cadastro</h1><p className="mt-2 text-gray-500">Informe os dados para criar seu espaço no Modulus.</p>{error && <p role="alert" className="mt-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</p>}<form onSubmit={submit} noValidate className="mt-6 space-y-5"><Field name="userName" label="Nome" error={fieldErrors.name} disabled={pending}/><Field name="enterpriseName" label="Nome da empresa" error={fieldErrors.enterpriseName} disabled={pending}/><button disabled={pending} className="w-full rounded-lg bg-indigo-600 py-3 font-semibold text-white disabled:opacity-70">{pending ? "Concluindo..." : "Concluir cadastro"}</button></form><div className="mt-5"><LogoutButton /></div></main>;
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<OnboardingField, string>>>({});
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (pending) return;
+    setError(null); setFieldErrors({});
+    const form = new FormData(event.currentTarget);
+    startTransition(async () => {
+      try {
+        const result = await completePublicOnboardingAction(form);
+        if (result.status === "error") { setError(result.message); setFieldErrors(result.fieldErrors ?? {}); }
+        else if (result.status === "outcome_unknown") setError(result.message);
+        else if (result.status === "success") { router.replace("/home"); router.refresh(); }
+      } catch { setError("Não foi possível confirmar o resultado da conclusão. Tente novamente."); }
+    });
+  }
+  return <AuthShell>
+    <AuthHeading title="Conclua seu cadastro" description="Informe os dados para criar seu espaço no Modulus." badge="VOCÊ E SUA EMPRESA" />
+    {error ? <AuthNotice type="error">{error}</AuthNotice> : null}
+    <form onSubmit={submit} noValidate className="space-y-5" aria-busy={pending}>
+      <AuthField name="userName" label="Nome" autoComplete="name" icon={<User size={20} />} error={fieldErrors.name} required disabled={pending} />
+      <AuthField name="enterpriseName" label="Nome da empresa" autoComplete="organization" icon={<Building2 size={20} />} error={fieldErrors.enterpriseName} required disabled={pending} />
+      <AuthSubmit pending={pending} pendingText="Concluindo...">Concluir cadastro</AuthSubmit>
+    </form>
+    <div className="mt-6"><LogoutButton /></div>
+  </AuthShell>;
 }
-function Field({ name, label, disabled, error }: { name: string; label: string; disabled: boolean; error?: string }) { return <label className="block text-sm text-black">{label}<input id={name} name={name} required disabled={disabled} aria-invalid={!!error} aria-describedby={error ? `${name}-error` : undefined} className="mt-2 w-full rounded-lg border border-gray-200 p-3 text-black outline-none focus:ring-2 focus:ring-indigo-500" />{error ? <span id={`${name}-error`} className="mt-1 block text-sm text-red-700">{error}</span> : null}</label>; }

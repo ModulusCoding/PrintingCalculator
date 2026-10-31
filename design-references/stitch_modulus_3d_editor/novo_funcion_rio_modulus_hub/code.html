@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-bright":"#f8f9fa","surface-container-highest":"#e1e3e4","primary":"#3d32e6","tertiary-fixed-dim":"#ffb695","on-primary-container":"#f2eeff","on-tertiary-container":"#ffede6","error":"#ba1a1a","tertiary":"#933900","outline":"#777588","primary-container":"#5852ff","on-error-container":"#93000a","on-tertiary":"#ffffff","surface-container-lowest":"#ffffff","secondary-fixed-dim":"#c6c6c6","inverse-on-surface":"#f0f1f2","surface-container-low":"#f3f4f5","on-secondary":"#ffffff","on-secondary-fixed-variant":"#474747","primary-fixed-dim":"#c2c1ff","surface":"#f8f9fa","secondary-container":"#e2e2e2","background":"#f8f9fa","surface-container":"#edeeef","inverse-primary":"#c2c1ff","on-primary-fixed-variant":"#2c18d9","surface-variant":"#e1e3e4","tertiary-fixed":"#ffdbcc","on-tertiary-fixed":"#351000","secondary":"#5e5e5e","primary-fixed":"#e2dfff","on-tertiary-fixed-variant":"#7b2f00","outline-variant":"#c7c4d9","surface-tint":"#483ff0","on-primary-fixed":"#0c006a","on-secondary-container":"#646464","on-surface":"#191c1d","on-secondary-fixed":"#1b1b1b","on-surface-variant":"#464556","surface-container-high":"#e7e8e9","on-background":"#191c1d","secondary-fixed":"#e2e2e2","on-error":"#ffffff","surface-dim":"#d9dadb","tertiary-container":"#ba4a00","error-container":"#ffdad6","inverse-surface":"#2e3132","on-primary":"#ffffff"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{"md":"16px","margin-mobile":"16px","gutter":"24px","lg":"24px","unit":"4px","container-max-width":"1200px","sm":"8px","xs":"4px","xl":"40px"},fontFamily:{"body-base":["Geist"],"display-lg":["Geist"],"display-lg-mobile":["Geist"],"body-sm":["Geist"],"label-mono":["Geist"],"headline-md":["Geist"]},fontSize:{"body-base":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.04em","fontWeight":"700"}],"display-lg-mobile":["36px",{"lineHeight":"42px","letterSpacing":"-0.03em","fontWeight":"700"}],"body-sm":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"label-mono":["12px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"500"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-base text-body-base text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest flex flex-col z-50 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-6 flex items-center gap-3 bg-surface-container-lowest"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[20px]">view_in_ar</span></div><div class="flex flex-col"><span class="font-headline-md text-body-sm font-bold tracking-tight text-on-surface">Modulus Hub</span><span class="font-label-mono text-label-mono text-outline">Oficina 3D Criativa</span></div></div><div class="flex-1 overflow-y-auto px-4 py-4"><nav class="space-y-6" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg"><div class="space-y-1"><span class="px-3 font-label-mono text-label-mono uppercase text-outline tracking-wider font-semibold">Visão Geral</span><div class="mt-1 space-y-1"><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Dashboard</span></a></div></div><div class="space-y-1"><span class="px-3 font-label-mono text-label-mono uppercase text-outline tracking-wider font-semibold">Operação</span><div class="mt-1 space-y-1"><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="produtos" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span>Produtos</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="precificadora" href="#"><span class="material-symbols-outlined text-[20px]">calculate</span><span>Precificadora</span></a></div></div><div class="space-y-1"><span class="px-3 font-label-mono text-label-mono uppercase text-outline tracking-wider font-semibold">Recursos</span><div class="mt-1 space-y-1"><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="impressoras" href="#"><span class="material-symbols-outlined text-[20px]">precision_manufacturing</span><span>Impressoras</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="materiais" href="#"><span class="material-symbols-outlined text-[20px]">category</span><span>Materiais</span></a></div></div><div class="space-y-1"><span class="px-3 font-label-mono text-label-mono uppercase text-outline tracking-wider font-semibold">Gestão</span><div class="mt-1 space-y-1"><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="dados-da-empresa" href="#"><span class="material-symbols-outlined text-[20px]">domain</span><span>Empresa</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="equipe" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span>Equipe</span></a></div></div></nav></div><div class="p-4 bg-surface-container-low"><div class="flex items-center justify-between gap-2"><div class="flex items-center gap-3 min-w-0"><div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="min-w-0"><p class="font-body-sm text-body-sm font-semibold text-on-surface truncate leading-tight">Rafael Moura</p><p class="font-label-mono text-label-mono text-outline truncate leading-tight">Proprietário</p></div></div><a class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:bg-error-container hover:text-on-error-container transition-all flex-shrink-0" data-path="login" href="#" title="Sair"><span class="material-symbols-outlined text-[20px]">logout</span></a></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-8"><div class="flex items-center gap-3 text-outline"><span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Hub</span><span class="font-label-mono text-label-mono text-outline-variant">/</span><span class="font-body-sm text-body-sm text-on-surface font-medium">Oficina 3D Criativa</span></div><div class="flex items-center gap-4"><div class="flex items-center gap-2"><button class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"><span class="material-symbols-outlined text-[20px]">search</span></button><button class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"><span class="material-symbols-outlined text-[20px]">notifications</span></button><button class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"><span class="material-symbols-outlined text-[20px]">help_outline</span></button></div><div class="h-6 w-px bg-surface-container-highest"></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 bg-surface w-full px-8"><div class="flex flex-col w-full pb-16">
+<!-- Breadcrumb & Page Intro -->
+<div class="flex flex-col gap-1 mb-8 pt-4">
+<nav class="flex items-center gap-2 font-label-mono text-label-mono text-outline">
+<span class="hover:text-on-surface transition-colors">Gestão</span>
+<span>/</span>
+<a class="hover:text-on-surface transition-colors" data-path="equipe" href="#">Equipe</a>
+<span>/</span>
+<span class="text-primary font-semibold">Novo funcionário</span>
+</nav>
+<div class="flex flex-wrap items-baseline justify-between gap-4 mt-2">
+<div>
+<h1 class="font-headline-md text-headline-md font-bold tracking-tight text-on-surface">Novo funcionário</h1>
+<p class="font-body-base text-body-base text-outline mt-1">Crie um acesso para alguém da sua equipe com perfil operacional ou administrativo.</p>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-mono text-label-mono">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span>Acesso Manual Seguro</span>
+</div>
+</div>
+</div>
+<!-- Layout Grid: Main Form & Context Panel -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left: Primary Form Card (8 cols) -->
+<div class="lg:col-span-8 flex flex-col gap-6">
+<!-- Informational Warning Banner -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-low p-5 flex items-start gap-4 shadow-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center flex-shrink-0 text-primary">
+<span class="material-symbols-outlined text-[22px]">lock_person</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Credenciais de Primeiro Acesso</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            Este cadastro não envia convite por e-mail. Compartilhe os dados de acesso com o funcionário por um canal seguro. Ele deverá obrigatoriamente trocar a senha no primeiro acesso.
+          </p>
+</div>
+</div>
+<!-- Main Form Wrapper -->
+<form class="rounded-xl bg-surface-container-lowest p-8 shadow-sm flex flex-col gap-6" id="employeeForm" onsubmit="event.preventDefault(); window.submitNewEmployee();">
+<!-- Step Indicator / Progress Hint -->
+<div class="flex items-center justify-between pb-2">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-outline font-semibold">Informações Básicas & Permissão</span>
+<span class="font-label-mono text-label-mono text-primary font-medium">Etapa Única</span>
+</div>
+<!-- Inputs: Grid for Nome & Email -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+<div class="flex flex-col gap-2">
+<label class="font-body-sm text-body-sm font-semibold text-on-surface" for="fullName">Nome completo <span class="text-error">*</span></label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">badge</span>
+<input class="w-full h-11 pl-11 pr-4 bg-surface-container-low rounded-lg font-body-base text-body-sm text-on-surface placeholder:text-outline/70 focus:outline-none focus:bg-surface-container-lowest transition-all shadow-inner" id="fullName" name="fullName" placeholder="Ex: Mateus Silva" required="" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-body-sm text-body-sm font-semibold text-on-surface" for="corporateEmail">E-mail corporativo <span class="text-error">*</span></label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">alternate_email</span>
+<input class="w-full h-11 pl-11 pr-4 bg-surface-container-low rounded-lg font-body-base text-body-sm text-on-surface placeholder:text-outline/70 focus:outline-none focus:bg-surface-container-lowest transition-all shadow-inner" id="corporateEmail" name="corporateEmail" placeholder="mateus@oficina3d.com.br" required="" type="email"/>
+</div>
+</div>
+</div>
+<!-- Role Selector (Cards / Radios) -->
+<div class="flex flex-col gap-3 pt-2">
+<label class="font-body-sm text-body-sm font-semibold text-on-surface">Papel na empresa <span class="text-error">*</span></label>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Option 1: Operador (Default) -->
+<label class="group relative flex flex-col p-4 rounded-xl cursor-pointer transition-all bg-surface-container-low has-[:checked]:bg-surface-container-highest has-[:checked]:shadow-md">
+<input checked="" class="sr-only" name="role" onchange="window.updateRoleBadge(this.value)" type="radio" value="operador"/>
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary group-has-[:checked]:bg-primary group-has-[:checked]:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">precision_manufacturing</span>
+</div>
+<span class="font-body-base text-body-sm font-bold text-on-surface">Operador</span>
+</div>
+<div class="w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center group-has-[:checked]:bg-primary transition-colors">
+<div class="w-2 h-2 rounded-full bg-surface-container-lowest group-has-[:checked]:scale-100 scale-0 transition-transform"></div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
+                Opera a fila de impressão e consulta produtos e materiais. Ideal para técnicos da bancada.
+              </p>
+</label>
+<!-- Option 2: Administrador -->
+<label class="group relative flex flex-col p-4 rounded-xl cursor-pointer transition-all bg-surface-container-low has-[:checked]:bg-surface-container-highest has-[:checked]:shadow-md">
+<input class="sr-only" name="role" onchange="window.updateRoleBadge(this.value)" type="radio" value="administrador"/>
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary group-has-[:checked]:bg-primary group-has-[:checked]:text-on-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+</div>
+<span class="font-body-base text-body-sm font-bold text-on-surface">Administrador</span>
+</div>
+<div class="w-5 h-5 rounded-full bg-surface-container-highest flex items-center justify-center group-has-[:checked]:bg-primary transition-colors">
+<div class="w-2 h-2 rounded-full bg-surface-container-lowest group-has-[:checked]:scale-100 scale-0 transition-transform"></div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-snug">
+                Gerencia equipe e configurações operacionais, custos e precificação geral do hub.
+              </p>
+</label>
+</div>
+</div>
+<!-- Passwords Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+<!-- Temporary Password -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<label class="font-body-sm text-body-sm font-semibold text-on-surface" for="tempPassword">Senha temporária <span class="text-error">*</span></label>
+<button class="font-label-mono text-label-mono text-primary font-medium hover:underline" onclick="window.generateRandomPassword()" type="button">Sugerir senha</button>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">key</span>
+<input class="w-full h-11 pl-11 pr-11 bg-surface-container-low rounded-lg font-body-base text-body-sm text-on-surface placeholder:text-outline/70 focus:outline-none focus:bg-surface-container-lowest transition-all shadow-inner" id="tempPassword" name="tempPassword" oninput="window.evaluatePasswordSecurity(this.value)" placeholder="••••••••••••" required="" type="password"/>
+<button class="absolute right-2.5 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center text-outline hover:text-on-surface transition-colors rounded" onclick="window.togglePasswordVisibility('tempPassword', 'iconToggle1')" title="Exibir ou ocultar senha" type="button">
+<span class="material-symbols-outlined text-[19px]" id="iconToggle1">visibility</span>
+</button>
+</div>
+</div>
+<!-- Confirm Password -->
+<div class="flex flex-col gap-2">
+<label class="font-body-sm text-body-sm font-semibold text-on-surface" for="confirmPassword">Confirmar senha temporária <span class="text-error">*</span></label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline text-[20px]">lock_reset</span>
+<input class="w-full h-11 pl-11 pr-11 bg-surface-container-low rounded-lg font-body-base text-body-sm text-on-surface placeholder:text-outline/70 focus:outline-none focus:bg-surface-container-lowest transition-all shadow-inner" id="confirmPassword" name="confirmPassword" oninput="window.checkPasswordMatch()" placeholder="••••••••••••" required="" type="password"/>
+<button class="absolute right-2.5 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center text-outline hover:text-on-surface transition-colors rounded" onclick="window.togglePasswordVisibility('confirmPassword', 'iconToggle2')" title="Exibir ou ocultar senha" type="button">
+<span class="material-symbols-outlined text-[19px]" id="iconToggle2">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Security Meter & Checklist -->
+<div class="p-4 rounded-xl bg-surface-container-low flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono font-semibold uppercase tracking-wider text-outline">Força da Senha</span>
+<span class="font-label-mono text-label-mono font-medium text-outline" id="strengthLabel">Aguardando digitação</span>
+</div>
+<!-- Dynamic Strength Bar -->
+<div class="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden flex gap-1">
+<div class="h-full flex-1 bg-surface-container-highest transition-colors duration-300" id="bar1"></div>
+<div class="h-full flex-1 bg-surface-container-highest transition-colors duration-300" id="bar2"></div>
+<div class="h-full flex-1 bg-surface-container-highest transition-colors duration-300" id="bar3"></div>
+<div class="h-full flex-1 bg-surface-container-highest transition-colors duration-300" id="bar4"></div>
+</div>
+<!-- Rules Checklist -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 font-label-mono text-label-mono">
+<div class="flex items-center gap-1.5 text-outline" id="rule-length">
+<span class="material-symbols-outlined text-[16px]">radio_button_unchecked</span>
+<span>8+ caracteres</span>
+</div>
+<div class="flex items-center gap-1.5 text-outline" id="rule-upper">
+<span class="material-symbols-outlined text-[16px]">radio_button_unchecked</span>
+<span>Maiúscula</span>
+</div>
+<div class="flex items-center gap-1.5 text-outline" id="rule-num">
+<span class="material-symbols-outlined text-[16px]">radio_button_unchecked</span>
+<span>Número</span>
+</div>
+<div class="flex items-center gap-1.5 text-outline" id="rule-match">
+<span class="material-symbols-outlined text-[16px]">radio_button_unchecked</span>
+<span>Senhas coincidem</span>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="flex items-center justify-between pt-4 mt-2">
+<a class="px-5 py-2.5 rounded-lg font-body-sm text-body-sm font-semibold text-on-surface-variant hover:bg-surface-container-high transition-all flex items-center gap-2" data-path="equipe" href="#">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Cancelar</span>
+</a>
+<button class="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-body-sm text-body-sm font-semibold transition-all shadow-sm flex items-center gap-2" type="submit">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+<span>Cadastrar funcionário</span>
+</button>
+</div>
+</form>
+</div>
+<!-- Right: Context Summary & Team Preview (4 cols) -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<!-- Visual Card Preview -->
+<div class="rounded-xl bg-surface-container-lowest p-6 shadow-sm flex flex-col gap-5">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-outline font-semibold">Resumo do Perfil</span>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-primary font-label-mono text-label-mono font-medium" id="roleBadge">Operador</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[30px]" id="previewAvatarIcon">precision_manufacturing</span>
+</div>
+<div class="flex flex-col min-w-0">
+<p class="font-body-base text-body-base font-bold text-on-surface truncate" id="previewName">Nome do Colaborador</p>
+<p class="font-label-mono text-label-mono text-outline truncate" id="previewEmail">email@oficina3d.com.br</p>
+</div>
+</div>
+<div class="p-3.5 rounded-lg bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between text-on-surface font-body-sm text-body-sm">
+<span class="text-outline">Status inicial:</span>
+<span class="font-semibold flex items-center gap-1.5 text-tertiary">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+              Pendente 1º Login
+            </span>
+</div>
+<div class="flex items-center justify-between text-on-surface font-body-sm text-body-sm">
+<span class="text-outline">Módulo:</span>
+<span class="font-medium text-on-surface">Modulus Hub 3D</span>
+</div>
+<div class="flex items-center justify-between text-on-surface font-body-sm text-body-sm">
+<span class="text-outline">Expiração da chave:</span>
+<span class="font-medium text-on-surface">7 dias</span>
+</div>
+</div>
+</div>
+<!-- Workshop Best Practice Card -->
+<div class="rounded-xl bg-surface-container-low p-6 flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</div>
+<h2 class="font-body-base text-body-sm font-bold text-on-surface">Política Operacional</h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+          Cada colaborador possui sua própria chave rastreável na telemetria das impressoras. Não compartilhe uma conta mestre entre turnos da oficina.
+        </p>
+<div class="flex items-center gap-2 pt-2 text-outline font-label-mono text-label-mono">
+<span class="material-symbols-outlined text-[16px]">info</span>
+<span>Logs de corte e fatiamento associados</span>
+</div>
+</div>
+<!-- Quick Tips -->
+<div class="relative overflow-hidden rounded-xl bg-surface-container-lowest p-6 shadow-sm flex flex-col gap-3">
+<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">Próximos passos recomendados</h3>
+<ul class="flex flex-col gap-2.5 font-body-sm text-body-sm text-on-surface-variant">
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">check_circle</span>
+<span>Copie a senha gerada antes de fechar a tela.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">check_circle</span>
+<span>Envie por WhatsApp corporativo ou entregue pessoalmente.</span>
+</li>
+<li class="flex items-start gap-2">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">check_circle</span>
+<span>O operador poderá iniciar fila no fatiador imediatamente.</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Success Feedback Modal / Overlay Card -->
+<div class="fixed inset-0 z-50 bg-on-surface/40 backdrop-blur-sm hidden items-center justify-center p-4" id="successModal">
+<div class="relative w-full max-w-lg bg-surface-container-lowest rounded-2xl p-8 shadow-2xl flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200">
+<!-- Success Icon Badge -->
+<div class="w-16 h-16 rounded-2xl bg-surface-container flex items-center justify-center text-primary mb-5 shadow-sm">
+<span class="material-symbols-outlined text-[36px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">Funcionário cadastrado com sucesso!</h2>
+<p class="font-body-base text-body-sm text-on-surface-variant mt-2 max-w-md leading-relaxed">
+        A senha temporária foi registrada. Lembre-se de fornecer os dados de acesso para o colaborador realizar o primeiro login com substituição obrigatória de senha.
+      </p>
+<!-- Access Summary Pill -->
+<div class="w-full mt-6 p-4 rounded-xl bg-surface-container-low flex flex-col gap-2 text-left">
+<div class="flex items-center justify-between font-label-mono text-label-mono">
+<span class="text-outline uppercase">Usuário criado</span>
+<span class="text-primary font-semibold" id="modalSuccessRole">Operador</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-base text-body-sm font-bold text-on-surface" id="modalSuccessName">Mateus Silva</span>
+<span class="font-label-mono text-label-mono text-outline" id="modalSuccessEmail">mateus@oficina3d.com.br</span>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full mt-7">
+<a class="w-full py-2.5 px-4 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-body-sm text-body-sm font-semibold transition-all flex items-center justify-center gap-2" data-path="equipe" href="#">
+<span class="material-symbols-outlined text-[18px]">group</span>
+<span>Voltar para equipe</span>
+</a>
+<button class="w-full py-2.5 px-4 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-body-sm text-body-sm font-semibold transition-all shadow-sm flex items-center justify-center gap-2" onclick="window.resetFormForNewEntry()" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Cadastrar outro</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Dynamic Real-time preview updates
+  const fullNameInput = document.getElementById('fullName');
+  const corporateEmailInput = document.getElementById('corporateEmail');
+  const previewName = document.getElementById('previewName');
+  const previewEmail = document.getElementById('previewEmail');
+  const previewAvatarIcon = document.getElementById('previewAvatarIcon');
+  const roleBadge = document.getElementById('roleBadge');
+
+  if (fullNameInput) {
+    fullNameInput.addEventListener('input', (e) => {
+      previewName.textContent = e.target.value.trim() || 'Nome do Colaborador';
+    });
+  }
+
+  if (corporateEmailInput) {
+    corporateEmailInput.addEventListener('input', (e) => {
+      previewEmail.textContent = e.target.value.trim() || 'email@oficina3d.com.br';
+    });
+  }
+
+  window.updateRoleBadge = function(role) {
+    if (role === 'administrador') {
+      roleBadge.textContent = 'Administrador';
+      previewAvatarIcon.textContent = 'admin_panel_settings';
+    } else {
+      roleBadge.textContent = 'Operador';
+      previewAvatarIcon.textContent = 'precision_manufacturing';
+    }
+  };
+
+  // Password visibility toggle
+  window.togglePasswordVisibility = function(inputId, iconId) {
+    const input = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    if (!input || !icon) return;
+
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.textContent = 'visibility_off';
+    } else {
+      input.type = 'password';
+      icon.textContent = 'visibility';
+    }
+  };
+
+  // Generate strong random temporary password
+  window.generateRandomPassword = function() {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%';
+    let pass = '';
+    // ensure uppercase, number, symbol
+    pass += 'M3!';
+    for (let i = 0; i < 9; i++) {
+      pass += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const tempPass = document.getElementById('tempPassword');
+    const confPass = document.getElementById('confirmPassword');
+    if (tempPass && confPass) {
+      tempPass.value = pass;
+      confPass.value = pass;
+      window.evaluatePasswordSecurity(pass);
+      window.checkPasswordMatch();
+    }
+  };
+
+  // Evaluate Password Rules
+  window.evaluatePasswordSecurity = function(val) {
+    const ruleLength = document.getElementById('rule-length');
+    const ruleUpper = document.getElementById('rule-upper');
+    const ruleNum = document.getElementById('rule-num');
+    const strengthLabel = document.getElementById('strengthLabel');
+    const b1 = document.getElementById('bar1');
+    const b2 = document.getElementById('bar2');
+    const b3 = document.getElementById('bar3');
+    const b4 = document.getElementById('bar4');
+
+    const hasLength = val.length >= 8;
+    const hasUpper = /[A-Z]/.test(val);
+    const hasNum = /[0-9]/.test(val);
+
+    updateRuleElement(ruleLength, hasLength);
+    updateRuleElement(ruleUpper, hasUpper);
+    updateRuleElement(ruleNum, hasNum);
+
+    let score = 0;
+    if (val.length > 0) score++;
+    if (hasLength) score++;
+    if (hasUpper && hasNum) score++;
+    if (val.length >= 12 && /[^A-Za-z0-9]/.test(val)) score++;
+
+    // Color bars based on score
+    const resetBars = () => {
+      b1.className = 'h-full flex-1 bg-surface-container-highest transition-colors duration-300';
+      b2.className = 'h-full flex-1 bg-surface-container-highest transition-colors duration-300';
+      b3.className = 'h-full flex-1 bg-surface-container-highest transition-colors duration-300';
+      b4.className = 'h-full flex-1 bg-surface-container-highest transition-colors duration-300';
+    };
+
+    resetBars();
+
+    if (score === 0) {
+      strengthLabel.textContent = 'Aguardando digitação';
+      strengthLabel.className = 'font-label-mono text-label-mono font-medium text-outline';
+    } else if (score === 1) {
+      strengthLabel.textContent = 'Fraca';
+      strengthLabel.className = 'font-label-mono text-label-mono font-medium text-error';
+      b1.className = 'h-full flex-1 bg-error transition-colors duration-300';
+    } else if (score === 2) {
+      strengthLabel.textContent = 'Razoável';
+      strengthLabel.className = 'font-label-mono text-label-mono font-medium text-tertiary';
+      b1.className = 'h-full flex-1 bg-tertiary transition-colors duration-300';
+      b2.className = 'h-full flex-1 bg-tertiary transition-colors duration-300';
+    } else if (score === 3) {
+      strengthLabel.textContent = 'Boa';
+      strengthLabel.className = 'font-label-mono text-label-mono font-medium text-primary';
+      b1.className = 'h-full flex-1 bg-primary transition-colors duration-300';
+      b2.className = 'h-full flex-1 bg-primary transition-colors duration-300';
+      b3.className = 'h-full flex-1 bg-primary transition-colors duration-300';
+    } else {
+      strengthLabel.textContent = 'Excelente';
+      strengthLabel.className = 'font-label-mono text-label-mono font-medium text-primary';
+      b1.className = 'h-full flex-1 bg-primary transition-colors duration-300';
+      b2.className = 'h-full flex-1 bg-primary transition-colors duration-300';
+      b3.className = 'h-full flex-1 bg-primary transition-colors duration-300';
+      b4.className = 'h-full flex-1 bg-primary transition-colors duration-300';
+    }
+
+    window.checkPasswordMatch();
+  };
+
+  function updateRuleElement(elem, isValid) {
+    if (!elem) return;
+    const icon = elem.querySelector('.material-symbols-outlined');
+    if (isValid) {
+      elem.className = 'flex items-center gap-1.5 text-primary font-medium';
+      if (icon) icon.textContent = 'check_circle';
+    } else {
+      elem.className = 'flex items-center gap-1.5 text-outline';
+      if (icon) icon.textContent = 'radio_button_unchecked';
+    }
+  }
+
+  window.checkPasswordMatch = function() {
+    const tempPass = document.getElementById('tempPassword').value;
+    const confPass = document.getElementById('confirmPassword').value;
+    const ruleMatch = document.getElementById('rule-match');
+    const isMatching = tempPass.length > 0 && tempPass === confPass;
+    updateRuleElement(ruleMatch, isMatching);
+  };
+
+  // Form submission and success trigger
+  window.submitNewEmployee = function() {
+    const name = document.getElementById('fullName').value;
+    const email = document.getElementById('corporateEmail').value;
+    const roleRadio = document.querySelector('input[name="role"]:checked');
+    const role = roleRadio ? roleRadio.value : 'operador';
+
+    document.getElementById('modalSuccessName').textContent = name || 'Novo Funcionário';
+    document.getElementById('modalSuccessEmail').textContent = email || 'acesso@modulus.hub';
+    document.getElementById('modalSuccessRole').textContent = role === 'administrador' ? 'Administrador' : 'Operador';
+
+    const modal = document.getElementById('successModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+  };
+
+  window.resetFormForNewEntry = function() {
+    const modal = document.getElementById('successModal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+    const form = document.getElementById('employeeForm');
+    if (form) form.reset();
+    previewName.textContent = 'Nome do Colaborador';
+    previewEmail.textContent = 'email@oficina3d.com.br';
+    window.evaluatePasswordSecurity('');
+    window.updateRoleBadge('operador');
+  };
+</script></main></div></body></html>

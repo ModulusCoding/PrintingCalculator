@@ -11,7 +11,7 @@ async function NewPrinterPage() {
   if (!canWrite) return <p className="text-red-600">Sem permissão.</p>;
 
   return (
-    <div className="max-w-xl mx-auto">
+    <div className="mx-auto w-full min-w-0 max-w-5xl">
       <PrinterForm canWrite={canWrite} canArchive={false} />
     </div>
   );

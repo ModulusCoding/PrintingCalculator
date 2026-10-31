@@ -12,6 +12,7 @@ for (const [route, formName] of [['carreteis', 'NewSpoolForm'], ['materiais-gera
     const imports = {
       'react/jsx-runtime': { jsx, jsxs: jsx },
       'next/link': { default: 'link' },
+      '@/components/spools/SpoolPages.module.css': { default: {} },
       [`@/components/${route === 'carreteis' ? 'spools/SpoolForms' : 'general-materials/GeneralMaterialForms'}`]: { [formName]: formName },
       '@/components/plans/PaidModuleGate': { renderPaidModule: async (module, permission, loader) => { events.push(['gate', module, permission]); return blocked ? 'blocked' : loader(); } },
       '@/components/plans/CreationLimitNotice': { CreationLimitNotice: 'limit-notice' },

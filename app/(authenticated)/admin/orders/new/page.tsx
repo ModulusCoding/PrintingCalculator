@@ -16,7 +16,7 @@ export default async function NewOrderPage() {
   }
   return <div className="space-y-6">
     <header>
-      <Link href="/admin/orders" className="text-sm text-[#3d32e6]">← Pedidos</Link>
+      <Link href="/admin/orders" className="text-sm text-[#3d32e6]">Pedidos</Link>
       <h1 className="mt-2 text-2xl font-bold text-[#152336]">Novo pedido</h1>
       <p className="text-sm text-[#464556]">Registre o atendimento com valores negociados. O servidor confirma preços e disponibilidade.</p>
       {plan.effective_plan === "free" && <p className="mt-2 text-sm text-amber-800">Aprendiz: até três pedidos históricos por empresa, incluindo cancelados.</p>}

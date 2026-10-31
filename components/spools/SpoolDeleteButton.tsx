@@ -44,7 +44,7 @@ export function SpoolDeleteButton({ id, version, returnTo }: { id: string; versi
         type="button"
         onClick={deleteSpoolAction}
         disabled={pending}
-        className="text-sm underline text-red-600 disabled:opacity-50"
+        className="min-h-11 rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-700 disabled:opacity-50"
       >
         {pending ? "Excluindo..." : "Excluir"}
       </button>

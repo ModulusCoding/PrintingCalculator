@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Modulus Hub - Produtos (Menu Aberto)</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              primary: '#2b00ff',
+              primaryHover: '#2200cc',
+              primaryLight: '#ebeaff',
+              dark: '#152336',
+              accent: '#ff4e26',
+              surface: '#ffffff',
+              bg: '#f8f9fc',
+              border: '#e2e6ed',
+              textPrimary: '#111827',
+              textSecondary: '#4b5563',
+              textMuted: '#9ca3af'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['"Space Grotesk"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 450, 'GRAD' 0, 'opsz' 20;
+    }
+    .material-symbols-outlined.filled {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 20;
+    }
+  </style>
+</link></head>
+<body class="bg-brand-bg text-brand-textPrimary font-sans antialiased min-h-screen flex">
+<!-- SIDEBAR (EXPANDED) -->
+<aside class="w-64 bg-white border-r border-brand-border flex flex-col justify-between shrink-0 h-screen sticky top-0 select-none z-20">
+<div class="flex flex-col h-full overflow-y-auto">
+<!-- HEADER / BRAND IDENTIFICATION -->
+<div class="h-16 px-5 border-b border-brand-border flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<!-- Logo Isotipo Modulus -->
+<div class="w-8 h-8 rounded-lg bg-brand-primary flex items-center justify-center text-white shrink-0 shadow-sm">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 28 28">
+<path d="M 0,7.8 L 10.2,1.2 L 10.2,9.4 L 17.8,14.2 L 28,7.8 L 28,20.2 L 17.8,26.8 L 17.8,18.6 L 10.2,13.8 L 0,20.2 Z" fill="#ffffff"></path>
+<polygon fill="#d5dcff" points="10.2,1.2 17.8,6.1 17.8,14.2 10.2,9.4"></polygon>
+</svg>
+</div>
+<div class="flex flex-col overflow-hidden">
+<div class="flex items-center gap-1.5">
+<span class="font-display font-bold text-sm tracking-tight text-brand-dark">Modulus</span>
+<span class="text-[10px] font-semibold bg-brand-primaryLight text-brand-primary px-1.5 py-0.2 rounded font-display uppercase tracking-wider">Hub</span>
+</div>
+<!-- Nome da empresa atual -->
+<span class="text-[11px] text-brand-textSecondary truncate font-medium" title="Oficina 3D Criativa">Oficina 3D Criativa</span>
+</div>
+</div>
+<!-- Botão para Recolher Menu -->
+<button aria-label="Recolher menu lateral" class="w-8 h-8 rounded-md flex items-center justify-center text-brand-textSecondary hover:text-brand-dark hover:bg-slate-100 transition-colors" title="Recolher menu lateral">
+<span class="material-symbols-outlined text-lg">menu_open</span>
+</button>
+</div>
+<!-- NAVIGATION GROUPS -->
+<nav class="flex-1 px-3 py-4 space-y-6">
+<!-- Grupo: Visão Geral -->
+<div>
+<span class="px-2.5 text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted font-display">Visão geral</span>
+<div class="mt-1 space-y-0.5">
+<a class="flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium text-brand-textSecondary hover:text-brand-dark hover:bg-slate-50 transition-colors group" href="#">
+<span class="material-symbols-outlined text-xl text-slate-400 group-hover:text-slate-600">dashboard</span>
+<span>Dashboard</span>
+</a>
+</div>
+</div>
+<!-- Grupo: Operação (Ativo) -->
+<div>
+<span class="px-2.5 text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted font-display">Operação</span>
+<div class="mt-1 space-y-0.5">
+<!-- Item Selecionado: Produtos -->
+<a class="flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-semibold bg-brand-primaryLight text-brand-primary border-l-2 border-brand-primary transition-all" href="#">
+<span class="material-symbols-outlined text-xl filled text-brand-primary">inventory_2</span>
+<span>Produtos</span>
+</a>
+<a class="flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium text-brand-textSecondary hover:text-brand-dark hover:bg-slate-50 transition-colors group" href="#">
+<span class="material-symbols-outlined text-xl text-slate-400 group-hover:text-slate-600">calculate</span>
+<span>Precificadora</span>
+</a>
+</div>
+</div>
+<!-- Grupo: Recursos -->
+<div>
+<span class="px-2.5 text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted font-display">Recursos</span>
+<div class="mt-1 space-y-0.5">
+<a class="flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium text-brand-textSecondary hover:text-brand-dark hover:bg-slate-50 transition-colors group" href="#">
+<span class="material-symbols-outlined text-xl text-slate-400 group-hover:text-slate-600">print</span>
+<span>Impressoras</span>
+</a>
+<a class="flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium text-brand-textSecondary hover:text-brand-dark hover:bg-slate-50 transition-colors group" href="#">
+<span class="material-symbols-outlined text-xl text-slate-400 group-hover:text-slate-600">category</span>
+<span>Materiais</span>
+</a>
+</div>
+</div>
+<!-- Grupo: Gestão (Perfil Proprietário) -->
+<div>
+<span class="px-2.5 text-[11px] font-semibold uppercase tracking-wider text-brand-textMuted font-display">Gestão</span>
+<div class="mt-1 space-y-0.5">
+<a class="flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium text-brand-textSecondary hover:text-brand-dark hover:bg-slate-50 transition-colors group" href="#">
+<span class="material-symbols-outlined text-xl text-slate-400 group-hover:text-slate-600">business</span>
+<span>Empresa</span>
+</a>
+<a class="flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium text-brand-textSecondary hover:text-brand-dark hover:bg-slate-50 transition-colors group" href="#">
+<span class="material-symbols-outlined text-xl text-slate-400 group-hover:text-slate-600">group</span>
+<span>Equipe</span>
+</a>
+</div>
+</div>
+</nav>
+<!-- RODAPÉ DA SIDEBAR: USUÁRIO, PAPEL E SAIR -->
+<div class="p-3 border-t border-brand-border bg-slate-50/70">
+<div class="flex items-center justify-between gap-2 p-1.5 rounded-lg">
+<div class="flex items-center gap-2.5 overflow-hidden">
+<div class="w-8 h-8 rounded-full bg-brand-dark text-white font-display font-semibold text-xs flex items-center justify-center shrink-0">
+              RM
+            </div>
+<div class="flex flex-col overflow-hidden">
+<span class="text-xs font-semibold text-brand-dark truncate">Rafael Moura</span>
+<span class="text-[11px] text-brand-textSecondary truncate">Proprietário</span>
+</div>
+</div>
+<button aria-label="Sair" class="w-8 h-8 rounded flex items-center justify-center text-slate-400 hover:text-brand-accent hover:bg-red-50 transition-colors" title="Sair da conta">
+<span class="material-symbols-outlined text-lg">logout</span>
+</button>
+</div>
+</div>
+</div>
+</aside>
+<!-- CONTEÚDO PRINCIPAL (DESKTOP) -->
+<main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+<!-- BARRA SUPERIOR / CABEÇALHO PADRÃO DO CONTEÚDO -->
+<header class="bg-white border-b border-brand-border px-8 py-6 sticky top-0 z-10">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div>
+<!-- Caminho de Navegação -->
+<nav class="flex items-center gap-1.5 text-xs text-brand-textMuted font-medium mb-1">
+<span>Operação</span>
+<span class="text-slate-300">/</span>
+<span class="text-brand-dark font-semibold">Produtos</span>
+</nav>
+<!-- Título e Descrição Reutilizáveis -->
+<h1 class="text-2xl font-bold font-display text-brand-dark tracking-tight">Produtos</h1>
+<p class="text-sm text-brand-textSecondary mt-0.5">Organize os produtos da sua empresa.</p>
+</div>
+<!-- Ação Principal -->
+<div class="flex items-center gap-3">
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-brand-primary text-white text-sm font-medium hover:bg-brand-primaryHover shadow-sm transition-all focus:ring-2 focus:ring-brand-primary/30 focus:outline-none">
+<span class="material-symbols-outlined text-lg">add</span>
+<span>Novo produto</span>
+</button>
+</div>
+</div>
+</header>
+<!-- ÁREA DE DADOS & FILTROS -->
+<div class="p-8 max-w-7xl w-full mx-auto space-y-6">
+<!-- BARRA DE CONTROLE: BUSCA E FILTRO DE SITUAÇÃO -->
+<div class="bg-white p-4 rounded-xl border border-brand-border shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+<!-- Campo de Busca por Nome -->
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-brand-border rounded-lg text-brand-textPrimary placeholder-slate-400 focus:bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 focus:outline-none transition-all" placeholder="Buscar por nome do produto..." type="text"/>
+</div>
+<!-- Segmented Control: Filtro de Situação -->
+<div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200/60 self-start md:self-auto">
+<button class="px-3 py-1.5 text-xs font-semibold rounded-md bg-white text-brand-dark shadow-xs transition-all">
+            Ativos <span class="ml-1 text-[11px] text-brand-primary font-bold">14</span>
+</button>
+<button class="px-3 py-1.5 text-xs font-medium rounded-md text-brand-textSecondary hover:text-brand-dark transition-colors">
+            Arquivados <span class="ml-1 text-[11px] text-slate-400">3</span>
+</button>
+<button class="px-3 py-1.5 text-xs font-medium rounded-md text-brand-textSecondary hover:text-brand-dark transition-colors">
+            Todos <span class="ml-1 text-[11px] text-slate-400">17</span>
+</button>
+</div>
+</div>
+<!-- TABELA DE PRODUTOS -->
+<div class="bg-white rounded-xl border border-brand-border shadow-xs overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm border-collapse">
+<thead>
+<tr class="bg-slate-50/80 border-b border-brand-border text-xs font-semibold text-brand-textSecondary uppercase tracking-wider font-display">
+<th class="py-3.5 px-6" scope="col">Produto</th>
+<th class="py-3.5 px-6" scope="col">Preço</th>
+<th class="py-3.5 px-6" scope="col">Situação</th>
+<th class="py-3.5 px-6 text-right" scope="col">Ação</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-brand-border">
+<!-- Item 1: Vaso Geométrico Voronoi -->
+<tr class="hover:bg-slate-50/60 transition-colors group cursor-pointer">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
+<img alt="Vaso Voronoi" class="w-full h-full object-cover" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+<div>
+<span class="font-semibold text-brand-dark group-hover:text-brand-primary transition-colors block">Vaso Voronoi 18cm</span>
+<span class="text-xs text-brand-textMuted">PLA Premium · 6h 20m</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-6 font-medium text-brand-dark">
+                  R$ 79,90
+                </td>
+<td class="py-3.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right">
+<a class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium text-brand-primary hover:bg-brand-primaryLight transition-colors" href="#">
+<span>Ver detalhes</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+</td>
+</tr>
+<!-- Item 2: Suporte Articulado para Headset -->
+<tr class="hover:bg-slate-50/60 transition-colors group cursor-pointer">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
+<img alt="Suporte Headset" class="w-full h-full object-cover" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+<div>
+<span class="font-semibold text-brand-dark group-hover:text-brand-primary transition-colors block">Suporte Articulado Headset</span>
+<span class="text-xs text-brand-textMuted">PETG Reforçado · 4h 10m</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-6 font-medium text-brand-dark">
+                  R$ 54,00
+                </td>
+<td class="py-3.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right">
+<a class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium text-brand-primary hover:bg-brand-primaryLight transition-colors" href="#">
+<span>Ver detalhes</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+</td>
+</tr>
+<!-- Item 3: Luminária Lua Paramétrica (Preço Sob Consulta) -->
+<tr class="hover:bg-slate-50/60 transition-colors group cursor-pointer">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
+<img alt="Luminária Paramétrica" class="w-full h-full object-cover" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+<div>
+<span class="font-semibold text-brand-dark group-hover:text-brand-primary transition-colors block">Luminária Lua Paramétrica</span>
+<span class="text-xs text-brand-textMuted">PLA Mármore · Escala customizada</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-6">
+<span class="text-xs font-medium px-2 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200">Sob consulta</span>
+</td>
+<td class="py-3.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right">
+<a class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium text-brand-primary hover:bg-brand-primaryLight transition-colors" href="#">
+<span>Ver detalhes</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+</td>
+</tr>
+<!-- Item 4: Engrenagem Helicoidal Sob Medida (SEM IMAGEM - Placehoder visual limpo) -->
+<tr class="hover:bg-slate-50/60 transition-colors group cursor-pointer">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3.5">
+<!-- Placeholder de produto sem imagem -->
+<div class="w-10 h-10 rounded-lg bg-slate-100 border border-dashed border-slate-300 flex items-center justify-center text-slate-400 shrink-0" title="Produto sem imagem cadastrada">
+<span class="material-symbols-outlined text-xl">view_in_ar</span>
+</div>
+<div>
+<span class="font-semibold text-brand-dark group-hover:text-brand-primary transition-colors block">Engrenagem Helicoidal 42T</span>
+<span class="text-xs text-brand-textMuted">Nylon PA12 · Peça técnica</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-6 font-medium text-brand-dark">
+                  R$ 38,50
+                </td>
+<td class="py-3.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right">
+<a class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium text-brand-primary hover:bg-brand-primaryLight transition-colors" href="#">
+<span>Ver detalhes</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+</td>
+</tr>
+<!-- Item 5: Action Figure Articulado -->
+<tr class="hover:bg-slate-50/60 transition-colors group cursor-pointer">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
+<img alt="Action Figure" class="w-full h-full object-cover" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+<div>
+<span class="font-semibold text-brand-dark group-hover:text-brand-primary transition-colors block">Boneco Articulado 15cm</span>
+<span class="text-xs text-brand-textMuted">Resina Tough · 0.05mm</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-6 font-medium text-brand-dark">
+                  R$ 125,00
+                </td>
+<td class="py-3.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right">
+<a class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium text-brand-primary hover:bg-brand-primaryLight transition-colors" href="#">
+<span>Ver detalhes</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+</td>
+</tr>
+<!-- Item 6: Case de Raspberry Pi 4 -->
+<tr class="hover:bg-slate-50/60 transition-colors group cursor-pointer">
+<td class="py-3.5 px-6">
+<div class="flex items-center gap-3.5">
+<div class="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
+<img alt="Case Raspberry" class="w-full h-full object-cover" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+<div>
+<span class="font-semibold text-brand-dark group-hover:text-brand-primary transition-colors block">Case Ventilado Pi 4</span>
+<span class="text-xs text-brand-textMuted">ABS Industrial · 2h 45m</span>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-6 font-medium text-brand-dark">
+                  R$ 32,00
+                </td>
+<td class="py-3.5 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Ativo
+                  </span>
+</td>
+<td class="py-3.5 px-6 text-right">
+<a class="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-medium text-brand-primary hover:bg-brand-primaryLight transition-colors" href="#">
+<span>Ver detalhes</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</a>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- PAGINAÇÃO & QUANTIDADE DE RESULTADOS -->
+<div class="px-6 py-4 bg-slate-50/60 border-t border-brand-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-brand-textSecondary">
+<div>
+            Mostrando <span class="font-semibold text-brand-dark">1</span> a <span class="font-semibold text-brand-dark">6</span> de <span class="font-semibold text-brand-dark">14</span> produtos ativos
+          </div>
+<div class="flex items-center gap-1.5">
+<button class="px-2.5 py-1.5 rounded-md border border-brand-border bg-white text-slate-400 cursor-not-allowed" disabled="">
+              Anterior
+            </button>
+<button class="w-7 h-7 rounded-md bg-brand-primary text-white font-medium flex items-center justify-center shadow-xs">
+              1
+            </button>
+<button class="w-7 h-7 rounded-md bg-white border border-brand-border text-brand-textSecondary hover:bg-slate-50 font-medium flex items-center justify-center">
+              2
+            </button>
+<button class="w-7 h-7 rounded-md bg-white border border-brand-border text-brand-textSecondary hover:bg-slate-50 font-medium flex items-center justify-center">
+              3
+            </button>
+<button class="px-2.5 py-1.5 rounded-md border border-brand-border bg-white text-brand-textSecondary hover:bg-slate-50">
+              Próximo
+            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body>
+</html>

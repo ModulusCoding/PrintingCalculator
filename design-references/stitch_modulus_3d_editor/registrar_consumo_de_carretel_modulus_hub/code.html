@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-tertiary":"#ffffff","surface-bright":"#f8f9fa","secondary":"#5e5e5e","primary-fixed":"#e2dfff","surface":"#f8f9fa","surface-container-low":"#f3f4f5","on-primary-container":"#f2eeff","secondary-container":"#e2e2e2","inverse-primary":"#c2c1ff","primary":"#3d32e6","secondary-fixed-dim":"#c6c6c6","surface-variant":"#e1e3e4","surface-container-lowest":"#ffffff","surface-container":"#edeeef","on-tertiary-fixed":"#351000","tertiary":"#933900","on-primary-fixed":"#0c006a","on-error":"#ffffff","outline":"#777588","primary-container":"#5852ff","background":"#f8f9fa","primary-fixed-dim":"#c2c1ff","on-tertiary-fixed-variant":"#7b2f00","on-primary-fixed-variant":"#2c18d9","tertiary-fixed":"#ffdbcc","on-error-container":"#93000a","on-surface-variant":"#464556","tertiary-container":"#ba4a00","surface-container-highest":"#e1e3e4","on-secondary-container":"#646464","error-container":"#ffdad6","outline-variant":"#c7c4d9","surface-tint":"#483ff0","on-secondary":"#ffffff","on-background":"#191c1d","on-secondary-fixed":"#1b1b1b","on-tertiary-container":"#ffede6","surface-container-high":"#e7e8e9","error":"#ba1a1a","secondary-fixed":"#e2e2e2","inverse-surface":"#2e3132","tertiary-fixed-dim":"#ffb695","inverse-on-surface":"#f0f1f2","on-surface":"#191c1d","surface-dim":"#d9dadb","on-primary":"#ffffff","on-secondary-fixed-variant":"#474747"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"xl":"40px","lg":"24px","gutter":"24px","md":"16px","container-max-width":"1200px","margin-mobile":"16px","xs":"4px","unit":"4px","sm":"8px"},"fontFamily":{"headline-md":["Geist"],"display-lg":["Geist"],"body-sm":["Geist"],"label-mono":["Geist"],"body-base":["Geist"],"display-lg-mobile":["Geist"]},"fontSize":{"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"600"}],"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.04em","fontWeight":"700"}],"body-sm":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"label-mono":["12px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"500"}],"body-base":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"display-lg-mobile":["36px",{"lineHeight":"42px","letterSpacing":"-0.03em","fontWeight":"700"}]}}}}</script></head><body class="bg-background font-body-base text-body-base text-on-surface min-h-screen"><aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between"><div class="flex flex-col h-full"><div class="h-16 px-md flex items-center gap-sm"><img alt="logo_Horizontal.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UDLNIThQesGPtGfe4C7uIPoEZZnqqc38FGBkkR8z-w7nsJSriM5xi_xjhs7lPzvXG1zrl0JLJdzzYvCyXFz3p5VPlCZ1MSzkqsQOULV9yaH1Ocq0aVedRVEN88v6JrH2vSupJFioLayml2qmLcJhLJzJ6hLcGUVGeU9_NO0aw-r96qqXvmdTNJXbUOzMrifovSHDWD009fnGzx0vQdjmcGJaJgi6NVhyywUXjjjbzEEz4paMINmtsCkNCQD_cmoYJ5e-crMtWL_Q"/><span class="font-headline-md text-headline-md font-semibold text-on-surface">Modulus Hub</span></div><div class="flex-1 overflow-y-auto px-sm py-sm space-y-md"><nav class="space-y-xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg shadow-sm"><div class="px-xs pb-xs pt-xs font-label-mono text-label-mono text-on-surface-variant font-medium uppercase tracking-wider">Visão Geral</div><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Dashboard</span></a></nav><nav class="space-y-xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg shadow-sm"><div class="px-xs pb-xs pt-xs font-label-mono text-label-mono text-on-surface-variant font-medium uppercase tracking-wider">Operação</div><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="produtos" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span>Produtos</span></a><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="precificadora" href="#"><span class="material-symbols-outlined text-[20px]">calculate</span><span>Precificadora</span></a></nav><nav class="space-y-xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg shadow-sm"><div class="px-xs pb-xs pt-xs font-label-mono text-label-mono text-on-surface-variant font-medium uppercase tracking-wider">Recursos</div><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="impressoras" href="#"><span class="material-symbols-outlined text-[20px]">print</span><span>Impressoras</span></a><a aria-current="page" class="flex items-center gap-sm px-sm py-xs transition-colors bg-primary-container text-on-primary-container font-semibold rounded-lg shadow-sm" data-path="materiais" href="#"><span class="material-symbols-outlined text-[20px]">layers</span><span>Materiais</span></a></nav><nav class="space-y-xs" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg shadow-sm"><div class="px-xs pb-xs pt-xs font-label-mono text-label-mono text-on-surface-variant font-medium uppercase tracking-wider">Gestão</div><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="empresa" href="#"><span class="material-symbols-outlined text-[20px]">business</span><span>Empresa</span></a><a class="flex items-center gap-sm px-sm py-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-sm text-body-sm" data-path="equipe" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span>Equipe</span></a></nav></div><div class="p-sm bg-surface-container-lowest shadow-[0_-1px_6px_rgba(0,0,0,0.02)]"><div class="flex items-center justify-between p-xs rounded-lg bg-surface-container-low"><div class="flex items-center gap-xs overflow-hidden"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="flex flex-col min-w-0"><span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">Rafael Moura</span><span class="font-label-mono text-label-mono text-on-surface-variant truncate">Oficina 3D Criativa</span></div></div><a aria-label="Sair" class="p-xs rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors flex items-center justify-center" data-path="login" href="#"><span class="material-symbols-outlined text-[20px]">logout</span></a></div></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-lg"><div class="flex items-center w-full max-w-md"><div class="relative w-full"><span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span><input class="w-full bg-surface-container-low text-on-surface placeholder:text-on-surface-variant pl-xl pr-md py-xs rounded-lg font-body-sm text-body-sm outline-none transition-all" placeholder="Buscar peças, materiais, carretéis... Ctrl+K" type="text"/></div></div><div class="flex items-center gap-md"><button aria-label="Ajuda" class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">help_outline</span></button><button aria-label="Notificações" class="relative w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-tertiary"></span></button><div class="flex items-center gap-sm pl-xs"><div class="flex flex-col text-right hidden sm:flex"><span class="font-body-sm text-body-sm font-semibold text-on-surface leading-tight">Rafael Moura</span><span class="font-label-mono text-label-mono text-on-surface-variant">Proprietário</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-background px-lg py-lg min-h-screen"><div class="flex flex-col w-full relative">
+<!-- Top Navigation & Breadcrumbs -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-md mb-lg">
+<div class="flex flex-col gap-xs">
+<div class="flex items-center gap-xs font-label-mono text-label-mono text-on-surface-variant">
+<span>Recursos</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span>Materiais</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Carretéis</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-semibold">PLA preto — 01</span>
+</div>
+<div class="flex items-center gap-sm">
+<button class="inline-flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors font-body-sm text-body-sm group" type="button">
+<span class="material-symbols-outlined text-[18px] transition-transform group-hover:-translate-x-1">arrow_back</span>
+<span>Voltar para carretéis</span>
+</button>
+</div>
+</div>
+<!-- Header Actions -->
+<div class="flex items-center gap-sm">
+<button class="px-md py-xs rounded-lg bg-surface-container-low text-on-surface hover:bg-surface-container-high transition-colors font-body-sm text-body-sm font-medium flex items-center gap-xs" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span>Corrigir saldo</span>
+</button>
+<button class="px-md py-xs rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-colors font-body-sm text-body-sm font-semibold flex items-center gap-xs shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Registrar consumo</span>
+</button>
+</div>
+</div>
+<!-- Background Screen: Filament Detail Page (Partially Obscured by Modal) -->
+<div class="flex flex-col gap-lg select-none opacity-90 filter blur-[0.5px]">
+<!-- Identity & Physical Specs Bento Strip -->
+<div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col lg:flex-row items-start lg:items-center justify-between gap-lg">
+<div class="flex items-start gap-md">
+<div class="relative w-16 h-16 rounded-xl bg-surface-container-high flex items-center justify-center shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close-up macro of a high precision black filament 3D printer spool with clean matte finish and textured spool wheel in studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIzTcfsmx480h3RqLzEm9To804-Xmj7TXKE-HsQQFZ0pQr_wZ-5qPrbWF2OGv4wDxivfgd4NryERQf4BG06iY2aw8qSG606XIt1uz94WuqTewAi-SVIhPif-BWFhq9rpmVIcfidtS2cGr_GcDoYfEDX4dNQGOWiYNIkKkJ-lBg-TCH-HQUyMPjTrxYPEOBtdfcvIBb5b07iI3PP12nfIdXiKZVCn-GD0fVQS-N3Uud5qRUUqqBpqYBVw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+</div>
+<div class="flex flex-col gap-xs">
+<div class="flex items-center gap-sm flex-wrap">
+<h1 class="font-headline-md text-headline-md text-on-surface font-bold">PLA preto — 01</h1>
+<span class="inline-flex items-center gap-xs px-sm py-0.5 rounded-full bg-surface-container-high text-on-surface font-label-mono text-label-mono font-medium">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+              Em uso (65% restante)
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Lote: #2024-VLT-0988 • Cadastrado em 12/02/2025</p>
+</div>
+</div>
+<!-- Quick specs badges -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-md w-full lg:w-auto">
+<div class="flex flex-col p-xs bg-surface-container-low rounded-lg">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase">Material</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface truncate">PLA Premium Preto</span>
+</div>
+<div class="flex flex-col p-xs bg-surface-container-low rounded-lg">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase">Fabricante</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Voolt3D</span>
+</div>
+<div class="flex flex-col p-xs bg-surface-container-low rounded-lg">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase">Cor</span>
+<div class="flex items-center gap-xs">
+<span class="w-3.5 h-3.5 rounded-full bg-[#111111] shadow-xs"></span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Preto Puro</span>
+</div>
+</div>
+<div class="flex flex-col p-xs bg-surface-container-low rounded-lg">
+<span class="font-label-mono text-label-mono text-on-surface-variant uppercase">Tecnologia</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">FDM 1.75mm</span>
+</div>
+</div>
+</div>
+<!-- 3 Metrics Highlights -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<!-- Metric 1 -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-sm">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-on-surface-variant">Saldo Atual</span>
+<span class="material-symbols-outlined text-primary text-[20px]">scale</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-display-lg text-display-lg font-bold text-on-surface">650</span>
+<span class="font-headline-md text-headline-md text-on-surface-variant">g</span>
+</div>
+<div class="mt-md flex flex-col gap-xs">
+<div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-500" style="width: 65%;"></div>
+</div>
+<div class="flex justify-between font-label-mono text-label-mono text-on-surface-variant">
+<span>65% restante</span>
+<span>Inicial: 1.000 g</span>
+</div>
+</div>
+</div>
+<!-- Metric 2 -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-sm">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-on-surface-variant">Consumo Registrado</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">history_edu</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-display-lg text-display-lg font-bold text-on-surface">350</span>
+<span class="font-headline-md text-headline-md text-on-surface-variant">g</span>
+</div>
+<div class="mt-md font-body-sm text-body-sm text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-tertiary text-[18px]">trending_up</span>
+<span>Calculado em 2 registros de ordens</span>
+</div>
+</div>
+<!-- Metric 3 -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-sm flex flex-col justify-between">
+<div class="flex items-center justify-between mb-sm">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-on-surface-variant">Custo do Consumo</span>
+<span class="material-symbols-outlined text-primary text-[20px]">payments</span>
+</div>
+<div class="flex items-baseline gap-xs">
+<span class="font-display-lg text-display-lg font-bold text-on-surface">R$ 31,50</span>
+</div>
+<div class="mt-md font-label-mono text-label-mono text-on-surface-variant">
+<span>350 g × R$ 0,090 / g de base contábil</span>
+</div>
+</div>
+</div>
+<!-- Accounting Ledger Strip -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm flex flex-col md:flex-row items-center justify-between gap-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">account_balance_wallet</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Dados Contábeis do Carretel</span>
+</div>
+<div class="flex flex-wrap items-center gap-lg font-body-sm text-body-sm">
+<div>
+<span class="text-on-surface-variant">Valor de compra:</span>
+<span class="font-semibold text-on-surface ml-xs">R$ 90,00</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-surface-container-highest"></div>
+<div>
+<span class="text-on-surface-variant">Custo próprio:</span>
+<span class="font-semibold text-primary ml-xs">R$ 0,090 / g</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-surface-container-highest"></div>
+<div>
+<span class="text-on-surface-variant">Custo ref. do material:</span>
+<span class="font-semibold text-on-surface ml-xs">R$ 0,095 / g</span>
+</div>
+</div>
+</div>
+<!-- Background Table: Movement History Preview -->
+<div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[20px] text-on-surface-variant">list_alt</span>
+<h2 class="font-headline-md text-headline-md text-on-surface text-base">Histórico de Movimentações</h2>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant">3 registros</span>
+</div>
+<div class="overflow-x-auto w-full">
+<table class="w-full text-left font-body-sm text-body-sm">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-mono text-label-mono uppercase">
+<th class="py-xs px-sm rounded-l-lg">Data</th>
+<th class="py-xs px-sm">Tipo</th>
+<th class="py-xs px-sm">Observação / Descrição</th>
+<th class="py-xs px-sm text-right">Quantidade</th>
+<th class="py-xs px-sm text-right rounded-r-lg">Saldo Resultante</th>
+</tr>
+</thead>
+<tbody class="text-on-surface">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-sm px-sm font-label-mono text-label-mono">04/03/2025 14:15</td>
+<td class="py-sm px-sm">
+<span class="inline-flex px-xs py-0.5 rounded-full bg-error-container text-on-error-container font-label-mono text-label-mono font-medium">Consumo</span>
+</td>
+<td class="py-sm px-sm">Case Raspberry Pi 5 - Lote de Teste</td>
+<td class="py-sm px-sm text-right font-medium text-error">- 200 g</td>
+<td class="py-sm px-sm text-right font-semibold">650 g</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-sm px-sm font-label-mono text-label-mono">27/02/2025 09:30</td>
+<td class="py-sm px-sm">
+<span class="inline-flex px-xs py-0.5 rounded-full bg-error-container text-on-error-container font-label-mono text-label-mono font-medium">Consumo</span>
+</td>
+<td class="py-sm px-sm">Suporte de Câmera Articulado</td>
+<td class="py-sm px-sm text-right font-medium text-error">- 150 g</td>
+<td class="py-sm px-sm text-right font-semibold">850 g</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="py-sm px-sm font-label-mono text-label-mono">12/02/2025 10:00</td>
+<td class="py-sm px-sm">
+<span class="inline-flex px-xs py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-mono text-label-mono font-medium">Abertura</span>
+</td>
+<td class="py-sm px-sm">Pesagem e ativação inicial do rolo</td>
+<td class="py-sm px-sm text-right font-medium text-primary">+ 1.000 g</td>
+<td class="py-sm px-sm text-right font-semibold">1.000 g</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- OVERLAY / MODAL: "Registrar consumo" -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-md bg-inverse-surface/40 backdrop-blur-sm transition-opacity" id="modalContainer">
+<div class="bg-surface-container-lowest w-full max-w-xl rounded-xl shadow-xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+<!-- Modal Header -->
+<div class="p-lg bg-surface-container-lowest flex items-start justify-between">
+<div class="flex flex-col gap-xs">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary text-[24px]">scale</span>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">Registrar consumo</h2>
+</div>
+<div class="flex items-center gap-xs font-body-sm text-body-sm text-on-surface-variant">
+<span class="font-medium text-on-surface">PLA preto — 01</span>
+<span>•</span>
+<span class="inline-flex items-center gap-xs text-primary font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+              Saldo disponível: 650 g
+            </span>
+</div>
+</div>
+<button aria-label="Fechar" class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" onclick="document.getElementById('modalContainer').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Modal Body / Form -->
+<form class="p-lg flex flex-col gap-md overflow-y-auto max-h-[calc(90vh-140px)]" onsubmit="event.preventDefault();">
+<!-- Field 1: Read-only Available Stock -->
+<div class="flex items-center justify-between p-sm rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">inventory</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Saldo Disponível Atual</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="font-headline-md text-headline-md text-on-surface font-bold" id="currentStock">650</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface-variant">gramas</span>
+</div>
+</div>
+<!-- Field 2: Grams Consumed -->
+<div class="flex flex-col gap-xs">
+<label class="font-body-sm text-body-sm font-semibold text-on-surface flex items-center justify-between" for="consumedGrams">
+<span>Quantidade consumida <span class="text-error">*</span></span>
+<span class="font-label-mono text-label-mono text-on-surface-variant font-normal">Máx: 650 g</span>
+</label>
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low text-on-surface px-md py-sm rounded-lg font-headline-md text-headline-md font-bold focus:bg-surface-container-lowest focus:outline-none transition-all pr-24" id="consumedGrams" max="650" min="1" oninput="updateSimulation(this.value)" placeholder="0" type="number" value="50"/>
+<span class="absolute right-md font-body-sm text-body-sm font-semibold text-on-surface-variant pointer-events-none">gramas</span>
+</div>
+<p class="font-label-mono text-label-mono text-on-surface-variant">
+            Informe o peso fatiado ou medido da peça impressa (incluindo suportes e brim).
+          </p>
+</div>
+<!-- Two Columns: Date & Auxiliary -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+<!-- Field 3: Date -->
+<div class="flex flex-col gap-xs">
+<label class="font-body-sm text-body-sm font-semibold text-on-surface" for="consumptionDate">
+              Data do consumo <span class="text-error">*</span>
+</label>
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-sm text-on-surface-variant text-[18px]">calendar_today</span>
+<input class="w-full bg-surface-container-low text-on-surface pl-xl pr-md py-xs rounded-lg font-body-sm text-body-sm focus:bg-surface-container-lowest focus:outline-none transition-all" id="consumptionDate" type="text" value="08/03/2025"/>
+</div>
+</div>
+<!-- Secondary detail badge -->
+<div class="flex flex-col gap-xs">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Custo unitário base</span>
+<div class="flex items-center h-full px-md py-xs rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm justify-between">
+<span class="text-on-surface-variant font-label-mono text-label-mono">Contábil</span>
+<span class="font-semibold text-primary">R$ 0,090 / g</span>
+</div>
+</div>
+</div>
+<!-- Field 4: Observation -->
+<div class="flex flex-col gap-xs">
+<label class="font-body-sm text-body-sm font-semibold text-on-surface" for="consumptionNotes">
+            Observação <span class="font-label-mono text-label-mono text-on-surface-variant font-normal">(opcional)</span>
+</label>
+<div class="relative">
+<input class="w-full bg-surface-container-low text-on-surface px-md py-xs rounded-lg font-body-sm text-body-sm focus:bg-surface-container-lowest focus:outline-none transition-all" id="consumptionNotes" placeholder="Ex: Ordem #382, protótipo de teste, etc." type="text" value="Lote 12 un - Engrenagem 42T para cliente Alpha"/>
+</div>
+</div>
+<!-- Simulation & Live Preview Panel -->
+<div class="bg-surface-container-low rounded-xl p-md flex flex-col gap-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-mono text-label-mono uppercase font-semibold text-on-surface tracking-wider">
+              Simulação de Impacto
+            </span>
+<span class="inline-flex items-center gap-xs text-[11px] font-label-mono text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+              Tempo real
+            </span>
+</div>
+<div class="grid grid-cols-2 gap-md p-xs">
+<!-- Simulated Cost -->
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-on-surface-variant">Custo calculado</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-md text-headline-md font-bold text-primary" id="calculatedCost">R$ 4,50</span>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant" id="costCalculationFormula">50 g × R$ 0,090</span>
+</div>
+<!-- Resulting Stock -->
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-on-surface-variant">Novo saldo resultante</span>
+<div class="flex items-baseline gap-xs">
+<span class="font-headline-md text-headline-md font-bold text-on-surface" id="resultingStock">600</span>
+<span class="font-body-sm text-body-sm font-semibold text-on-surface-variant">g</span>
+</div>
+<span class="font-label-mono text-label-mono text-on-surface-variant" id="stockCalculationFormula">650 g − 50 g</span>
+</div>
+</div>
+<!-- Live Progress Bar -->
+<div class="flex flex-col gap-xs pt-xs">
+<div class="w-full bg-surface-container-highest h-2.5 rounded-full overflow-hidden flex">
+<div class="bg-primary h-full transition-all duration-300 rounded-full" id="progressBar" style="width: 60%;"></div>
+</div>
+<div class="flex justify-between font-label-mono text-label-mono text-on-surface-variant">
+<span id="remainingPercentText">60,0% restante do rolo</span>
+<span>Total inicial: 1.000 g</span>
+</div>
+</div>
+</div>
+<!-- Rule Alert Notice -->
+<div class="flex items-start gap-xs p-sm rounded-lg bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px] text-tertiary shrink-0 mt-0.5">info</span>
+<p class="font-label-mono text-label-mono leading-relaxed">
+            O consumo não pode ultrapassar o saldo disponível (<strong class="text-on-surface">650 g</strong>). Este cálculo reflete exclusivamente a matéria-prima e não inclui energia elétrica ou depreciação da máquina.
+          </p>
+</div>
+<!-- Modal Footer Actions -->
+<div class="flex items-center justify-end gap-sm pt-sm mt-xs">
+<button class="px-md py-sm rounded-lg bg-surface-container-high text-on-surface hover:bg-surface-container-highest transition-colors font-body-sm text-body-sm font-medium" onclick="document.getElementById('modalContainer').classList.add('hidden')" type="button">
+            Cancelar
+          </button>
+<button class="px-lg py-sm rounded-lg bg-[#2b00ff] text-white hover:bg-primary transition-all font-body-sm text-body-sm font-semibold shadow-md flex items-center gap-xs" type="submit">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span>Confirmar registro de consumo</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+<!-- Interactive JavaScript for Live Simulation -->
+<script>
+    function updateSimulation(val) {
+      const initialStock = 650;
+      const initialCapacity = 1000;
+      const unitCost = 0.090;
+      
+      let consumed = parseFloat(val);
+      if (isNaN(consumed) || consumed < 0) consumed = 0;
+      if (consumed > initialStock) consumed = initialStock;
+
+      const newStock = Math.max(0, initialStock - consumed);
+      const totalCost = (consumed * unitCost).toFixed(2).replace('.', ',');
+      const percent = ((newStock / initialCapacity) * 100).toFixed(1);
+
+      // DOM updates
+      const costEl = document.getElementById('calculatedCost');
+      const formulaEl = document.getElementById('costCalculationFormula');
+      const stockEl = document.getElementById('resultingStock');
+      const stockFormulaEl = document.getElementById('stockCalculationFormula');
+      const progressBar = document.getElementById('progressBar');
+      const percentText = document.getElementById('remainingPercentText');
+
+      if (costEl) costEl.textContent = 'R$ ' + totalCost;
+      if (formulaEl) formulaEl.textContent = consumed + ' g × R$ 0,090';
+      if (stockEl) stockEl.textContent = newStock;
+      if (stockFormulaEl) stockFormulaEl.textContent = initialStock + ' g − ' + consumed + ' g';
+      if (progressBar) progressBar.style.width = percent + '%';
+      if (percentText) percentText.textContent = percent + '% restante do rolo';
+    }
+  </script>
+</div></main></div></body></html>

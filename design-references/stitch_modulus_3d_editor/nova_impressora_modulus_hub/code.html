@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"primary-fixed":"#e2dfff","primary":"#3d32e6","error-container":"#ffdad6","on-primary":"#ffffff","tertiary-fixed-dim":"#ffb695","inverse-surface":"#2e3132","surface-container-lowest":"#ffffff","tertiary":"#933900","tertiary-fixed":"#ffdbcc","tertiary-container":"#ba4a00","secondary-container":"#e2e2e2","outline":"#777588","on-secondary":"#ffffff","on-secondary-fixed-variant":"#474747","secondary":"#5e5e5e","on-surface":"#191c1d","surface-dim":"#d9dadb","surface-container-low":"#f3f4f5","on-error-container":"#93000a","on-primary-fixed-variant":"#2c18d9","on-primary-fixed":"#0c006a","primary-container":"#5852ff","error":"#ba1a1a","on-surface-variant":"#464556","surface-variant":"#e1e3e4","on-primary-container":"#f2eeff","on-tertiary-fixed":"#351000","inverse-on-surface":"#f0f1f2","surface-container":"#edeeef","on-secondary-container":"#646464","outline-variant":"#c7c4d9","primary-fixed-dim":"#c2c1ff","on-error":"#ffffff","background":"#f8f9fa","surface-tint":"#483ff0","on-tertiary-fixed-variant":"#7b2f00","on-background":"#191c1d","surface":"#f8f9fa","surface-container-highest":"#e1e3e4","surface-container-high":"#e7e8e9","inverse-primary":"#c2c1ff","on-tertiary-container":"#ffede6","secondary-fixed":"#e2e2e2","surface-bright":"#f8f9fa","on-secondary-fixed":"#1b1b1b","on-tertiary":"#ffffff","secondary-fixed-dim":"#c6c6c6"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"md":"16px","xs":"4px","xl":"40px","margin-mobile":"16px","sm":"8px","gutter":"24px","container-max-width":"1200px","lg":"24px","unit":"4px"},"fontFamily":{"display-lg":["Geist"],"body-sm":["Geist"],"body-base":["Geist"],"headline-md":["Geist"],"label-mono":["Geist"],"display-lg-mobile":["Geist"]},"fontSize":{"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.04em","fontWeight":"700"}],"body-sm":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"body-base":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"600"}],"label-mono":["12px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"500"}],"display-lg-mobile":["36px",{"lineHeight":"42px","letterSpacing":"-0.03em","fontWeight":"700"}]}}}};</script></head><body class="bg-background font-body-base text-body-base text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-low border-r border-outline-variant/30 flex flex-col justify-between z-40 select-none"><div class="flex flex-col min-h-0"><div class="h-16 px-md flex items-center justify-between border-b border-outline-variant/20"><div class="flex items-center gap-sm overflow-hidden"><div class="flex items-center gap-xs"><span class="font-headline-md text-headline-md tracking-tight text-on-surface">Modulus</span><span class="bg-primary text-on-primary font-label-mono text-label-mono px-xs py-0.5 rounded-lg tracking-wider font-semibold uppercase">HUB</span></div></div><button class="p-xs rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Recolher menu" type="button"><span class="material-symbols-outlined text-[20px]">keyboard_double_arrow_left</span></button></div><div class="px-md py-sm bg-surface-container-lowest/60 border-b border-outline-variant/15 flex items-center justify-between"><div class="flex items-center gap-sm overflow-hidden"><div class="w-6 h-6 rounded bg-primary-fixed flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-primary text-[16px]">store</span></div><div class="flex flex-col truncate"><span class="font-label-mono text-label-mono text-on-surface truncate font-semibold">Oficina 3D Criativa</span><span class="font-label-mono text-[10px] text-on-surface-variant leading-none">Espaço Ativo</span></div></div><span class="material-symbols-outlined text-on-surface-variant text-[16px]">unfold_more</span></div><div class="overflow-y-auto px-sm py-md space-y-md"><div class="space-y-xs"><span class="px-sm font-label-mono text-[11px] uppercase tracking-wider text-on-surface-variant/80 font-semibold">Visão geral</span><nav class="space-y-0.5 relative" data-active-classes="bg-primary-fixed text-primary font-semibold before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:bg-primary before:rounded-r"><a class="relative flex items-center gap-sm px-sm py-1.5 rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[18px]">dashboard</span><span>Dashboard</span></a></nav></div><div class="space-y-xs"><span class="px-sm font-label-mono text-[11px] uppercase tracking-wider text-on-surface-variant/80 font-semibold">Operação</span><nav class="space-y-0.5 relative" data-active-classes="bg-primary-fixed text-primary font-semibold before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:bg-primary before:rounded-r"><a class="relative flex items-center gap-sm px-sm py-1.5 rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="produtos" href="#"><span class="material-symbols-outlined text-[18px]">inventory_2</span><span>Produtos</span></a><a class="relative flex items-center gap-sm px-sm py-1.5 rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="precificadora" href="#"><span class="material-symbols-outlined text-[18px]">calculate</span><span>Precificadora</span></a></nav></div><div class="space-y-xs"><span class="px-sm font-label-mono text-[11px] uppercase tracking-wider text-on-surface-variant/80 font-semibold">Recursos</span><nav class="space-y-0.5 relative" data-active-classes="bg-primary-fixed text-primary font-semibold before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:bg-primary before:rounded-r"><a aria-current="page" class="relative flex items-center gap-sm px-sm py-1.5 rounded-lg transition-all bg-primary-fixed text-primary font-semibold before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:bg-primary before:rounded-r" data-path="impressoras" href="#"><span class="material-symbols-outlined text-[18px]">print</span><span>Impressoras</span></a><a class="relative flex items-center gap-sm px-sm py-1.5 rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="materiais" href="#"><span class="material-symbols-outlined text-[18px]">category</span><span>Materiais</span></a></nav></div><div class="space-y-xs"><span class="px-sm font-label-mono text-[11px] uppercase tracking-wider text-on-surface-variant/80 font-semibold">Gestão</span><nav class="space-y-0.5 relative" data-active-classes="bg-primary-fixed text-primary font-semibold before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-1 before:bg-primary before:rounded-r"><a class="relative flex items-center gap-sm px-sm py-1.5 rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="empresa" href="#"><span class="material-symbols-outlined text-[18px]">domain</span><span>Empresa</span></a><a class="relative flex items-center gap-sm px-sm py-1.5 rounded-lg font-body-sm text-body-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all" data-path="equipe" href="#"><span class="material-symbols-outlined text-[18px]">group</span><span>Equipe</span></a></nav></div></div></div><div class="p-sm border-t border-outline-variant/20 bg-surface-container-low shrink-0"><div class="flex items-center justify-between p-xs rounded-lg bg-surface-container-lowest/80 border border-outline-variant/20"><div class="flex items-center gap-sm min-w-0"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="flex flex-col truncate"><span class="font-body-sm text-body-sm font-semibold text-on-surface truncate leading-tight">Rafael Moura</span><span class="font-label-mono text-[11px] text-on-surface-variant leading-tight truncate">Proprietário</span></div></div><button class="p-xs rounded text-on-surface-variant hover:text-error hover:bg-error-container/20 transition-colors shrink-0" title="Sair da conta" type="button"><span class="material-symbols-outlined text-[18px]">logout</span></button></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest/80 backdrop-blur-md border-b border-outline-variant/20 z-30 flex items-center justify-between px-lg"><div class="w-96"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-sm text-on-surface-variant text-[18px] pointer-events-none">search</span><input class="w-full pl-9 pr-sm py-1.5 bg-surface-container-low border border-outline-variant/30 rounded-lg font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/70 focus:outline-none focus:border-primary focus:bg-surface-container-lowest transition-all" placeholder="Buscar peças, impressoras, pedidos (Ctrl + K)..." type="search"/></div></div><div class="flex items-center gap-md"><div class="flex items-center gap-xs"><button class="p-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors" title="Criar novo item" type="button"><span class="material-symbols-outlined text-[20px]">add_circle</span></button><button class="p-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors relative" title="Notificações" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-surface-container-lowest"></span></button><button class="p-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors" title="Ajuda e Documentação" type="button"><span class="material-symbols-outlined text-[20px]">help</span></button></div><div class="h-5 w-px bg-outline-variant/40"></div><div class="flex items-center gap-sm"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="relative pt-16 bg-background min-h-screen px-lg py-lg"><div class="flex flex-col w-full">
+<!-- Navegação e Breadcrumb Superior -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-sm mb-lg">
+<div class="flex items-center gap-xs text-on-surface-variant font-label-mono text-label-mono">
+<span class="hover:text-on-surface cursor-pointer transition-colors">Recursos</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors flex items-center gap-xs" href="#">
+<span>Impressoras</span>
+</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-semibold">Nova impressora</span>
+</div>
+<a class="inline-flex items-center gap-xs font-body-sm text-body-sm text-primary hover:text-on-primary-fixed-variant transition-colors group" href="#">
+<span class="material-symbols-outlined text-[18px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+<span>Voltar para impressoras</span>
+</a>
+</div>
+<!-- Cabeçalho Editorial com Identificador Técnico -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md pb-md mb-xl">
+<div class="max-w-2xl">
+<div class="inline-flex items-center gap-xs px-sm py-0.5 bg-primary-fixed text-primary rounded-full font-label-mono text-[11px] font-semibold uppercase tracking-wider mb-xs">
+<span class="material-symbols-outlined text-[13px]">precision_manufacturing</span>
+<span>Parâmetros de Produção</span>
+</div>
+<h1 class="font-headline-md text-headline-md text-on-surface tracking-tight">Nova impressora</h1>
+<p class="font-body-base text-body-base text-on-surface-variant mt-xs">
+        Cadastre uma máquina física e seus parâmetros de custo para cálculo automático na precificadora.
+      </p>
+</div>
+<div class="flex items-center gap-xs bg-surface-container-low px-md py-sm rounded-xl">
+<span class="material-symbols-outlined text-primary text-[20px]">verified_user</span>
+<div class="flex flex-col">
+<span class="font-label-mono text-[10px] text-on-surface-variant uppercase tracking-wider">Algoritmo Ativo</span>
+<span class="font-label-mono text-label-mono font-semibold text-on-surface">Margem Real v3.2</span>
+</div>
+</div>
+</div>
+<!-- Grid Principal de Conteúdo -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+<!-- Formulário Principal (Coluna Esquerda: 7 Cols) -->
+<div class="lg:col-span-7 flex flex-col gap-lg">
+<!-- Seção 1: Identificação da Máquina -->
+<section class="bg-surface-container-lowest p-lg rounded-xl shadow-sm">
+<div class="flex items-center gap-sm mb-md pb-sm bg-surface-container-low/50 -mx-lg -mt-lg px-lg pt-md rounded-t-xl">
+<div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">badge</span>
+</div>
+<div>
+<h2 class="font-headline-md text-body-base font-semibold text-on-surface">1. Identificação da Máquina</h2>
+<p class="font-label-mono text-[11px] text-on-surface-variant">Dados de inventário e categorização física</p>
+</div>
+</div>
+<div class="space-y-md">
+<!-- Nome Interno -->
+<div>
+<div class="flex items-center justify-between mb-xs">
+<label class="font-body-sm text-body-sm font-semibold text-on-surface" for="machine-name">
+                Nome interno <span class="text-error font-bold">*</span>
+</label>
+<span class="font-label-mono text-[11px] text-on-surface-variant uppercase">Exclusivo na oficina</span>
+</div>
+<div class="relative">
+<input class="w-full px-md py-2 bg-surface-container-low rounded-lg font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" id="machine-name" name="machine-name" placeholder="Ex: Voron 2.4 — 01" required="" type="text" value="Bambu Lab A1 — 01"/>
+<span class="material-symbols-outlined absolute right-sm top-2.5 text-primary text-[18px]">check_circle</span>
+</div>
+<p class="font-label-mono text-[11px] text-on-surface-variant mt-1.5 flex items-start gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary shrink-0 mt-0.5">info</span>
+<span>Use um nome que diferencie esta máquina das demais (ex: Bambu A1 — 01, Bambu A1 — 02).</span>
+</p>
+</div>
+<!-- Linha Marca e Modelo -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+<div>
+<label class="block font-body-sm text-body-sm font-medium text-on-surface mb-xs" for="machine-brand">
+                Marca <span class="font-label-mono text-[11px] text-on-surface-variant font-normal">(opcional)</span>
+</label>
+<input class="w-full px-md py-2 bg-surface-container-low rounded-lg font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" id="machine-brand" name="machine-brand" placeholder="Ex: Creality, Prusa" type="text" value="Bambu Lab"/>
+</div>
+<div>
+<label class="block font-body-sm text-body-sm font-medium text-on-surface mb-xs" for="machine-model">
+                Modelo <span class="font-label-mono text-[11px] text-on-surface-variant font-normal">(opcional)</span>
+</label>
+<input class="w-full px-md py-2 bg-surface-container-low rounded-lg font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" id="machine-model" name="machine-model" placeholder="Ex: Ender 3 V3, MK4" type="text" value="A1"/>
+</div>
+</div>
+<!-- Tecnologia (Pill fixa) -->
+<div>
+<span class="block font-body-sm text-body-sm font-medium text-on-surface mb-xs">Tecnologia de Impressão</span>
+<div class="flex items-center justify-between p-sm bg-surface-container-low rounded-lg">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">layers</span>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Tecnologia FDM (Modelagem por Fusão e Deposição) — Padrão</span>
+</div>
+<span class="bg-surface-container-highest text-on-surface-variant font-label-mono text-[10px] px-sm py-0.5 rounded-full uppercase tracking-wider font-semibold">Fixa</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Seção 2: Parâmetros de Custo -->
+<section class="bg-surface-container-lowest p-lg rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-md pb-sm bg-surface-container-low/50 -mx-lg -mt-lg px-lg pt-md rounded-t-xl">
+<div class="flex items-center gap-sm">
+<div class="w-7 h-7 rounded-lg bg-tertiary-container/10 flex items-center justify-center text-tertiary-container">
+<span class="material-symbols-outlined text-[18px]">calculate</span>
+</div>
+<div>
+<h2 class="font-headline-md text-body-base font-semibold text-on-surface">2. Parâmetros de Custo</h2>
+<p class="font-label-mono text-[11px] text-on-surface-variant">Variáveis para amortização, conservação e energia</p>
+</div>
+</div>
+<span class="font-label-mono text-[11px] text-primary bg-primary-fixed px-sm py-0.5 rounded-full font-medium">Cálculo Ativo</span>
+</div>
+<div class="space-y-md">
+<!-- Linha 1 de Custos -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+<div>
+<label class="block font-body-sm text-body-sm font-semibold text-on-surface mb-xs" for="purchase-value">
+                Valor de compra em R$
+              </label>
+<div class="relative flex items-center">
+<span class="absolute left-md font-label-mono text-body-sm font-semibold text-on-surface-variant pointer-events-none">R$</span>
+<input class="w-full pl-10 pr-md py-2 bg-surface-container-low rounded-lg font-body-sm text-body-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" id="purchase-value" min="0" name="purchase-value" step="0.01" type="number" value="3000.00"/>
+</div>
+<p class="font-label-mono text-[11px] text-on-surface-variant mt-1.5 leading-tight">
+                Valor utilizado para calcular a depreciação da máquina. Aceita R$ 0,00 para máquinas já amortizadas.
+              </p>
+</div>
+<div>
+<label class="block font-body-sm text-body-sm font-semibold text-on-surface mb-xs" for="useful-life">
+                Vida útil estimada em horas <span class="text-error font-bold">*</span>
+</label>
+<div class="relative flex items-center">
+<input class="w-full pl-md pr-16 py-2 bg-surface-container-low rounded-lg font-body-sm text-body-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" id="useful-life" min="1" name="useful-life" required="" type="number" value="6000"/>
+<span class="absolute right-md font-label-mono text-[12px] font-medium text-on-surface-variant pointer-events-none uppercase">horas</span>
+</div>
+<p class="font-label-mono text-[11px] text-on-surface-variant mt-1.5 leading-tight">
+                Estimativa de horas de uso considerada para distribuir o valor de compra. Não é o contador de horas rodadas.
+              </p>
+</div>
+</div>
+<!-- Linha 2 de Custos -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-md">
+<div>
+<label class="block font-body-sm text-body-sm font-semibold text-on-surface mb-xs" for="power-watts">
+                Potência média em Watts <span class="text-error font-bold">*</span>
+</label>
+<div class="relative flex items-center">
+<input class="w-full pl-md pr-12 py-2 bg-surface-container-low rounded-lg font-body-sm text-body-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" id="power-watts" min="1" name="power-watts" required="" type="number" value="280"/>
+<span class="absolute right-md font-label-mono text-[12px] font-semibold text-on-surface-variant pointer-events-none">W</span>
+</div>
+<p class="font-label-mono text-[11px] text-on-surface-variant mt-1.5 leading-tight">
+                Consumo médio de potência durante a impressão. Pode ser diferente da potência máxima da fonte.
+              </p>
+</div>
+<div>
+<label class="block font-body-sm text-body-sm font-semibold text-on-surface mb-xs" for="maintenance-cost">
+                Manutenção estimada por hora
+              </label>
+<div class="relative flex items-center">
+<span class="absolute left-md font-label-mono text-body-sm font-semibold text-on-surface-variant pointer-events-none">R$</span>
+<input class="w-full pl-10 pr-12 py-2 bg-surface-container-low rounded-lg font-body-sm text-body-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all" id="maintenance-cost" min="0" name="maintenance-cost" step="0.01" type="number" value="0.20"/>
+<span class="absolute right-md font-label-mono text-[12px] font-medium text-on-surface-variant pointer-events-none">/h</span>
+</div>
+<p class="font-label-mono text-[11px] text-on-surface-variant mt-1.5 leading-tight">
+                Estimativa de custo de manutenção e reposição por hora de impressão.
+              </p>
+</div>
+</div>
+</div>
+</section>
+<!-- Ações do Formulário -->
+<div class="flex items-center justify-between pt-sm">
+<a class="px-lg py-2.5 rounded-lg font-body-sm text-body-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors text-center" href="#">
+          Cancelar
+        </a>
+<div class="flex items-center gap-sm">
+<button class="px-lg py-2.5 bg-primary-container hover:bg-primary text-on-primary font-body-sm text-body-sm font-semibold rounded-lg shadow-sm hover:shadow transition-all flex items-center gap-xs" id="btn-save-printer" type="button">
+<span class="material-symbols-outlined text-[18px]">add_task</span>
+<span>Cadastrar impressora</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Coluna Direita: Painel de Ajuda e Simulador em Tempo Real (5 Cols) -->
+<div class="lg:col-span-5 flex flex-col gap-md sticky top-20">
+<!-- Card Principal: Simulador e Prévia -->
+<div class="bg-surface-container-lowest p-lg rounded-xl shadow-md relative overflow-hidden">
+<!-- Detalhe decorativo com gradiente sutil de engenharia -->
+<div class="absolute -right-8 -top-8 w-32 h-32 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex items-start justify-between gap-sm mb-sm">
+<div>
+<span class="font-label-mono text-[10px] uppercase font-bold text-primary tracking-widest">Simulador Ativo</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Prévia de Custos da Máquina</h3>
+</div>
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary text-[18px]">query_stats</span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">
+          Cálculo instantâneo gerado a partir dos parâmetros ao lado:
+        </p>
+<!-- Bloco de Métricas de Cálculo Instantâneo -->
+<div class="space-y-sm bg-surface-container-low p-md rounded-xl">
+<!-- Depreciação -->
+<div class="flex items-center justify-between py-1">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-medium text-on-surface">Depreciação por hora</span>
+<span class="font-label-mono text-[11px] text-on-surface-variant" id="preview-depreciation-formula">
+                Fórmula: R$ 3.000,00 ÷ 6.000 h
+              </span>
+</div>
+<div class="text-right">
+<span class="font-label-mono text-body-base font-bold text-on-surface" id="preview-depreciation-val">
+                R$ 0,50 / h
+              </span>
+</div>
+</div>
+<div class="h-px bg-surface-container-highest"></div>
+<!-- Manutenção -->
+<div class="flex items-center justify-between py-1">
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-medium text-on-surface">Manutenção estimada</span>
+<span class="font-label-mono text-[11px] text-on-surface-variant">Reposição periódica de bicos e peças</span>
+</div>
+<div class="text-right">
+<span class="font-label-mono text-body-base font-bold text-on-surface" id="preview-maintenance-val">
+                R$ 0,20 / h
+              </span>
+</div>
+</div>
+<!-- Destaque Total Acumulado -->
+<div class="bg-primary-fixed/60 p-md rounded-lg flex items-center justify-between mt-sm">
+<div class="flex flex-col">
+<span class="font-label-mono text-[11px] uppercase tracking-wider text-primary font-bold">Custo Fixo Máquina</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant">Depreciação + Manutenção</span>
+</div>
+<div class="text-right">
+<span class="font-headline-md text-headline-md font-bold text-primary tracking-tight" id="preview-total-val">
+                R$ 0,70 / h
+              </span>
+</div>
+</div>
+</div>
+<!-- Mini Visualização Gráfica do Custo em Barra Proporcional -->
+<div class="mt-md pt-sm">
+<div class="flex items-center justify-between font-label-mono text-[10px] text-on-surface-variant mb-1">
+<span class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span> Depreciação (<span id="deprec-pct">71%</span>)
+            </span>
+<span class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-tertiary inline-block"></span> Manutenção (<span id="maint-pct">29%</span>)
+            </span>
+</div>
+<div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="bg-primary h-full transition-all duration-300" id="bar-deprec" style="width: 71.4%"></div>
+<div class="bg-tertiary h-full transition-all duration-300" id="bar-maint" style="width: 28.6%"></div>
+</div>
+</div>
+<!-- Explicação do Custo de Energia Elétrica -->
+<div class="mt-md bg-surface-container-low p-md rounded-xl space-y-xs">
+<div class="flex items-center gap-xs text-on-surface">
+<span class="material-symbols-outlined text-tertiary-container text-[18px]">bolt</span>
+<span class="font-body-sm text-body-sm font-semibold">Sobre o custo de Energia:</span>
+</div>
+<p class="font-body-sm text-[13px] text-on-surface-variant leading-relaxed">
+            A energia não entra neste total fixo porque varia por impressão. A precificadora calculará automaticamente usando: 
+            <span class="font-label-mono text-[11px] text-on-surface font-semibold bg-surface-container-highest px-1 py-0.5 rounded">
+              Potência (<span id="preview-power-text">280</span>W) × Tempo fatiado × Tarifa da sua empresa (R$ 0,854321/kWh)
+            </span>.
+          </p>
+</div>
+<!-- Dica de Integridade / Checklist -->
+<div class="mt-md p-md bg-surface-container-high/60 rounded-xl flex items-start gap-sm">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">rule</span>
+<div class="space-y-xs">
+<span class="font-label-mono text-[11px] uppercase tracking-wider text-on-surface font-bold">Diretriz do Sistema</span>
+<p class="font-body-sm text-[12px] text-on-surface-variant leading-normal">
+<strong>Campos obrigatórios:</strong> Nome interno, Vida útil (> 0) e Potência (> 0). Ao salvar, esta impressora ficará imediatamente disponível para seleção nas ordens de serviço e matrizes de precificação.
+            </p>
+</div>
+</div>
+</div>
+<!-- Card Complementar de Máquinas Cadastradas de Referência -->
+<div class="bg-surface-container-lowest p-md rounded-xl shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">dataset</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-surface">Parque Ativo</span>
+<span class="font-label-mono text-[11px] text-on-surface-variant">4 máquinas operacionais cadastradas</span>
+</div>
+</div>
+<span class="font-label-mono text-label-mono px-sm py-1 bg-surface-container-low text-on-surface font-semibold rounded-lg">
+          Média: R$ 0,78/h
+        </span>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    // Referências aos inputs
+    const purchaseInput = document.getElementById('purchase-value');
+    const lifeInput = document.getElementById('useful-life');
+    const maintInput = document.getElementById('maintenance-cost');
+    const powerInput = document.getElementById('power-watts');
+    const nameInput = document.getElementById('machine-name');
+    const saveBtn = document.getElementById('btn-save-printer');
+
+    // Referências aos elementos de prévia
+    const deprecFormulaEl = document.getElementById('preview-depreciation-formula');
+    const deprecValEl = document.getElementById('preview-depreciation-val');
+    const maintValEl = document.getElementById('preview-maintenance-val');
+    const totalValEl = document.getElementById('preview-total-val');
+    const powerTextEl = document.getElementById('preview-power-text');
+    const barDeprec = document.getElementById('bar-deprec');
+    const barMaint = document.getElementById('bar-maint');
+    const deprecPctEl = document.getElementById('deprec-pct');
+    const maintPctEl = document.getElementById('maint-pct');
+
+    function formatBRL(val) {
+      return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function recalculate() {
+      const purchase = parseFloat(purchaseInput.value) || 0;
+      const lifeHours = parseFloat(lifeInput.value) || 0;
+      const maintPerHour = parseFloat(maintInput.value) || 0;
+      const power = parseFloat(powerInput.value) || 0;
+
+      // Depreciação por hora
+      let deprecPerHour = 0;
+      if (lifeHours > 0) {
+        deprecPerHour = purchase / lifeHours;
+      }
+
+      // Atualiza fórmulas e textos
+      deprecFormulaEl.innerText = `Fórmula: R$ ${formatBRL(purchase)} ÷ ${lifeHours.toLocaleString('pt-BR')} h`;
+      deprecValEl.innerText = `R$ ${formatBRL(deprecPerHour)} / h`;
+      maintValEl.innerText = `R$ ${formatBRL(maintPerHour)} / h`;
+
+      // Custo Fixo Total
+      const totalCost = deprecPerHour + maintPerHour;
+      totalValEl.innerText = `R$ ${formatBRL(totalCost)} / h`;
+
+      // Potência em Watts
+      powerTextEl.innerText = power > 0 ? power : 0;
+
+      // Proporções para o gráfico horizontal
+      if (totalCost > 0) {
+        const pDeprec = Math.round((deprecPerHour / totalCost) * 100);
+        const pMaint = 100 - pDeprec;
+        barDeprec.style.width = pDeprec + '%';
+        barMaint.style.width = pMaint + '%';
+        deprecPctEl.innerText = pDeprec + '%';
+        maintPctEl.innerText = pMaint + '%';
+      } else {
+        barDeprec.style.width = '50%';
+        barMaint.style.width = '50%';
+        deprecPctEl.innerText = '0%';
+        maintPctEl.innerText = '0%';
+      }
+    }
+
+    [purchaseInput, lifeInput, maintInput, powerInput].forEach(inp => {
+      inp.addEventListener('input', recalculate);
+    });
+
+    saveBtn.addEventListener('click', function() {
+      const name = nameInput.value.trim();
+      const life = parseFloat(lifeInput.value) || 0;
+      const power = parseFloat(powerInput.value) || 0;
+
+      if (!name) {
+        alert('Por favor, preencha o Nome Interno da impressora.');
+        nameInput.focus();
+        return;
+      }
+      if (life <= 0) {
+        alert('A Vida Útil Estimada precisa ser maior que 0 horas.');
+        lifeInput.focus();
+        return;
+      }
+      if (power <= 0) {
+        alert('A Potência média precisa ser maior que 0 Watts.');
+        powerInput.focus();
+        return;
+      }
+
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = `
+        <span class="material-symbols-outlined text-[18px] animate-spin">refresh</span>
+        <span>Gravando máquina...</span>
+      `;
+
+      setTimeout(() => {
+        saveBtn.innerHTML = `
+          <span class="material-symbols-outlined text-[18px]">check</span>
+          <span>Impressora Cadastrada!</span>
+        `;
+        saveBtn.classList.remove('bg-primary-container', 'hover:bg-primary');
+        saveBtn.classList.add('bg-tertiary-container');
+        
+        setTimeout(() => {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = `
+            <span class="material-symbols-outlined text-[18px]">add_task</span>
+            <span>Cadastrar impressora</span>
+          `;
+          saveBtn.classList.remove('bg-tertiary-container');
+          saveBtn.classList.add('bg-primary-container', 'hover:bg-primary');
+        }, 2000);
+      }, 700);
+    });
+
+    // Execução inicial
+    recalculate();
+  })();
+</script></main></div></body></html>

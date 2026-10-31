@@ -22,7 +22,7 @@ export default async function EditOrderPage({params}: {params:Promise<{orderId:s
   if (blocked) return <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-amber-900">Este pedido não permite edição comercial: pedidos cancelados, entregues ou com atendimento físico são protegidos pelo servidor. <Link href={`/admin/orders?orderId=${orderId}`} className="underline">Ver detalhes</Link></div>;
   return <div className="space-y-6">
     <header>
-      <Link href={`/admin/orders?orderId=${orderId}`} className="text-sm text-[#3d32e6]">← Detalhes</Link>
+      <Link href={`/admin/orders?orderId=${orderId}`} className="text-sm text-[#3d32e6]">Detalhes</Link>
       <h1 className="mt-2 text-2xl font-bold text-[#152336]">Editar pedido #{detail.order.displayNumber}</h1>
       <p className="text-sm text-[#464556]">Versão {detail.order.version}. Alterações concorrentes exigirão recarregar os dados.</p>
     </header>

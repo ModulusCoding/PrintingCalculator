@@ -3,6 +3,8 @@ import { isPublicOnboardingEnabled } from "@/lib/auth/config";
 import { redirect } from "next/navigation";
 import { LogoutButton } from "./LogoutButton";
 import Link from "next/link";
+import { AuthenticatedShell } from "@/app/(authenticated)/AuthenticatedShell";
+import { shellAccessForRole } from "@/components/layout/access";
 
 const stateMessages: Record<string, { title: string; description: string }> = {
   unauthenticated: {
@@ -83,15 +85,24 @@ export default async function ContaPage() {
 
   if (context.state === "business_ready") {
     return (
-      <main className="mx-auto my-16 max-w-lg space-y-6 rounded-xl border bg-white p-8">
-        <h1 className="text-2xl font-bold">Minha conta</h1>
-        <p>Sua conta está vinculada a uma empresa ativa.</p>
-        <nav className="flex flex-wrap gap-4">
-          <Link className="underline" href="/home">Entrar no Hub</Link>
-          {context.role === "owner" && <Link className="underline" href="/meu-plano">Meu plano</Link>}
+      <AuthenticatedShell {...shellAccessForRole(context.role)}><section className="mx-auto max-w-xl space-y-6 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 text-[#152336]">
+        <header className="space-y-2">
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-slate-500">Configurações / Perfil</p>
+          <h1 className="text-3xl font-semibold tracking-tight">Minha conta</h1>
+          <p className="text-sm text-slate-600">Sua conta está ativa e vinculada à empresa.</p>
+        </header>
+        <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 space-y-2 text-sm">
+          <p><strong className="font-medium text-[#152336]">Papel no sistema:</strong> {context.role}</p>
+          <p><strong className="font-medium text-[#152336]">Empresa ID:</strong> <span className="font-mono text-xs text-slate-500">{context.enterpriseId}</span></p>
+        </div>
+        <nav className="flex flex-wrap items-center gap-4 pt-2">
+          <Link className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#2B00FF] px-5 py-3 text-sm font-medium text-white hover:bg-[#2200CC]" href="/home">Ir para o Hub</Link>
+          {context.role === "owner" && <Link className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-[#152336] hover:bg-slate-50" href="/meu-plano">Meu plano</Link>}
         </nav>
-        <LogoutButton />
-      </main>
+        <div className="border-t border-slate-100 pt-6">
+          <LogoutButton />
+        </div>
+      </section></AuthenticatedShell>
     );
   }
 

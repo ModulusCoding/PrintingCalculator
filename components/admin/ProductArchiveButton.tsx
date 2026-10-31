@@ -34,6 +34,7 @@ export function ProductArchiveButton({ id, version, active, returnTo }: { id: st
     if (!window.confirm(active ? "Arquivar este produto?" : "Restaurar este produto?")) return;
     setMessage("");
     startTransition(async () => {
+      try {
       const result = await setInternalProductActive(id, version, !active);
       if (result.status === "success") {
         router.push(safeReturnTo);
@@ -42,11 +43,12 @@ export function ProductArchiveButton({ id, version, active, returnTo }: { id: st
       }
       setStatus(result.status);
       setMessage(productMessage(result.status, "reference" in result ? result.reference : undefined));
+      } catch { setStatus("unknown"); setMessage(productMessage("unknown")); }
     });
   }
 
   return <div className="inline-block">
-    <button type="button" onClick={changeState} disabled={pending} className="text-sm underline text-red-600 disabled:opacity-50">
+    <button type="button" onClick={changeState} disabled={pending} className="inline-flex min-h-11 items-center rounded-lg px-2 text-sm font-medium text-[#152336] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2B00FF] disabled:opacity-50">
       {pending ? "Processando..." : label}
     </button>
     {message && <p role="alert" className="text-xs text-red-700">{message} {productPlanAction(status) && <Link href="/planos" className="underline">Consultar planos</Link>}</p>}

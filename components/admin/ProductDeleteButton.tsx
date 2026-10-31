@@ -26,20 +26,28 @@ export function ProductDeleteButton({ id, version, returnTo }: { id: string; ver
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
-  const [attempt] = useState(() => ({ attemptId: crypto.randomUUID(), expectedVersion: version }));
+  const [attempt, setAttempt] = useState<{ attemptId: string; expectedVersion: number } | null>(null);
 
   function deleteProduct() {
-    if (!window.confirm("Excluir este produto? Ele ficará indisponível para operações, o histórico será preservado e o espaço será liberado. Não há restauração comum.")) return;
+    if (!window.confirm("Excluir este produto? Ele ficará indisponível para operações e o histórico será preservado. A exclusão não garante nova capacidade de cadastro no seu plano. Não há restauração comum.")) return;
+    const currentAttempt = attempt ?? { attemptId: crypto.randomUUID(), expectedVersion: version };
+    setAttempt(currentAttempt);
     setMessage("");
     startTransition(async () => {
-      const result = await deleteInternalProduct(id, attempt.expectedVersion, attempt.attemptId);
+      try {
+      const result = await deleteInternalProduct(id, currentAttempt.expectedVersion, currentAttempt.attemptId);
       if (result.status === "deleted") {
         router.push(safeReturnTo);
         router.refresh();
         return;
       }
+      if (result.status === "version_conflict") {
+        setAttempt(null);
+        router.refresh();
+      }
       setStatus(result.status);
       setMessage(productMessage(result.status, "reference" in result ? result.reference : undefined));
+      } catch { setStatus("unknown"); setMessage(productMessage("unknown")); }
     });
   }
 
@@ -49,7 +57,7 @@ export function ProductDeleteButton({ id, version, returnTo }: { id: string; ver
         type="button"
         onClick={deleteProduct}
         disabled={pending}
-        className="text-sm underline text-red-600 disabled:opacity-50"
+        className="inline-flex min-h-11 items-center rounded-lg px-2 text-sm font-medium text-red-700 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2B00FF] disabled:opacity-50"
       >
         {pending ? "Excluindo..." : "Excluir"}
       </button>

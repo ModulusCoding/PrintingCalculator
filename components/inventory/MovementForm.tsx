@@ -122,7 +122,7 @@ export function MovementForm({ productId, productName, balance, version }: Movem
   const isSuccess = result && ["created", "idempotent", "no_change"].includes(result.status);
   const isBlockingError = result && !isSuccess && result.status !== "uncertain" && result.status !== "invalid_input";
   return (
-    <section className="space-y-4 rounded border bg-white p-5">
+    <section className="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <header>
         <h2 className="text-lg font-semibold">Movimentar estoque</h2>
         <p className="mt-1 text-sm text-slate-600">
@@ -130,7 +130,7 @@ export function MovementForm({ productId, productName, balance, version }: Movem
         </p>
       </header>
 
-      <div className="rounded bg-indigo-50 p-3 text-sm text-indigo-900" role="note">
+      <div className="rounded-xl border border-modulus-primary/10 bg-modulus-primary/5 p-4 text-sm leading-relaxed text-slate-700" role="note">
         A entrada manual registra peças existentes. Ela não comprova produção nem altera o custo médio de materiais.
       </div>
 
@@ -146,7 +146,7 @@ export function MovementForm({ productId, productName, balance, version }: Movem
               setResult(null);
             }}
             disabled={busy || !!frozen}
-            className="mt-1 block w-full rounded border-slate-300 p-2 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500"
+            className="mt-2 block min-h-11 w-full rounded-xl border bg-slate-50 border-slate-300 p-2 shadow-sm focus:border-modulus-primary focus:ring-modulus-primary disabled:bg-slate-50 disabled:text-slate-500"
           >
             <option value="entry">Entrada (+)</option>
             <option value="exit">Saída (-)</option>
@@ -170,15 +170,15 @@ export function MovementForm({ productId, productName, balance, version }: Movem
             disabled={busy || !!frozen}
             aria-invalid={!!valueErrors}
             aria-describedby={valueErrors ? valueErrorId : undefined}
-            className={`mt-1 block w-full rounded p-2 shadow-sm focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 ${
-              valueErrors ? "border-red-300 focus:border-red-500" : "border-slate-300 focus:border-indigo-500"
+            className={`mt-2 block min-h-11 w-full rounded-xl border bg-slate-50 p-2 shadow-sm focus:ring-modulus-primary disabled:bg-slate-50 disabled:text-slate-500 ${
+              valueErrors ? "border-red-300 focus:border-red-500" : "border-slate-300 focus:border-modulus-primary"
             }`}
           />
           {valueErrors && (
             <p id={valueErrorId} className="mt-1 text-xs text-red-600">{valueErrors.join(" ")}</p>
           )}
           <p className="mt-1 text-xs text-slate-500">
-            Saldo atual: {balance}. 
+            Saldo físico atual: {balance}.
             {predicted !== null && predicted >= 0 ? (
               <span className="ml-1 font-medium">
                 Previsto: {predicted} ({delta! > 0 ? "+" : ""}{delta})
@@ -203,8 +203,8 @@ export function MovementForm({ productId, productName, balance, version }: Movem
             disabled={busy || !!frozen}
             aria-invalid={!!reasonErrors}
             aria-describedby={reasonErrors ? reasonErrorId : undefined}
-            className={`mt-1 block w-full rounded p-2 shadow-sm focus:ring-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 ${
-              reasonErrors ? "border-red-300 focus:border-red-500" : "border-slate-300 focus:border-indigo-500"
+            className={`mt-2 block min-h-11 w-full rounded-xl border bg-slate-50 p-2 shadow-sm focus:ring-modulus-primary disabled:bg-slate-50 disabled:text-slate-500 ${
+              reasonErrors ? "border-red-300 focus:border-red-500" : "border-slate-300 focus:border-modulus-primary"
             }`}
             placeholder="Ex: Contagem mensal, erro de digitação, etc."
           />
@@ -228,7 +228,7 @@ export function MovementForm({ productId, productName, balance, version }: Movem
                   type="button"
                   disabled={busy}
                   onClick={() => frozen && perform(frozen)}
-                  className="rounded bg-red-100 px-3 py-1 text-xs font-semibold hover:bg-red-200 disabled:opacity-50"
+                  className="min-h-11 rounded-xl bg-red-100 px-3 py-2 text-xs font-semibold hover:bg-red-200 disabled:opacity-50"
                 >
                   Repetir mesma tentativa
                 </button>
@@ -238,7 +238,7 @@ export function MovementForm({ productId, productName, balance, version }: Movem
                     setStale(true);
                     router.refresh();
                   }}
-                  className="rounded border border-red-200 px-3 py-1 text-xs font-semibold hover:bg-red-100"
+                  className="min-h-11 rounded-xl border border-red-200 px-3 py-2 text-xs font-semibold hover:bg-red-100"
                 >
                   Atualizar e conferir saldo
                 </button>
@@ -253,7 +253,7 @@ export function MovementForm({ productId, productName, balance, version }: Movem
                     setStale(true);
                     router.refresh();
                   }}
-                  className="rounded bg-red-100 px-3 py-1 text-xs font-semibold hover:bg-red-200"
+                  className="min-h-11 rounded-xl bg-red-100 px-3 py-2 text-xs font-semibold hover:bg-red-200"
                 >
                   Atualizar dados para tentar novamente
                 </button>
@@ -262,12 +262,12 @@ export function MovementForm({ productId, productName, balance, version }: Movem
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
           {!frozen && !isSuccess && (
             <button
               type="submit"
               disabled={busy || stale}
-              className="inline-flex items-center rounded bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-slate-400"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-modulus-primary px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-modulus-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-modulus-primary disabled:bg-slate-400 sm:w-auto"
             >
               {busy ? "Processando..." : "Registrar movimentação"}
             </button>
@@ -284,7 +284,7 @@ export function MovementForm({ productId, productName, balance, version }: Movem
                 setStale(true);
                 router.refresh();
               }}
-              className="rounded bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500"
+              className="min-h-11 rounded-xl bg-modulus-primary px-5 py-3 text-sm font-semibold text-white hover:bg-modulus-primary/90"
             >
               Nova movimentação
             </button>
