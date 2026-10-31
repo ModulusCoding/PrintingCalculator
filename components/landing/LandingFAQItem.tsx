@@ -1,4 +1,5 @@
 "use client";
+import { Plus } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 export function LandingFAQItem({ title, children }: { title: ReactNode; children: ReactNode }) {
@@ -14,7 +15,7 @@ export function LandingFAQItem({ title, children }: { title: ReactNode; children
     return () => animation.cancel();
   }, [open]);
   return <details ref={detail} name="landing-faq" onToggle={event => { if (!event.currentTarget.open) setOpen(false); }}>
-    <summary onClick={event => { event.preventDefault(); if (!open && detail.current) detail.current.open = true; setOpen(!open); }}>{title}<span>+</span></summary>
+    <summary onClick={event => { event.preventDefault(); if (!open && detail.current) detail.current.open = true; setOpen(!open); }}>{title}<span><Plus size={20} strokeWidth={1.75} aria-hidden="true" /></span></summary>
     <div ref={answer} className="ml-faq-answer">{children}</div>
   </details>;
 }

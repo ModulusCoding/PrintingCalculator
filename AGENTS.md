@@ -7,3 +7,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## UI da Modulus
+
+- Não usar setas decorativas em botões, links, CTAs ou cards clicáveis. Setas só são permitidas quando estritamente funcionais e indispensáveis (por exemplo, navegação direcional).
+- Reutilizar os assets oficiais de marca em `public` e o conjunto `lucide-react` para ícones de interface.

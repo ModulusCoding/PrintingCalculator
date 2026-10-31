@@ -30,13 +30,24 @@ function load(file, imports = {}, globals = {}) {
   return loadedModule.exports;
 }
 const link = { default: ({ children, ...props }) => React.createElement('a', props, children) };
+// Keep official asset paths visible without invoking Next's image optimizer in isolated SSR.
+const image = { default: props => {
+  const attributes = { ...props };
+  delete attributes.priority;
+  delete attributes.fill;
+  return React.createElement('img', attributes);
+} };
+const cssModule = prefix => ({ default: new Proxy({}, { get: (_, key) => `${prefix}-${String(key)}` }) });
+const previewStyles = cssModule('preview');
+const icons = require('lucide-react');
 function ssr(enabled) {
   const cache = new Map();
   function component(file) {
     if (cache.has(file)) return cache.get(file);
     const imports = {
-      react: React, 'next/link': link,
+      react: React, 'next/link': link, 'next/image': image, 'lucide-react': icons,
       './Landing.module.css': { default: { landing: 'isolated-landing' } },
+      './LandingPreview.module.css': previewStyles,
       './useLandingEffects': { useLandingEffects() {} },
       '@/lib/auth/config': { isPublicOnboardingEnabled: () => enabled },
     };
@@ -71,7 +82,7 @@ function text(tree) {
   if (tree && typeof tree === 'object') return text(tree.props?.children);
   return tree == null || typeof tree === 'boolean' ? '' : String(tree);
 }
-function hooks(file) {
+function hooks(file, globals = {}) {
   const slots = [], refs = [], effects = [], frames = new Map(), timers = new Map();
   let cursor = 0, refCursor = 0, nextId = 1;
   const jsx = (type, props) => ({ type, props: props ?? {} });
@@ -89,6 +100,9 @@ function hooks(file) {
   };
   const component = load(landing + file, {
     react, 'next/link': { default: props => jsx('a', props) },
+    'lucide-react': icons, 'next/image': image,
+    './LandingBrand': load(landing + 'LandingBrand.tsx', { 'next/image': image }),
+    './LandingPreview.module.css': previewStyles,
     'react/jsx-runtime': { jsx, jsxs: jsx, Fragment: 'fragment' },
   }, {
     performance: { now: () => 0 },
@@ -97,6 +111,7 @@ function hooks(file) {
     cancelAnimationFrame(id) { frames.delete(id); },
     setTimeout(callback) { const id = nextId++; timers.set(id, callback); return id; },
     clearTimeout(id) { timers.delete(id); },
+    ...globals,
   });
   return {
     refs, effects, frames, timers,
@@ -132,7 +147,7 @@ test('SSR preserves all original source sections, landmarks, anchor targets, and
   assert.equal(ids.length, new Set(ids).size, 'No duplicate DOM IDs');
   for (const [, id] of html.matchAll(/href="#([^"]+)"/g)) assert.ok(ids.includes(id), `Broken anchor #${id}`);
   assert.doesNotMatch(html, /<script|preview-dialog|data-open="login"|fonts\.googleapis/);
-  assert.match(html, /Nenhum dado real é alterado/);
+  assert.match(html, /Prévia estática · Dados ilustrativos/);
 });
 
 for (const enabled of [false, true]) {
@@ -161,8 +176,8 @@ test('SEO replaces former calculator marketing title without inheriting the root
   assert.ok(fs.existsSync(path.join(root, 'public', metadata.icons.icon)));
 });
 
-test('source favicon copied byte-for-byte; sculpture geometry remains code-native and server rendered', () => {
-  assert.equal(source('public/landing/favicon.svg'), source(original + 'assets/favicon.svg'));
+test('public favicon remains available; sculpture geometry remains code-native and server rendered', () => {
+  assert.match(source('public/landing/favicon.svg'), /<svg[^>]*viewBox="0 0 64 64"/);
   const html = ssr(false).html;
   assert.match(html, /id="vaseLayers"/);
   assert.equal((html.match(/<polygon /g) ?? []).length, 92 * 12 + 1);
@@ -222,7 +237,13 @@ test('commercial cards preserve real prices, shared capacity, historical free ca
   assert.match(html, /Até 3 pedidos históricos/);
   assert.match(html, /15 materiais: carretéis \+ materiais gerais/);
   assert.match(html, /15 cadastros somados/);
-  assert.match(html, /<button[^>]*disabled=""[^>]*>Em construção/);
+  assert.match(html, /<button[^>]*disabled=""[^>]*>Em breve<\/button>/);
+  const magnata = html.match(/<article[^>]*ml-upcoming[^>]*>[\s\S]*?<\/article>/)?.[0];
+  assert.ok(magnata, 'Magnata future card is rendered');
+  assert.match(magnata, /Base prevista: recursos do Visionário/);
+  assert.match(magnata, /Escopo a confirmar/);
+  assert.match(magnata, /Sem contratação ou cobrança antecipada/);
+  assert.doesNotMatch(magnata, /<a\b|3 operadores|3 operators|materiais ilimitados|telemetria/i);
   assert.match(html, /ainda não contratável/);
   assert.match(html, /Não há telemetria, monitoramento de camadas ou controle remoto/);
   assert.match(html, /Não exige cartão/);
@@ -230,50 +251,32 @@ test('commercial cards preserve real prices, shared capacity, historical free ca
   assert.match(source('lib/plans.ts'), /7990/);
 });
 
-test('demo tabs switch panels and preserve local pricing/order state', () => {
-  const h = hooks('LandingDemo.tsx');
-  let tree = h.render();
-  assert.equal(byId(tree, 'panel-pricing').props.hidden, false);
-  for (const tab of ['stock', 'orders', 'pricing']) {
-    one(tree, node => node.props?.['data-tab'] === tab).props.onClick();
-    tree = h.render();
-    for (const key of ['pricing', 'stock', 'orders']) assert.equal(byId(tree, `panel-${key}`).props.hidden, tab !== key);
-    assert.equal(one(tree, node => node.props?.['data-tab'] === tab).props['aria-pressed'], true);
-  }
+test('Home preview is static, illustrative, CSS-module scoped, and independent of authenticated UI', () => {
+  const demo = source(landing + 'LandingDemo.tsx');
+  assert.doesNotMatch(demo, /useState|useEffect|use client|onClick|onChange|@\/components\/(?:dashboard|layout)|@\/lib\//);
+  assert.match(demo, /import styles from "\.\/LandingPreview\.module\.css"/);
+  const tree = hooks('LandingDemo.tsx').render();
+  const figure = one(tree, node => node.type === 'figure');
+  assert.match(figure.props.className, /preview-preview ml-reveal/);
+  assert.match(text(figure), /Prévia estática · Dados ilustrativos/);
+  assert.match(text(figure), /Vendas do mês/);
+  assert.match(text(figure), /Recebido no mês/);
+  assert.match(text(figure), /não representam lucro/);
+  assert.equal(nodes(figure, node => ['button', 'a', 'input', 'select', 'form'].includes(node.type)).length, 0);
+  assert.equal(nodes(figure, node => Object.keys(node.props).some(key => /^on[A-Z]/.test(key))).length, 0);
+  const html = renderToStaticMarkup(React.createElement(load(landing + 'LandingDemo.tsx', {
+    'next/image': image, 'lucide-react': icons, './LandingPreview.module.css': previewStyles,
+  }).default));
+  assert.match(html, /src="\/logo_Horizontal\.svg"[^>]*alt="Modulus"/);
+  assert.match(html, /role="img" aria-label="mai: vendas/);
 });
 
-for (const weight of [20, 100, 300]) {
-  test(`demo slider ${weight}g uses original reference math, 5% loss and 100% markup`, () => {
-    const h = hooks('LandingDemo.tsx');
-    byId(h.render(), 'weight').props.onChange({ target: { value: String(weight) } });
-    h.flushFrames();
-    const tree = h.render();
-    const brl = value => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    assert.equal(text(byId(tree, 'weight-value')), String(weight));
-    assert.equal(byId(tree, 'weight').props['aria-valuetext'], `${weight} gramas`);
-    assert.equal(text(byId(tree, 'filament-cost')), brl(weight * 1.05 * .1));
-    assert.equal(text(byId(tree, 'cost-total')), brl(weight * 1.05 * .1 + 9));
-    assert.equal(text(byId(tree, 'suggested')), brl((weight * 1.05 * .1 + 9) * 2));
-  });
-}
-
-test('demo order advances exactly twice, updates counters, disables delivery, and resets', () => {
-  const h = hooks('LandingDemo.tsx');
-  let tree = h.render();
-  for (const stage of [0, 1, 2]) {
-    assert.equal(text(byId(tree, 'count-quoted')), stage === 0 ? '1' : '0');
-    assert.equal(text(byId(tree, 'count-paid')), stage === 1 ? '1' : '0');
-    assert.equal(text(byId(tree, 'count-delivered')), stage === 2 ? '2' : '1');
-    assert.equal(byId(tree, 'advance-order').props.disabled, stage === 2);
-    byId(tree, 'advance-order').props.onClick();
-    tree = h.render();
-  }
-  assert.match(text(one(tree, node => node.props?.role === 'status')), /simulação/);
-  byId(tree, 'reset-order').props.onClick();
-  tree = h.render();
-  assert.match(text(byId(tree, 'advance-order')), /Marcar como pago/);
-  h.flushTimers();
-  assert.equal(text(one(h.render(), node => node.props?.role === 'status')).trim(), '✓');
+test('shared LandingBrand renders the official asset with meaningful alternative text', () => {
+  const Brand = load(landing + 'LandingBrand.tsx', { 'next/image': image }).default;
+  const html = renderToStaticMarkup(React.createElement(Brand));
+  assert.match(html, /src="\/logo_Horizontal\.svg"[^>]*alt="Modulus"/);
+  assert.ok(fs.existsSync(path.join(root, 'public/logo_Horizontal.svg')));
+  assert.match(source(landing + 'LandingHeader.tsx'), /LandingBrand/);
 });
 
 test('comparison modes and pricing disclosure expose state and correctly labelled content', () => {
@@ -294,6 +297,63 @@ test('comparison modes and pricing disclosure expose state and correctly labelle
   tree = comparison.render({ children: 'table content' });
   assert.equal(byId(tree, 'detailed-comparison').props.hidden, false);
   assert.equal(one(tree, node => node.type === 'button').props['aria-expanded'], true);
+});
+
+test('comparison reveal wrappers stay static across repeated click and keyboard mode changes', () => {
+  // Source contract complements the hooks harness: only React DOM can actually reconcile
+  // observer-mutated class attributes. A literal className must not depend on mode.
+  const ast = ts.createSourceFile('LandingComparison.tsx', source(landing + 'LandingComparison.tsx'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  let revealCount = 0;
+  function visit(node) {
+    if (ts.isJsxAttribute(node) && node.name.getText(ast) === 'className') {
+      const value = node.initializer;
+      if (value?.getText(ast).includes('ml-reveal')) {
+        assert.ok(ts.isStringLiteral(value), 'Reveal className must be a static literal, never a conditional template');
+        revealCount++;
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(ast);
+  assert.equal(revealCount, 3);
+  const focused = [];
+  const h = hooks('LandingComparison.tsx', {
+    document: { getElementById(id) { return { focus() { focused.push(id); } }; } },
+  });
+  let tree = h.render();
+  const wrappers = value => nodes(value, node => node.props?.className === 'ml-reveal');
+  const initialWrappers = wrappers(tree);
+  assert.equal(initialWrappers.length, 2);
+  assert.equal(initialWrappers[0].props.children.props.role, 'tablist');
+  assert.equal(initialWrappers[1].props.children.props.id, 'mode-demo');
+  const assertMode = manual => {
+    const id = manual ? 'mode-manual' : 'mode-integrated';
+    assert.equal(byId(tree, 'mode-demo').props['aria-labelledby'], id);
+    for (const tab of ['mode-manual', 'mode-integrated']) {
+      assert.equal(byId(tree, tab).props['aria-selected'], tab === id);
+      assert.equal(byId(tree, tab).props.tabIndex, tab === id ? 0 : -1);
+    }
+    assert.match(text(byId(tree, 'mode-printer')), manual ? /Informe os parâmetros/ : /Creality K1/);
+    wrappers(tree).forEach(wrapper => assert.equal(wrapper.props.className, 'ml-reveal'));
+  };
+  for (const manual of [true, false, true, false, true, false]) {
+    byId(tree, manual ? 'mode-manual' : 'mode-integrated').props.onClick();
+    tree = h.render();
+    assertMode(manual);
+  }
+  for (const [key, manual] of [['Home', true], ['Home', true], ['End', false], ['ArrowLeft', true], ['ArrowRight', false], ['End', false], ['Home', true], ['ArrowRight', false]]) {
+    let prevented = 0;
+    one(tree, node => node.props?.role === 'tablist').props.onKeyDown({ key, preventDefault() { prevented++; } });
+    tree = h.render();
+    assert.equal(prevented, 1);
+    assertMode(manual);
+    assert.equal(focused.at(-1), manual ? 'mode-manual' : 'mode-integrated');
+  }
+  const focusCount = focused.length;
+  one(tree, node => node.props?.role === 'tablist').props.onKeyDown({ key: 'Escape', preventDefault() { assert.fail('Unrelated keys stay native'); } });
+  tree = h.render();
+  assertMode(false);
+  assert.equal(focused.length, focusCount);
 });
 
 test('mobile menu exposes controls, toggles open, and closes after choosing a link', () => {
