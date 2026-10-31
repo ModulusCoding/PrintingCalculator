@@ -37,12 +37,11 @@
 .landing :global(.ml-orange-dot){color:var(--orange)}
 .landing :global(.ml-muted-heading){color:#8a94a6}
 .landing :global(.ml-micro){font-size:9px;font-weight:600;letter-spacing:.09em;color:var(--muted)}
-.landing :global(.ml-button){position:relative;display:inline-flex;justify-content:space-between;align-items:center;gap:32px;padding:17px 24px;background:var(--purple);color:#fff;font-size:13px;font-weight:600;border:1px solid var(--purple);border-radius:7px;min-height:53px;transition:background .25s,box-shadow .25s,transform .35s var(--ease);overflow:hidden}
+.landing :global(.ml-button){position:relative;display:inline-flex;justify-content:center;align-items:center;gap:12px;padding:17px 24px;background:var(--purple);color:#fff;font-size:13px;font-weight:600;border:1px solid var(--purple);border-radius:7px;min-height:53px;transition:background .25s,box-shadow .25s,transform .35s var(--ease);overflow:hidden}
 .landing :global(.ml-button:before){content:'';position:absolute;inset:-50%;background:linear-gradient(110deg,transparent 40%,#ffffff20 50%,transparent 60%);transform:translateX(-100%);transition:transform .7s}
 .landing :global(.ml-button:hover:before){transform:translateX(100%)}
 .landing :global(.ml-button:hover){background:var(--purple-hover);box-shadow:0 7px 22px #2b00ff22}
 .landing :global(.ml-button>span){font-size:20px;line-height:1;transition:transform .3s}
-.landing :global(.ml-button:hover>span){transform:translate(2px,-2px)}
 .landing :global(.ml-button.ml-small){padding:11px 18px;min-height:43px;font-size:11px;gap:26px}
 .landing :global(.ml-button.ml-outline){background:transparent;color:var(--purple);border-color:#cac5ff}
 .landing :global(.ml-button.ml-outline:hover){background:var(--pale)}
@@ -58,7 +57,9 @@
 .landing :global(.ml-header.ml-scrolled){border-color:var(--border);box-shadow:0 4px 24px #15233605}
 .landing :global(.ml-nav-wrap){width:min(1360px,calc(100% - 80px));height:86px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:32px}
 .landing :global(.ml-brand){display:flex;align-items:center;gap:9px;font-size:27px;font-weight:700;letter-spacing:-1.6px}
-.landing :global(.ml-brand-mark){width:28px;height:34px;color:var(--purple)}
+.landing :global(.ml-official-brand){display:inline-flex;align-items:center;gap:10px;flex-shrink:0}
+.landing :global(.ml-official-brand img){display:block;width:166px;height:auto}
+@media(max-width:480px){.landing :global(.ml-official-brand img){width:132px}.landing :global(.ml-official-brand){gap:6px}}
 .landing :global(.ml-brand-dot){color:var(--purple)}
 .landing :global(.ml-hub-tag){font-size:11px;letter-spacing:0;border:1px solid #dedaff;color:var(--purple);border-radius:4px;padding:1px 6px;margin-left:1px;font-weight:500}
 .landing :global(.ml-desktop-nav){display:flex;gap:28px;align-items:center;font-size:11px;color:var(--muted)}
@@ -244,6 +245,15 @@
 .landing :global(.ml-benefit-card:hover){box-shadow:0 14px 40px #1523360a}
 .landing :global(.ml-feature-number){font-size:8px;letter-spacing:.1em;color:#8f98a8}
 .landing :global(.ml-feature-art){height:165px;position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.landing :global(.ml-product-icon-art){color:var(--purple);background:radial-gradient(ellipse at center,#eef1ff 0%,#eef1ff80 35%,transparent 70%);border-radius:16px}
+.landing :global(.ml-product-icon-art>svg){box-sizing:content-box;padding:20px;border:1px solid #a6b4ff55;border-radius:24px;background:#ffffffcc;box-shadow:0 8px 24px #2b00ff08}
+.landing :global(.ml-product-icon-art .ml-art-label){bottom:0}
+.landing :global(.ml-cta-asterisk){animation:none!important}
+.landing :global(.ml-cta-asterisk svg){max-width:100%;height:auto}
+.landing :global(.ml-faq-decoration svg){max-width:100%;height:auto}
+.landing :global(.ml-plan-symbol),
+.landing :global(.ml-featured-label>span){display:flex;align-items:center}
+.landing :global(.ml-step-icon svg){flex-shrink:0}
 .landing :global(.ml-calc-art>span){font-size:84px;letter-spacing:-8px;color:var(--purple);font-weight:500;transform:rotate(-7deg);text-shadow:6px 8px 0 #e5e0ff}
 .landing :global(.ml-float-symbol){font-style:normal;font-size:22px;position:absolute;top:25px;left:50px;color:var(--orange);animation:card-float 5s infinite}
 .landing :global(.ml-float-symbol.ml-second){left:auto;right:35px;top:80px;transform:rotate(15deg);color:#a6b4ff}
@@ -312,7 +322,15 @@
 .landing :global(.ml-compare-left>p){font-size:11px;line-height:1.9;color:var(--muted);margin-top:20px;max-width:330px}
 .landing :global(.ml-mode-foot){font-size:8px;display:flex;gap:8px;align-items:center;margin-top:22px;color:#8991a5}
 .landing :global(.ml-mode-foot>span:first-child){font-size:20px;color:var(--orange)}
-.landing :global(.ml-compare-fields){padding-top:8px}
+.landing :global(.ml-compare-fields){padding-top:8px;min-width:0}
+.landing :global(.ml-compare-left){min-width:0}
+.landing :global(.ml-compare-left>p){min-height:9.5em}
+.landing :global(.ml-mode-foot){min-height:3em}
+.landing :global(.ml-compare-demo:focus-visible){outline:3px solid var(--orange);outline-offset:5px}
+.landing :global(.ml-compare-field>div){min-height:45px;gap:10px;transition:border-color .25s,color .25s,background-color .25s}
+.landing :global(.ml-compare-field i){flex-shrink:0}
+.landing :global(.ml-ready-calculate){display:flex;align-items:center;justify-content:center}
+.landing :global(.ml-ready-calculate>span){display:inline-flex}
 .landing :global(.ml-compare-field){margin-bottom:16px}
 .landing :global(.ml-compare-field label){font-size:6px;color:#8c95a8;letter-spacing:.1em;display:block;margin-bottom:6px}
 .landing :global(.ml-compare-field>div){border:1px solid #e3e5f1;background:white;padding:11px 13px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;font-size:9px;box-shadow:0 2px 4px #15233602}
@@ -358,9 +376,11 @@
 .landing :global(.ml-button.ml-disabled){color:#9aa3b5;background:#e7e9f1;border-color:#e2e5ef;box-shadow:none}
 .landing :global(.ml-button.ml-disabled:before){display:none}
 .landing :global(.ml-upcoming li:before){color:#9ca6ba}
-.landing :global(.ml-upcoming ul){color:#7e899d}
+.landing :global(.ml-upcoming ul){color:#566276}
+.landing :global(.ml-future-base){font-size:10px;font-weight:600;color:var(--ink);line-height:1.7;margin-bottom:15px}
+.landing :global(.ml-upcoming .ml-plan-note){color:#5e6a7d}
 .landing :global(.ml-pricing-under){display:flex;justify-content:space-between;align-items:center;margin-top:29px;font-size:9px;color:#8791a3}
-.landing :global(.ml-pricing-under>span){font-size:8px}
+.landing :global(.ml-pricing-under>span){font-size:8px;display:inline-flex;align-items:center;gap:7px}
 .landing :global(.ml-pricing-under .ml-text-button){font-size:9px;color:var(--purple)}
 .landing :global(.ml-pricing-under .ml-text-button>span){font-size:20px}
 .landing :global(.ml-table-scroll){overflow-x:auto;margin-top:30px;border:1px solid var(--border);border-radius:9px;background:white}
@@ -754,12 +774,13 @@ to{opacity:1;transform:translateY(0) scale(1)}
 .landing :global(.ml-compare-toggle button>span){font-size:7px}
 .landing :global(.ml-compare-demo){grid-template-columns:1fr;gap:27px;padding:26px 23px;border-radius:10px;min-height:0}
 .landing :global(.ml-mode-badge){font-size:6px;margin-bottom:19px}
-.landing :global(.ml-compare-left h3){font-size:29px}
+.landing :global(.ml-compare-left h3){font-size:29px;min-height:3.45em}
+.landing :global(.ml-mode-foot){min-height:4.5em}
 .landing :global(.ml-compare-left>p){font-size:11px;max-width:100%;margin-top:15px}
 .landing :global(.ml-mode-foot){font-size:7px;margin-top:15px}
 .landing :global(.ml-compare-fields){padding:0}
 .landing :global(.ml-compare-field label){font-size:6px}
-.landing :global(.ml-compare-field>div){font-size:9px;padding:12px}
+.landing :global(.ml-compare-field>div){font-size:9px;padding:12px;min-height:53px}
 .landing :global(.ml-ready-calculate){font-size:9px}
 .landing :global(.ml-pricing-head){margin-bottom:40px}
 .landing :global(.ml-plan-grid){grid-template-columns:1fr;gap:40px;max-width:420px;margin:auto}
@@ -783,7 +804,7 @@ to{opacity:1;transform:translateY(0) scale(1)}
 .landing :global(.ml-plan-name .ml-soon-label){font-size:7px!important}
 .landing :global(.ml-plan-divider){margin:25px 0 21px}
 .landing :global(.ml-pricing-under){flex-direction:column;gap:22px;align-items:start;max-width:420px;margin:25px auto 0}
-.landing :global(.ml-pricing-under>span){font-size:8px}
+.landing :global(.ml-pricing-under>span){font-size:8px;display:inline-flex;align-items:center;gap:7px}
 .landing :global(.ml-pricing-under .ml-text-button){font-size:10px}
 .landing :global(th),
 .landing :global(td){font-size:9px;min-width:110px;padding:13px}
