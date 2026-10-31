@@ -38,7 +38,7 @@ export async function getCatalogBySlug(slug: string): Promise<CatalogView | null
         // 2. Busca a relação N:N (catalog_products) com ordenação por display_order
         const { data: catalogProducts, error: cpError } = await supabase
           .from("catalog_products")
-          .select("display_order, product:products(*, product_images(id, url, display_order))")
+          .select("display_order, product:products(*, product_images(id, storage_path, display_order))")
           .eq("catalog_id", catalog.id)
           .order("display_order", { ascending: true });
 
@@ -49,10 +49,17 @@ export async function getCatalogBySlug(slug: string): Promise<CatalogView | null
             const rawProd = Array.isArray(item.product) ? item.product[0] : item.product;
             if (rawProd && rawProd.active !== false) {
               const rawImages = rawProd.product_images || [];
-              const sortedDbImages = [...rawImages]
-                .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
-                .map((img) => img.url)
-                .filter(Boolean);
+              const sortedDbImages = await Promise.all(
+                [...rawImages]
+                  .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
+                  .map(async (img) => {
+                    if (!img.storage_path) return null;
+                    const { data } = await supabase.storage
+                      .from("internal-product-images")
+                      .createSignedUrl(img.storage_path, 300);
+                    return data?.signedUrl ?? null;
+                  })
+              );
 
               const imageList =
                 sortedDbImages.length > 0
@@ -83,7 +90,7 @@ export async function getCatalogBySlug(slug: string): Promise<CatalogView | null
         }
 
         let filters: CatalogFilterView[] = [];
-        let filterProductMap = new Map<string, { ids: string[]; slugs: string[] }>();
+        const filterProductMap = new Map<string, { ids: string[]; slugs: string[] }>();
         try {
           const { data: filterRows } = await supabase
             .from("catalog_filters")

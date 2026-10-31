@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-bright":"#f8f9fa","surface-container-highest":"#e1e3e4","primary":"#3d32e6","tertiary-fixed-dim":"#ffb695","on-primary-container":"#f2eeff","on-tertiary-container":"#ffede6","error":"#ba1a1a","tertiary":"#933900","outline":"#777588","primary-container":"#5852ff","on-error-container":"#93000a","on-tertiary":"#ffffff","surface-container-lowest":"#ffffff","secondary-fixed-dim":"#c6c6c6","inverse-on-surface":"#f0f1f2","surface-container-low":"#f3f4f5","on-secondary":"#ffffff","on-secondary-fixed-variant":"#474747","primary-fixed-dim":"#c2c1ff","surface":"#f8f9fa","secondary-container":"#e2e2e2","background":"#f8f9fa","surface-container":"#edeeef","inverse-primary":"#c2c1ff","on-primary-fixed-variant":"#2c18d9","surface-variant":"#e1e3e4","tertiary-fixed":"#ffdbcc","on-tertiary-fixed":"#351000","secondary":"#5e5e5e","primary-fixed":"#e2dfff","on-tertiary-fixed-variant":"#7b2f00","outline-variant":"#c7c4d9","surface-tint":"#483ff0","on-primary-fixed":"#0c006a","on-secondary-container":"#646464","on-surface":"#191c1d","on-secondary-fixed":"#1b1b1b","on-surface-variant":"#464556","surface-container-high":"#e7e8e9","on-background":"#191c1d","secondary-fixed":"#e2e2e2","on-error":"#ffffff","surface-dim":"#d9dadb","tertiary-container":"#ba4a00","error-container":"#ffdad6","inverse-surface":"#2e3132","on-primary":"#ffffff"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{"md":"16px","margin-mobile":"16px","gutter":"24px","lg":"24px","unit":"4px","container-max-width":"1200px","sm":"8px","xs":"4px","xl":"40px"},fontFamily:{"body-base":["Geist"],"display-lg":["Geist"],"display-lg-mobile":["Geist"],"body-sm":["Geist"],"label-mono":["Geist"],"headline-md":["Geist"]},fontSize:{"body-base":["16px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"display-lg":["48px",{"lineHeight":"56px","letterSpacing":"-0.04em","fontWeight":"700"}],"display-lg-mobile":["36px",{"lineHeight":"42px","letterSpacing":"-0.03em","fontWeight":"700"}],"body-sm":["14px",{"lineHeight":"20px","letterSpacing":"0em","fontWeight":"400"}],"label-mono":["12px",{"lineHeight":"16px","letterSpacing":"0.05em","fontWeight":"500"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.02em","fontWeight":"600"}]}}}}</script></head><body class="bg-surface font-body-base text-body-base text-on-surface antialiased"><aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-lowest flex flex-col z-50 shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 px-6 flex items-center gap-3 bg-surface-container-lowest"><div class="w-9 h-9 rounded-xl bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[20px]">view_in_ar</span></div><div class="flex flex-col"><span class="font-headline-md text-body-sm font-bold tracking-tight text-on-surface">Modulus Hub</span><span class="font-label-mono text-label-mono text-outline">Oficina 3D Criativa</span></div></div><div class="flex-1 overflow-y-auto px-4 py-4"><nav class="space-y-6" data-active-classes="bg-primary-container text-on-primary-container font-semibold rounded-lg"><div class="space-y-1"><span class="px-3 font-label-mono text-label-mono uppercase text-outline tracking-wider font-semibold">Visão Geral</span><div class="mt-1 space-y-1"><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span>Dashboard</span></a></div></div><div class="space-y-1"><span class="px-3 font-label-mono text-label-mono uppercase text-outline tracking-wider font-semibold">Operação</span><div class="mt-1 space-y-1"><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="produtos" href="#"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span>Produtos</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="precificadora" href="#"><span class="material-symbols-outlined text-[20px]">calculate</span><span>Precificadora</span></a></div></div><div class="space-y-1"><span class="px-3 font-label-mono text-label-mono uppercase text-outline tracking-wider font-semibold">Recursos</span><div class="mt-1 space-y-1"><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="impressoras" href="#"><span class="material-symbols-outlined text-[20px]">precision_manufacturing</span><span>Impressoras</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="materiais" href="#"><span class="material-symbols-outlined text-[20px]">category</span><span>Materiais</span></a></div></div><div class="space-y-1"><span class="px-3 font-label-mono text-label-mono uppercase text-outline tracking-wider font-semibold">Gestão</span><div class="mt-1 space-y-1"><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all font-body-sm text-body-sm" data-path="dados-da-empresa" href="#"><span class="material-symbols-outlined text-[20px]">domain</span><span>Empresa</span></a><a aria-current="page" class="flex items-center gap-3 px-3 py-2 transition-all bg-primary-container text-on-primary-container font-semibold rounded-lg" data-path="equipe" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span>Equipe</span></a></div></div></nav></div><div class="p-4 bg-surface-container-low"><div class="flex items-center justify-between gap-2"><div class="flex items-center gap-3 min-w-0"><div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><div class="min-w-0"><p class="font-body-sm text-body-sm font-semibold text-on-surface truncate leading-tight">Rafael Moura</p><p class="font-label-mono text-label-mono text-outline truncate leading-tight">Proprietário</p></div></div><a class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:bg-error-container hover:text-on-error-container transition-all flex-shrink-0" data-path="login" href="#" title="Sair"><span class="material-symbols-outlined text-[20px]">logout</span></a></div></div></aside><div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-8"><div class="flex items-center gap-3 text-outline"><span class="font-label-mono text-label-mono uppercase tracking-wider text-outline">Hub</span><span class="font-label-mono text-label-mono text-outline-variant">/</span><span class="font-body-sm text-body-sm text-on-surface font-medium">Oficina 3D Criativa</span></div><div class="flex items-center gap-4"><div class="flex items-center gap-2"><button class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"><span class="material-symbols-outlined text-[20px]">search</span></button><button class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"><span class="material-symbols-outlined text-[20px]">notifications</span></button><button class="w-9 h-9 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all"><span class="material-symbols-outlined text-[20px]">help_outline</span></button></div><div class="h-6 w-px bg-surface-container-highest"></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-16 bg-surface w-full px-8"><div class="flex flex-col w-full pb-16">
+<!-- Top Navigation & Header Row -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pt-6 pb-8">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-2">
+<span class="font-label-mono text-label-mono uppercase tracking-widest text-outline">Gestão</span>
+<span class="font-label-mono text-label-mono text-outline-variant">/</span>
+<span class="font-label-mono text-label-mono uppercase tracking-widest text-primary font-semibold">Equipe</span>
+</div>
+<h1 class="font-display-lg text-display-lg text-on-surface tracking-tight">Equipe</h1>
+<p class="font-body-base text-body-base text-secondary max-w-xl">
+        Gerencie os funcionários, atribuições de estações de manufatura e os acessos à sua empresa.
+      </p>
+</div>
+<div class="flex items-center gap-3">
+<a class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-on-primary font-body-sm text-body-sm font-medium shadow-sm hover:bg-primary-container transition-colors" href="/equipe/novo">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Novo funcionário</span>
+</a>
+</div>
+</div>
+<!-- Operational Metric Stats / Micro-pills -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-outline uppercase tracking-wider">Total de Membros</span>
+<span class="font-headline-md text-headline-md text-on-surface mt-1">5</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-outline uppercase tracking-wider">Usuários Ativos</span>
+<span class="font-headline-md text-headline-md text-on-surface mt-1">4</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-outline uppercase tracking-wider">Impressoras Alocadas</span>
+<span class="font-headline-md text-headline-md text-on-surface mt-1">12 <span class="font-body-sm text-body-sm text-outline font-normal">/ 14</span></span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">precision_manufacturing</span>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono text-tertiary uppercase tracking-wider">Pendências de Acesso</span>
+<span class="font-headline-md text-headline-md text-tertiary mt-1">1</span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[20px]">password</span>
+</div>
+</div>
+</div>
+<!-- Filters & Controls Bar -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-3 mb-4 rounded-xl bg-surface-container-lowest shadow-sm">
+<!-- Search Bar -->
+<div class="relative flex-1 max-w-md">
+<span class="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[18px]">search</span>
+<input class="w-full pl-10 pr-4 py-2 rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline font-body-sm text-body-sm outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Buscar por nome ou e-mail..." type="text"/>
+</div>
+<!-- Segmented Filter Control -->
+<div class="inline-flex items-center p-1 rounded-lg bg-surface-container-high self-start sm:self-auto">
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface font-body-sm text-body-sm font-semibold shadow-sm transition-all flex items-center gap-1.5">
+<span>Ativos</span>
+<span class="w-5 h-5 rounded-full bg-primary/10 text-primary font-label-mono text-label-mono flex items-center justify-center font-bold">4</span>
+</button>
+<button class="px-3.5 py-1.5 rounded-lg text-secondary hover:text-on-surface font-body-sm text-body-sm font-medium transition-all flex items-center gap-1.5">
+<span>Inativos</span>
+<span class="w-5 h-5 rounded-full bg-surface-container-highest text-secondary font-label-mono text-label-mono flex items-center justify-center font-semibold">1</span>
+</button>
+<button class="px-3.5 py-1.5 rounded-lg text-secondary hover:text-on-surface font-body-sm text-body-sm font-medium transition-all flex items-center gap-1.5">
+<span>Todos</span>
+<span class="w-5 h-5 rounded-full bg-surface-container-highest text-secondary font-label-mono text-label-mono flex items-center justify-center font-semibold">5</span>
+</button>
+</div>
+</div>
+<!-- Table Container -->
+<div class="rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low text-outline font-label-mono text-label-mono uppercase tracking-wider">
+<th class="py-3.5 px-6 font-semibold">Colaborador</th>
+<th class="py-3.5 px-6 font-semibold">Papel no Sistema</th>
+<th class="py-3.5 px-6 font-semibold">Situação de Acesso</th>
+<th class="py-3.5 px-6 font-semibold">Última Atividade</th>
+<th class="py-3.5 px-6 font-semibold text-right">Ação</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container">
+<!-- Row 1: Rafael Moura (Proprietário - Self) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-headline-md text-body-sm font-bold shadow-sm">
+                  RM
+                </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2">
+<span class="font-body-base text-body-base font-semibold text-on-surface truncate">Rafael Moura</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-secondary font-label-mono text-label-mono uppercase tracking-wider">Você</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline truncate">rafael@oficina3d.com.br</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary-fixed text-on-primary-fixed font-label-mono text-label-mono font-semibold tracking-wide">
+<span class="material-symbols-outlined text-[14px]">stars</span>
+<span>Proprietário</span>
+</span>
+</td>
+<td class="py-4 px-6">
+<div class="inline-flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-body-sm text-body-sm font-medium text-on-surface">Ativo</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="font-body-sm text-body-sm text-outline">Agora mesmo</span>
+</td>
+<td class="py-4 px-6 text-right">
+<span class="inline-flex items-center gap-1 font-label-mono text-label-mono text-outline italic py-1 px-2.5 bg-surface-container-high rounded">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span>Protegido</span>
+</span>
+</td>
+</tr>
+<!-- Row 2: Camila Silveira (Administrador) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-primary font-headline-md text-body-sm font-bold flex items-center justify-center">
+                  CS
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-base text-body-base font-semibold text-on-surface truncate">Camila Silveira</span>
+<span class="font-body-sm text-body-sm text-outline truncate">camila.ops@oficina3d.com.br</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary-fixed-dim/40 text-on-primary-fixed-variant font-label-mono text-label-mono font-semibold tracking-wide">
+<span class="material-symbols-outlined text-[14px]">admin_panel_settings</span>
+<span>Administrador</span>
+</span>
+</td>
+<td class="py-4 px-6">
+<div class="inline-flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-body-sm text-body-sm font-medium text-on-surface">Ativo</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="font-body-sm text-body-sm text-outline">Hoje, às 14:22</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-primary hover:bg-surface-container-high font-body-sm text-body-sm font-medium transition-colors" onclick="document.getElementById('edit-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+<span>Editar</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: Lucas Berti (Operador - Destaque com alerta) -->
+<tr class="bg-surface-container-low/30 hover:bg-surface-container-low/60 transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container font-headline-md text-body-sm font-bold flex items-center justify-center">
+                  LB
+                </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-body-base text-body-base font-semibold text-on-surface truncate">Lucas Berti</span>
+<!-- Alerta sutil de senha pendente -->
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-mono text-label-mono font-semibold">
+<span class="material-symbols-outlined text-[12px]">key</span>
+<span>Troca de senha pendente</span>
+</span>
+</div>
+<span class="font-body-sm text-body-sm text-outline truncate">lucas.print@oficina3d.com.br</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface-variant font-label-mono text-label-mono font-medium tracking-wide">
+<span>Operador</span>
+</span>
+</td>
+<td class="py-4 px-6">
+<div class="inline-flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-body-sm text-body-sm font-medium text-on-surface">Ativo</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="font-body-sm text-body-sm text-outline">Ontem, às 18:04</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-primary hover:bg-surface-container-high font-body-sm text-body-sm font-medium transition-colors" onclick="document.getElementById('edit-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+<span>Editar</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Mariana Rios (Operador) -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface-variant font-headline-md text-body-sm font-bold flex items-center justify-center">
+                  MR
+                </div>
+<div class="flex flex-col min-w-0">
+<span class="font-body-base text-body-base font-semibold text-on-surface truncate">Mariana Rios</span>
+<span class="font-body-sm text-body-sm text-outline truncate">mariana.designer@oficina3d.com.br</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-surface-container-high text-on-surface-variant font-label-mono text-label-mono font-medium tracking-wide">
+<span>Operador</span>
+</span>
+</td>
+<td class="py-4 px-6">
+<div class="inline-flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-body-sm text-body-sm font-medium text-on-surface">Ativo</span>
+</div>
+</td>
+<td class="py-4 px-6">
+<span class="font-body-sm text-body-sm text-outline">28 de Out, 09:12</span>
+</td>
+<td class="py-4 px-6 text-right">
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-primary hover:bg-surface-container-high font-body-sm text-body-sm font-medium transition-colors" onclick="document.getElementById('edit-modal').classList.remove('hidden')">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+<span>Editar</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination Footer -->
+<div class="py-4 px-6 bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-3">
+<span class="font-body-sm text-body-sm text-outline">
+        Mostrando <span class="font-medium text-on-surface">1</span> a <span class="font-medium text-on-surface">4</span> de <span class="font-medium text-on-surface">4</span> funcionários ativos
+      </span>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-outline font-body-sm text-body-sm cursor-not-allowed opacity-60" disabled="">
+          Anterior
+        </button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-outline font-body-sm text-body-sm cursor-not-allowed opacity-60" disabled="">
+          Próximo
+        </button>
+</div>
+</div>
+</div>
+<!-- Interactive Modal 'Editar funcionário' (Aberto por padrão para visualização/interação imediata) -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4" id="edit-modal">
+<!-- Backdrop overlay -->
+<div class="absolute inset-0 bg-inverse-surface/40 backdrop-blur-sm transition-opacity" onclick="document.getElementById('edit-modal').classList.add('hidden')"></div>
+<!-- Modal Dialog Card (480px) -->
+<div class="relative w-full max-w-[480px] bg-surface-container-lowest rounded-xl shadow-2xl overflow-hidden z-10 flex flex-col animate-in fade-in zoom-in-95 duration-150">
+<!-- Modal Header -->
+<div class="px-6 pt-6 pb-4 flex items-center justify-between">
+<div class="flex flex-col">
+<h2 class="font-headline-md text-headline-md text-on-surface">Editar funcionário</h2>
+<span class="font-label-mono text-label-mono text-outline">Permissões de acesso e perfil</span>
+</div>
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:bg-surface-container-high hover:text-on-surface transition-colors" onclick="document.getElementById('edit-modal').classList.add('hidden')">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Warning/Status Alert Pill (Lucas Berti: Troca de senha) -->
+<div class="mx-6 mb-4 p-3 rounded-lg bg-tertiary-fixed text-on-tertiary-fixed flex items-start gap-2.5">
+<span class="material-symbols-outlined text-[18px] text-tertiary shrink-0 mt-0.5">notification_important</span>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm font-semibold text-on-tertiary-fixed leading-tight">Troca de senha pendente</span>
+<span class="font-label-mono text-label-mono text-on-tertiary-fixed-variant mt-0.5">Um link seguro foi gerado e aguarda redefinição no primeiro acesso pelo usuário.</span>
+</div>
+</div>
+<!-- Form Content -->
+<form class="px-6 space-y-4 flex flex-col" onsubmit="event.preventDefault(); document.getElementById('edit-modal').classList.add('hidden');">
+<!-- Campo 1: Nome completo -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-mono text-label-mono uppercase tracking-wider text-outline font-semibold">Nome completo</label>
+<input class="w-full px-3.5 py-2.5 rounded-lg bg-surface-container-low text-on-surface font-body-base text-body-base outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all font-medium" type="text" value="Lucas Berti"/>
+</div>
+<!-- Campo 2: E-mail corporativo (Readonly com cadeado) -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-mono text-label-mono uppercase tracking-wider text-outline font-semibold">E-mail corporativo</label>
+<span class="inline-flex items-center gap-1 font-label-mono text-label-mono text-outline">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span>Bloqueado</span>
+</span>
+</div>
+<div class="relative">
+<input class="w-full pl-3.5 pr-10 py-2.5 rounded-lg bg-surface-container-high/60 text-secondary font-body-sm text-body-sm cursor-not-allowed select-none outline-none font-mono" readonly="" type="email" value="lucas.print@oficina3d.com.br"/>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[16px]">lock</span>
+</div>
+<p class="font-label-mono text-label-mono text-outline">O e-mail não pode ser alterado por aqui. Contate o suporte para transferências de domínio.</p>
+</div>
+<!-- Campo 3: Papel na empresa (Select) -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-mono text-label-mono uppercase tracking-wider text-outline font-semibold">Papel na empresa</label>
+<div class="relative">
+<select class="w-full appearance-none px-3.5 py-2.5 rounded-lg bg-surface-container-low text-on-surface font-body-base text-body-base outline-none focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer font-medium">
+<option selected="" value="Operador">Operador (Filas de impressão, insumos e logs)</option>
+<option value="Administrador">Administrador (Controle total de parâmetros e custos)</option>
+</select>
+<span class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline pointer-events-none text-[20px]">expand_more</span>
+</div>
+</div>
+<!-- Campo 4: Situação -->
+<div class="flex items-center justify-between py-2 px-3.5 rounded-lg bg-surface-container-low">
+<div class="flex flex-col">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-outline font-semibold">Situação da Conta</span>
+<span class="font-body-sm text-body-sm text-on-surface">Acesso autorizado ao ambiente Modulus</span>
+</div>
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container-lowest shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-label-mono text-label-mono font-bold text-on-surface">Ativo</span>
+</div>
+</div>
+<!-- Modal Footer Actions -->
+<div class="pt-4 pb-2 mt-2 flex items-center justify-between gap-3 bg-surface-container-lowest">
+<!-- Ação Destrutiva à Esquerda -->
+<button class="px-3 py-2 rounded-lg text-error hover:bg-error-container hover:text-on-error-container font-body-sm text-body-sm font-semibold transition-colors flex items-center gap-1.5" onclick="confirm('Deseja realmente revogar todos os acessos de Lucas Berti?')" type="button">
+<span class="material-symbols-outlined text-[16px]">person_off</span>
+<span>Desativar acesso</span>
+</button>
+<!-- Ações Primárias à Direita -->
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 rounded-lg text-secondary hover:bg-surface-container-high hover:text-on-surface font-body-sm text-body-sm font-medium transition-colors" onclick="document.getElementById('edit-modal').classList.add('hidden')" type="button">
+              Cancelar
+            </button>
+<button class="px-5 py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-body-sm text-body-sm font-semibold shadow-sm transition-colors" type="submit">
+              Salvar alterações
+            </button>
+</div>
+</div>
+</form>
+</div>
+</div>
+</div></main></div></body></html>

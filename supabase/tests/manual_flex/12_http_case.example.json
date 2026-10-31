@@ -1,0 +1,31 @@
+{
+  "name": "two-operators-undo-same-confirmation",
+  "project_ref": "REPLACE_PROJECT_REF",
+  "run_id": "REPLACE_RUN_UUID",
+  "requests": [
+    {
+      "rpc": "undo_order_delivery",
+      "payload": {
+        "p_attempt_id": "REPLACE_NEW_ATTEMPT_A_UUID",
+        "p_order_id": "REPLACE_TEST_ORDER_UUID",
+        "p_expected_version": 0,
+        "p_delivery_event_id": "REPLACE_CURRENT_DELIVERY_EVENT_UUID",
+        "p_target_status": "orcado",
+        "p_reason": "Manual FLEX concurrent correction",
+        "p_classification": "incorrect_record"
+      }
+    },
+    {
+      "rpc": "undo_order_delivery",
+      "payload": {
+        "p_attempt_id": "REPLACE_NEW_ATTEMPT_B_UUID",
+        "p_order_id": "REPLACE_TEST_ORDER_UUID",
+        "p_expected_version": 0,
+        "p_delivery_event_id": "REPLACE_CURRENT_DELIVERY_EVENT_UUID",
+        "p_target_status": "orcado",
+        "p_reason": "Manual FLEX concurrent correction",
+        "p_classification": "incorrect_record"
+      }
+    }
+  ]
+}

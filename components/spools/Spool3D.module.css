@@ -1,0 +1,18 @@
+.root { margin: 0; width: 100%; min-width: 0; color: #152336; }
+.stage { width: 100%; aspect-ratio: 1.35; min-width: 0; position: relative; border-radius: 16px; overflow: hidden; background: radial-gradient(ellipse at 45% 40%, #fff, #f1f4fc 60%, #eaf0fa); }
+.stage::after { content: ""; position: absolute; bottom: 10%; left: 25%; width: 50%; height: 7%; background: #15233620; filter: blur(12px); border-radius: 50%; pointer-events: none; }
+.interactive { display: block; width: 100%; height: 100%; position: relative; z-index: 1; }
+.interactive { cursor: grab; touch-action: pan-y; }
+.interactive:active { cursor: grabbing; }
+.stage canvas[hidden] { display: none; }
+.fallback { padding: 20px; font-size: .85rem; }
+.details { display: flex; flex-direction: column; align-items: center; gap: 5px; padding-top: 12px; text-align: center; overflow-wrap: anywhere; }
+.details strong { font-size: 1.6rem; }
+.details small { color: #475569; }
+.status, .alert { border-radius: 999px; padding: 4px 10px; font-size: .8rem; background: #edf0ff; color: #152336; }
+.alert { background: #fff0e9; color: #9c3016; }
+.rotation { display: flex; flex-wrap: wrap; gap: 6px; padding-top: 8px; font-size: .75rem; }
+.rotation span { flex-basis: 100%; color: #475569; }
+.rotation button { background: white; color: #2b00ff; border: 1px solid #a6b4ff; border-radius: 8px; padding: 8px; min-height: 44px; font: inherit; cursor: pointer; }
+.rotation button:focus-visible { outline: 3px solid #2b00ff; outline-offset: 2px; }
+@media (max-width: 430px) { .stage { aspect-ratio: 1.25; } }

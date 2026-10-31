@@ -9,7 +9,7 @@ import {
 } from "@/lib/catalogs/actions";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { ShareLinkButton } from "@/components/admin/ShareLinkButton";
-import { Loader2, ArrowLeft, Save, AlertCircle } from "lucide-react";
+import { Loader2, Save, AlertCircle } from "lucide-react";
 import Link from "next/link";
 
 interface CatalogFormProps {
@@ -86,7 +86,7 @@ export function CatalogForm({ catalog }: CatalogFormProps) {
             href="/admin/catalogs"
             className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
           >
-            <ArrowLeft className="h-5 w-5" />
+            Voltar para catálogos
           </Link>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">

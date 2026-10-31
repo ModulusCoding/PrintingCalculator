@@ -3,6 +3,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { rateLimitLogin } from "@/lib/rate-limit";
 import { headers } from "next/headers";
+import { z } from "zod";
+import { resolveMinimalIdentity } from "./context";
+import { clearRecoveryMarker } from "./recovery-cookie";
+
+const loginSchema = z.object({
+  email: z.string().trim().email("E-mail inválido.").toLowerCase(),
+  password: z.string().min(1, "A senha é obrigatória."),
+});
 
 export async function loginAction(formData: FormData) {
   const headerList = await headers();
@@ -16,34 +24,59 @@ export async function loginAction(formData: FormData) {
     };
   }
 
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  const rawEmail = formData.get("email");
+  const rawPassword = formData.get("password");
 
-  if (!email || !password) {
-    return { error: "Por favor, preencha todos os campos." };
-  }
-
-  const supabase = await createClient();
-
-  const { error } = await supabase.auth.signInWithPassword({
-    email: email.trim(),
-    password,
+  const validatedFields = loginSchema.safeParse({
+    email: rawEmail,
+    password: rawPassword,
   });
 
-  if (error) {
+  if (!validatedFields.success) {
     return {
-      error:
-        error.message === "Invalid login credentials"
-          ? "E-mail ou senha incorretos."
-          : "Erro ao realizar login. Tente novamente.",
+      error: validatedFields.error.flatten().fieldErrors.email?.[0] || 
+             validatedFields.error.flatten().fieldErrors.password?.[0] || 
+             "Dados de login inválidos.",
     };
   }
 
-  return { success: true };
+  const { email, password } = validatedFields.data;
+  try {
+    const supabase = await createClient();
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (signInError) {
+      if (signInError.code === "invalid_credentials") {
+        return { error: "E-mail ou senha incorretos." };
+      }
+      return { error: "Não foi possível concluir o login. Tente novamente em instantes." };
+    }
+
+    try {
+      const context = await resolveMinimalIdentity();
+      return { success: true, state: context.state };
+    } catch {
+      // Keep the authenticated session intact: this is a context-resolution
+      // failure, not a failed login or a reason to sign the user out.
+      return { error: "Erro técnico ao validar seu perfil de acesso. Tente novamente em instantes." };
+    }
+  } catch {
+    return { error: "Não foi possível concluir o login. Tente novamente em instantes." };
+  }
 }
 
 export async function logoutAction() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  return { success: true };
+  await clearRecoveryMarker();
+  try {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.signOut({ scope: "local" });
+    
+    if (error) {
+      return { error: "Erro ao encerrar a sessão. Tente novamente." };
+    }
+    
+    return { success: true };
+  } catch {
+    return { error: "Erro técnico ao realizar logout." };
+  }
 }

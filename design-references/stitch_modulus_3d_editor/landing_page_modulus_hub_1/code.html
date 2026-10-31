@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          purple: "#2B00FF",
+          "purple-hover": "#2200CC",
+          dark: "#152336",
+          lavender: "#A6B4FF",
+          "lavender-light": "#EEF1FF",
+          orange: "#FF4E26",
+          bg: "#FFFFFF",
+          "surface-alt": "#F8F9FC",
+          "surface-card": "#F3F4F8",
+          muted: "#5E6A7D",
+          border: "#E2E6EE"
+        }
+      },
+      fontFamily: {
+        sans: ['"Space Grotesk"', 'sans-serif'],
+      }
+    }
+  }
+};</script><style>
+  * {
+    font-family: 'Space Grotesk', sans-serif !important;
+  }
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  .hero-grid-pattern {
+    background-size: 40px 40px;
+    background-image: 
+      linear-gradient(to right, rgba(43, 0, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(43, 0, 255, 0.04) 1px, transparent 1px);
+  }
+  .hero-radial-glow {
+    background: radial-gradient(circle at 50% 20%, rgba(166, 180, 255, 0.35) 0%, rgba(248, 249, 252, 0) 70%);
+  }
+</style></head><body class="bg-[#FFFFFF] font-sans text-brand-dark antialiased selection:bg-brand-lavender selection:text-brand-dark"><header class="fixed top-0 left-0 right-0 w-full z-50 bg-[#FFFFFF]/90 backdrop-blur-md border-b border-brand-border"><div class="h-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between"><div class="flex items-center gap-3"><a class="flex items-center gap-2.5" href="#"><img alt="Modulus Hub Logo" class="h-9 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WdJbq4SklBPIaTEsr1iqe6GDy2hyW3008am_fPDawEkDDY3tbkoM0Zo8PwARnZ_fRFBZUtMImHGNxQebo_t7GEzRaCkTTuEEuC1yba2ZbXwa4KiNLWKSok5E539RMwlsPmzeh_OHsPIMnTdPOdfowEG6Us99561PfgH_WS6Lm0Ekkqb8RG1WHjQIihrXbKpoNJwJTjLZc8ttZfFO28gwBWQtV1EF8Nvzx-ym19ApOReNujJMOg4s7oAlia_n8j1wxCo7DXgLkRhA"/><span class="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-lavender-light text-brand-purple border border-brand-lavender/50">Hub</span></a></div><nav class="hidden md:flex items-center gap-8"><a class="text-sm font-medium text-brand-purple transition-colors" data-path="hub" href="#">O Hub</a><a class="text-sm font-medium text-brand-muted hover:text-brand-purple transition-colors" data-path="funcionalidades" href="#funcionalidades">Funcionalidades</a><a class="text-sm font-medium text-brand-muted hover:text-brand-purple transition-colors" data-path="planos" href="#planos">Planos</a><a class="text-sm font-medium text-brand-muted hover:text-brand-purple transition-colors" data-path="duvidas" href="#duvidas">Dúvidas</a></nav><div class="flex items-center gap-4"><a class="text-sm font-medium text-brand-dark hover:text-brand-purple px-2 py-1 transition-colors" data-path="entrar" href="#">Entrar</a><a class="bg-brand-purple hover:bg-brand-purple-hover text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all shadow-[0_4px_14px_rgba(43,0,255,0.25)] hover:shadow-[0_6px_20px_rgba(43,0,255,0.35)]" data-path="comecar-gratis" href="#planos">Começar grátis</a></div></div></header><main class="w-full pt-20"><div class="flex flex-col w-full">
+<!-- HERO SECTION -->
+<section class="relative w-full overflow-hidden bg-brand-surface-alt py-16 md:py-24 hero-radial-glow hero-grid-pattern border-b border-brand-border">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center relative z-10">
+<!-- Overline Pill Tag -->
+<div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-brand-lavender shadow-sm mb-6">
+<span class="w-2 h-2 rounded-full bg-brand-orange animate-pulse"></span>
+<span class="font-medium text-brand-purple text-xs tracking-wide">A plataforma de gestão para impressão 3D</span>
+</div>
+<!-- Main Headline -->
+<h1 class="text-3xl sm:text-5xl lg:text-[56px] leading-[1.15] font-bold text-brand-dark tracking-tight max-w-4xl mx-auto mb-6">
+  Sua impressão 3D com custos claros e operação organizada.
+</h1>
+<!-- Subtitle -->
+<p class="text-base sm:text-lg text-brand-muted leading-relaxed max-w-2xl mx-auto mb-10 font-normal">
+  Reúna produtos, precificação, materiais e pedidos em um só lugar. Comece gratuitamente e evolua conforme sua operação cresce.
+</p>
+<!-- Primary & Secondary CTA Buttons -->
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto mb-14">
+<a class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brand-purple hover:bg-brand-purple-hover text-white text-base font-medium transition-all text-center shadow-[0_8px_20px_rgba(43,0,255,0.25)]" href="#planos">
+    Começar grátis
+  </a>
+<a class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white hover:bg-brand-surface-card text-brand-dark text-base font-medium border border-brand-border hover:border-brand-lavender transition-all text-center shadow-sm" href="#planos">
+    Conhecer os planos
+  </a>
+</div>
+<!-- High-Fidelity UI Interface Showcase (Bento Mosaic) -->
+<div class="w-full max-w-5xl bg-white border border-brand-border/80 rounded-2xl p-4 sm:p-6 md:p-8 shadow-[0_16px_40px_rgba(21,35,54,0.08)] text-left relative">
+<!-- Top Application Frame Bar -->
+<div class="flex items-center justify-between pb-4 mb-6 border-b border-brand-border">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-red-400 inline-block"></span>
+<span class="w-3 h-3 rounded-full bg-amber-400 inline-block"></span>
+<span class="w-3 h-3 rounded-full bg-green-400 inline-block"></span>
+<span class="ml-2 font-mono text-xs text-brand-muted font-normal">modulus-hub.internal/workshop</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-3 py-1 rounded-full bg-brand-lavender-light border border-brand-lavender/40 text-xs font-medium text-brand-purple flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-brand-purple"></span> Modulus Sync ativo
+      </span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Column Left: Interactive Precificador Widget (5 Cols) -->
+<div class="lg:col-span-5 flex flex-col gap-5">
+<div class="bg-brand-surface-alt border border-brand-border p-5 rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-brand-purple text-[22px]">calculate</span>
+<span class="text-base text-brand-dark font-semibold">Precificadora Guiada</span>
+</div>
+<span class="text-xs px-2.5 py-0.5 rounded bg-brand-lavender-light text-brand-purple font-medium">Etapa 3 de 4</span>
+</div>
+<div class="space-y-3">
+<div class="p-3 bg-white border border-brand-border/80 rounded-lg">
+<div class="flex justify-between items-center text-brand-muted text-xs mb-1.5 font-normal">
+<span>Peça: Vaso Geométrico Voronoi</span>
+<span class="font-semibold text-brand-dark">148g</span>
+</div>
+<div class="w-full bg-brand-border/60 h-2 rounded-full overflow-hidden">
+<div class="bg-brand-purple h-full w-[68%] rounded-full"></div>
+</div>
+</div>
+<!-- Parameters breakdown -->
+<div class="grid grid-cols-2 gap-2 text-xs text-brand-muted">
+<div class="p-2.5 bg-white border border-brand-border/60 rounded-lg">
+<span class="block text-[11px] uppercase tracking-wider text-brand-muted font-medium">Filamento PLA</span>
+<span class="font-semibold text-brand-dark text-sm">R$ 14,80</span>
+</div>
+<div class="p-2.5 bg-white border border-brand-border/60 rounded-lg">
+<span class="block text-[11px] uppercase tracking-wider text-brand-muted font-medium">Energia + Deprec.</span>
+<span class="font-semibold text-brand-dark text-sm">R$ 5,30</span>
+</div>
+<div class="p-2.5 bg-white border border-brand-border/60 rounded-lg">
+<span class="block text-[11px] uppercase tracking-wider text-brand-muted font-medium">Acabamento/Hora</span>
+<span class="font-semibold text-brand-dark text-sm">R$ 6,00</span>
+</div>
+<div class="p-2.5 bg-white border border-brand-border/60 rounded-lg">
+<span class="block text-[11px] uppercase tracking-wider text-brand-muted font-medium">Markup Sugerido</span>
+<span class="font-semibold text-brand-purple text-sm">120%</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3.5 rounded-lg bg-brand-lavender-light border border-brand-lavender/50">
+<div>
+<span class="block text-[11px] uppercase tracking-wider text-brand-dark font-medium">Preço Sugerido</span>
+<span class="text-xl font-bold text-brand-dark leading-none">R$ 57,40</span>
+</div>
+<span class="px-3 py-1.5 rounded-lg bg-brand-purple text-white text-xs font-medium shadow-sm">Aplicar Preço</span>
+</div>
+</div>
+</div>
+<!-- Material Reels Card -->
+<div class="bg-brand-surface-alt border border-brand-border p-5 rounded-xl shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<span class="text-sm text-brand-dark font-semibold flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[20px] text-brand-purple">inventory_2</span> Carretéis em Uso
+          </span>
+<span class="text-xs text-brand-muted font-medium">3 ativos</span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-2.5 bg-white border border-brand-border/60 rounded-lg text-xs">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-brand-purple"></span>
+<span class="font-medium text-brand-dark">PETG Cinza Sideral</span>
+</div>
+<span class="font-mono text-xs font-semibold text-brand-dark">740g / 1000g</span>
+</div>
+<div class="flex items-center justify-between p-2.5 bg-white border border-brand-border/60 rounded-lg text-xs">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-brand-orange"></span>
+<span class="font-medium text-brand-dark">PLA Terracota Mate</span>
+</div>
+<span class="font-mono text-xs font-semibold text-brand-orange">120g / 1000g</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Column Right: Live Kanban de Pedidos (7 Cols) -->
+<div class="lg:col-span-7 bg-brand-surface-alt border border-brand-border p-5 rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-brand-purple text-[22px]">view_kanban</span>
+<span class="text-base text-brand-dark font-semibold">Orquestração de Pedidos</span>
+</div>
+<div class="flex items-center gap-1.5 text-xs text-brand-muted font-medium">
+<span>Impressora 01: Bambu Lab X1C (8h20m rest.)</span>
+</div>
+</div>
+<!-- Kanban Columns -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<!-- Confirmado -->
+<div class="bg-white border border-brand-border/80 p-3 rounded-lg flex flex-col gap-2">
+<div class="flex items-center justify-between pb-1 border-b border-brand-border/40">
+<span class="text-xs uppercase font-semibold text-brand-dark">Confirmado</span>
+<span class="w-4 h-4 rounded-full bg-brand-surface-card text-[10px] font-semibold flex items-center justify-center text-brand-muted">2</span>
+</div>
+<div class="bg-brand-surface-alt p-2.5 rounded border border-brand-border/60 text-xs">
+<p class="font-medium text-brand-dark truncate">#1082 - Suporte Articulado</p>
+<p class="text-[11px] text-brand-muted mt-0.5">Cliente: Studio Arq</p>
+<div class="mt-2 flex items-center justify-between text-[11px] text-brand-muted">
+<span>Prazo: Amanhã</span>
+<span class="text-brand-dark font-semibold">R$ 135</span>
+</div>
+</div>
+</div>
+<!-- Em Produção -->
+<div class="bg-white border border-brand-border/80 p-3 rounded-lg flex flex-col gap-2">
+<div class="flex items-center justify-between pb-1 border-b border-brand-border/40">
+<span class="text-xs uppercase font-semibold text-brand-purple">Em Produção</span>
+<span class="w-4 h-4 rounded-full bg-brand-purple text-[10px] font-semibold flex items-center justify-center text-white">1</span>
+</div>
+<div class="bg-brand-surface-alt p-2.5 rounded border border-brand-border/60 text-xs">
+<p class="font-medium text-brand-dark truncate">#1080 - Engrenagem Nylon</p>
+<p class="text-[11px] text-brand-muted mt-0.5">Bambu Lab #2 (Camada 412/600)</p>
+<div class="w-full bg-brand-border/60 h-1.5 rounded-full mt-2 mb-1.5">
+<div class="bg-brand-purple h-full w-[65%] rounded-full"></div>
+</div>
+<span class="text-[10px] text-brand-muted font-normal">Término est.: 18:40</span>
+</div>
+</div>
+<!-- Pronto para Entrega -->
+<div class="bg-white border border-brand-border/80 p-3 rounded-lg flex flex-col gap-2">
+<div class="flex items-center justify-between pb-1 border-b border-brand-border/40">
+<span class="text-xs uppercase font-semibold text-brand-dark">Pronto</span>
+<span class="w-4 h-4 rounded-full bg-brand-surface-card text-[10px] font-semibold flex items-center justify-center text-brand-muted">3</span>
+</div>
+<div class="bg-brand-surface-alt p-2.5 rounded border border-brand-border/60 text-xs">
+<p class="font-medium text-brand-dark truncate">#1078 - Lote Miniaturas</p>
+<p class="text-[11px] text-brand-muted mt-0.5">Embalado e etiquetado</p>
+<div class="mt-2 flex items-center justify-between text-[11px] text-brand-muted">
+<span>Retirada Balcão</span>
+<span class="text-brand-dark font-semibold">R$ 290</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer metric bar -->
+<div class="mt-5 pt-3 border-t border-brand-border flex items-center justify-between text-xs text-brand-muted">
+<span>Eficiência Operacional: <strong class="text-brand-dark font-semibold">98.4%</strong></span>
+<span class="text-brand-purple font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> Zero Desperdício Não Mapeado
+        </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- APRESENTAÇÃO DA MODULUS -->
+<section class="w-full py-20 bg-white border-b border-brand-border">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-7 space-y-6">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-brand-surface-card text-brand-purple text-xs font-semibold uppercase tracking-wider">
+        Ecossistema Modulus
+      </div>
+<h2 class="text-2xl sm:text-4xl font-bold text-brand-dark leading-snug">
+        A Modulus cria ferramentas para simplificar a rotina de quem trabalha com impressão 3D.
+      </h2>
+<p class="text-base sm:text-lg text-brand-muted leading-relaxed font-normal">
+        O Hub reúne as informações que ajudam você a precificar com rigor, organizar materiais com precisão cirúrgica e acompanhar pedidos do fatiador à entrega final.
+      </p>
+<div class="p-5 rounded-xl bg-brand-surface-alt border border-brand-border shadow-sm">
+<h4 class="text-base text-brand-dark font-semibold mb-1.5 flex items-center gap-2">
+<span class="material-symbols-outlined text-brand-purple text-[22px]">engineering</span>
+          Desenvolvido por quem vive a oficina 3D
+        </h4>
+<p class="text-sm text-brand-muted leading-relaxed font-normal">
+          Chega de perder carretel sem saber onde foi parar, estimar preços “no chute” e lidar com atrasos evitáveis. O Modulus foi desenhado exatamente para sanar essas dores com precisão técnica e simplicidade.
+        </p>
+</div>
+</div>
+<div class="lg:col-span-5 grid grid-cols-2 gap-4">
+<div class="p-6 bg-brand-surface-alt border border-brand-border rounded-xl hover:border-brand-lavender transition-all">
+<span class="material-symbols-outlined text-brand-purple text-3xl mb-2">balance</span>
+<div class="text-2xl sm:text-3xl font-bold text-brand-dark mb-1">100%</div>
+<div class="text-xs sm:text-sm text-brand-muted font-normal">Custos visíveis de cada grama</div>
+</div>
+<div class="p-6 bg-brand-surface-alt border border-brand-border rounded-xl hover:border-brand-lavender transition-all">
+<span class="material-symbols-outlined text-brand-purple text-3xl mb-2">schedule</span>
+<div class="text-2xl sm:text-3xl font-bold text-brand-dark mb-1">&lt; 2 min</div>
+<div class="text-xs sm:text-sm text-brand-muted font-normal">Para orçar pedidos complexos</div>
+</div>
+<div class="p-6 bg-brand-surface-alt border border-brand-border rounded-xl hover:border-brand-lavender transition-all">
+<span class="material-symbols-outlined text-brand-purple text-3xl mb-2">history_toggle_off</span>
+<div class="text-2xl sm:text-3xl font-bold text-brand-dark mb-1">Histórico</div>
+<div class="text-xs sm:text-sm text-brand-muted font-normal">Auditável de carretéis e consumo</div>
+</div>
+<div class="p-6 bg-brand-surface-alt border border-brand-border rounded-xl hover:border-brand-lavender transition-all">
+<span class="material-symbols-outlined text-brand-purple text-3xl mb-2">hub</span>
+<div class="text-2xl sm:text-3xl font-bold text-brand-dark mb-1">Central</div>
+<div class="text-xs sm:text-sm text-brand-muted font-normal">Fim das planilhas dispersas</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FLUXO DE TRABALHO (STEPPER COMPACTO) -->
+<section class="w-full py-20 bg-brand-surface-alt border-b border-brand-border">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-2xl mx-auto mb-14">
+<span class="text-xs uppercase tracking-wider text-brand-purple font-semibold">Esteira Modular</span>
+<h2 class="text-2xl sm:text-4xl font-bold text-brand-dark mt-2">
+      Produto → Precificação → Estoque → Pedido
+    </h2>
+<p class="text-base text-brand-muted mt-3 font-normal">
+      Quatro etapas essenciais interligadas que eliminam o retrabalho e organizam seu fluxo produtivo.
+    </p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Step 1 -->
+<div class="p-6 bg-white border border-brand-border rounded-xl shadow-sm hover:border-brand-lavender hover:shadow-md transition-all">
+<div class="w-10 h-10 rounded-lg bg-brand-surface-card text-brand-dark font-semibold text-sm flex items-center justify-center mb-5 border border-brand-border">
+        01
+      </div>
+<h3 class="text-lg font-bold text-brand-dark mb-2">Produto</h3>
+<p class="text-sm text-brand-muted font-normal leading-relaxed">
+        Cadastre o que você produz com especificações técnicas e parâmetros-base de impressão.
+      </p>
+</div>
+<!-- Step 2 -->
+<div class="p-6 bg-white border-2 border-brand-purple rounded-xl shadow-md hover:shadow-lg transition-all relative">
+<div class="w-10 h-10 rounded-lg bg-brand-purple text-white font-semibold text-sm flex items-center justify-center mb-5 shadow-sm">
+        02
+      </div>
+<h3 class="text-lg font-bold text-brand-dark mb-2">Precificação</h3>
+<p class="text-sm text-brand-muted font-normal leading-relaxed">
+        Calcule custos operacionais reais e defina seu preço ideal com margem de lucro segura.
+      </p>
+</div>
+<!-- Step 3 -->
+<div class="p-6 bg-white border border-brand-border rounded-xl shadow-sm hover:border-brand-lavender hover:shadow-md transition-all">
+<div class="w-10 h-10 rounded-lg bg-brand-surface-card text-brand-dark font-semibold text-sm flex items-center justify-center mb-5 border border-brand-border">
+        03
+      </div>
+<h3 class="text-lg font-bold text-brand-dark mb-2">Estoque</h3>
+<p class="text-sm text-brand-muted font-normal leading-relaxed">
+        Acompanhe peças prontas e saldo de cada carretel de material em tempo real.
+      </p>
+</div>
+<!-- Step 4 -->
+<div class="p-6 bg-white border border-brand-border rounded-xl shadow-sm hover:border-brand-lavender hover:shadow-md transition-all">
+<div class="w-10 h-10 rounded-lg bg-brand-surface-card text-brand-dark font-semibold text-sm flex items-center justify-center mb-5 border border-brand-border">
+        04
+      </div>
+<h3 class="text-lg font-bold text-brand-dark mb-2">Pedido</h3>
+<p class="text-sm text-brand-muted font-normal leading-relaxed">
+        Organize os pedidos em um fluxo visual do fatiador até o cliente receber.
+      </p>
+</div>
+</div>
+</div>
+</section>
+<!-- FUNCIONALIDADES E BENEFÍCIOS (3 BLOCOS DIAGRAMADOS) -->
+<section class="w-full py-20 bg-white" id="funcionalidades">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
+<!-- Bloco 1: Precificação -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-6 space-y-5">
+<span class="text-xs uppercase tracking-wider text-brand-purple font-semibold">Simulação Realista</span>
+<h3 class="text-2xl sm:text-3xl font-bold text-brand-dark leading-snug">
+        Precificação com mais praticidade
+      </h3>
+<p class="text-base text-brand-muted font-normal leading-relaxed">
+        Esqueça fórmulas complexas em planilhas que quebram a todo momento. O Modulus Hub decompõe os custos com transparência total.
+      </p>
+<div class="space-y-3 pt-2">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-brand-purple text-[22px] shrink-0">check_circle</span>
+<span class="text-sm text-brand-dark font-normal leading-relaxed">Cálculo de custos operacionais: materiais, energia elétrica, depreciação de bico/mesa, manutenção, acabamento manual e embalagem.</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-brand-purple text-[22px] shrink-0">check_circle</span>
+<span class="text-sm text-brand-dark font-normal leading-relaxed">Sugestão automática de preço de venda final baseado em acréscimo calculado sobre o custo total (markup).</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-brand-purple text-[22px] shrink-0">check_circle</span>
+<span class="text-sm text-brand-dark font-normal leading-relaxed">Processo guiado por etapas que simplifica a simulação rápida de orçamentos sem alterar os cadastros mestres.</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-6 bg-brand-surface-alt border border-brand-border p-6 rounded-2xl shadow-sm">
+<div class="bg-white border border-brand-border/80 p-5 rounded-xl space-y-4">
+<div class="flex justify-between items-center pb-2 border-b border-brand-border/40">
+<span class="text-sm font-semibold text-brand-dark">Resumo de Formação de Preço</span>
+<span class="text-xs text-brand-purple bg-brand-lavender-light border border-brand-lavender/40 px-2.5 py-0.5 rounded font-medium">Simulação #042</span>
+</div>
+<div class="space-y-2.5">
+<div class="flex justify-between text-xs sm:text-sm text-brand-muted">
+<span>Material consumido (120g PLA)</span>
+<span class="font-semibold text-brand-dark">R$ 13,20</span>
+</div>
+<div class="flex justify-between text-xs sm:text-sm text-brand-muted">
+<span>Consumo Elétrico (350W @ 5h)</span>
+<span class="font-semibold text-brand-dark">R$ 1,75</span>
+</div>
+<div class="flex justify-between text-xs sm:text-sm text-brand-muted">
+<span>Depreciação de Máquina (5h)</span>
+<span class="font-semibold text-brand-dark">R$ 2,50</span>
+</div>
+<div class="flex justify-between text-xs sm:text-sm text-brand-muted">
+<span>Mão de obra &amp; Embalagem</span>
+<span class="font-semibold text-brand-dark">R$ 8,00</span>
+</div>
+<div class="pt-2 border-t border-brand-border/60 flex justify-between text-base font-bold text-brand-dark">
+<span>Custo Total de Produção:</span>
+<span>R$ 25,45</span>
+</div>
+<div class="p-4 bg-brand-lavender-light border border-brand-lavender/50 rounded-xl flex items-center justify-between">
+<div>
+<span class="block text-[11px] uppercase tracking-wider text-brand-dark font-medium">Margem configurada (150%)</span>
+<span class="text-xl sm:text-2xl font-bold text-brand-purple">R$ 63,62</span>
+</div>
+<span class="text-xs px-3 py-1 rounded bg-white border border-brand-border font-semibold text-brand-dark">Lucro Líquido: R$ 38,17</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bloco 2: Materiais e Máquinas -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-6 order-2 lg:order-1 bg-brand-surface-alt border border-brand-border p-6 rounded-2xl shadow-sm">
+<div class="bg-white border border-brand-border/80 p-5 rounded-xl space-y-4">
+<div class="flex justify-between items-center pb-2 border-b border-brand-border/40">
+<span class="text-sm font-semibold text-brand-dark">Parque de Impressoras &amp; Saldo</span>
+<span class="text-xs text-brand-muted font-medium">2 Máquinas Cadastradas</span>
+</div>
+<div class="p-3 bg-brand-surface-alt border border-brand-border/60 rounded-lg space-y-1">
+<div class="flex justify-between text-sm">
+<span class="font-semibold text-brand-dark">Creality K1 Max</span>
+<span class="font-mono text-brand-purple text-xs font-semibold">350W • R$ 0,85/h</span>
+</div>
+<p class="text-xs text-brand-muted font-normal">Depreciação estimada em 2.500 horas de ciclo de vida.</p>
+</div>
+<div class="space-y-2 pt-1">
+<span class="text-[11px] uppercase tracking-wider font-semibold text-brand-muted">Rastreabilidade de Carretéis</span>
+<div class="p-3 bg-brand-surface-alt border border-brand-border/60 rounded-lg flex items-center justify-between text-xs">
+<div>
+<span class="font-semibold text-brand-dark block">Lote #PETG-09</span>
+<span class="text-brand-muted text-[11px]">PETG Transparente 1.75mm</span>
+</div>
+<div class="text-right">
+<span class="font-semibold text-brand-dark font-mono">420g restantes</span>
+<span class="block text-[10px] text-brand-muted">Última baixa há 2h</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-6 order-1 lg:order-2 space-y-5">
+<span class="text-xs uppercase tracking-wider text-brand-purple font-semibold">Controle Físico e Ativos</span>
+<h3 class="text-2xl sm:text-3xl font-bold text-brand-dark leading-snug">
+        Materiais e máquinas organizados
+      </h3>
+<p class="text-base text-brand-muted font-normal leading-relaxed">
+        Mantenha o inventário alinhado à realidade do ateliê sem depender de contagens manuais de cabeça.
+      </p>
+<div class="space-y-3 pt-2">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-brand-purple text-[22px] shrink-0">check_circle</span>
+<span class="text-sm text-brand-dark font-normal leading-relaxed">Cadastro detalhado de impressoras com potência em Watts e taxa de depreciação horária calibrada.</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-brand-purple text-[22px] shrink-0">check_circle</span>
+<span class="text-sm text-brand-dark font-normal leading-relaxed">Materiais cadastrados com referências fixas de custo e especificações de densidade.</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-brand-purple text-[22px] shrink-0">check_circle</span>
+<span class="text-sm text-brand-dark font-normal leading-relaxed">Carretéis individuais rastreados com saldo grama a grama e consumo real por trabalho impresso.</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-brand-purple text-[22px] shrink-0">check_circle</span>
+<span class="text-sm text-brand-dark font-normal leading-relaxed">Histórico auditável de movimentações para evitar perdas ou sumiço de filamentos caros.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bloco 3: Produtos e Pedidos -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<div class="lg:col-span-6 space-y-5">
+<span class="text-xs uppercase tracking-wider text-brand-purple font-semibold">Operação &amp; Estoque</span>
+<h3 class="text-2xl sm:text-3xl font-bold text-brand-dark leading-snug">
+        Produtos e pedidos sob controle
+      </h3>
+<p class="text-base text-brand-muted font-normal leading-relaxed">
+        Separe o que já está impresso na prateleira daquilo que já foi encomendado ou reservado por outros clientes.
+      </p>
+<div class="space-y-3 pt-2">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-brand-purple text-[22px] shrink-0">check_circle</span>
+<span class="text-sm text-brand-dark font-normal leading-relaxed">Catálogo de produtos com especificações, tempos estimados e arquivos de corte relacionados.</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-brand-purple text-[22px] shrink-0">check_circle</span>
+<span class="text-sm text-brand-dark font-normal leading-relaxed">Organização do estoque de peças prontas com separação clara entre Físico, Reservado e Disponível para pronta entrega.</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-brand-purple text-[22px] shrink-0">check_circle</span>
+<span class="text-sm text-brand-dark font-normal leading-relaxed">Kanban de pedidos visual com prazos, status e histórico até o despacho final.</span>
+</div>
+</div>
+</div>
+<div class="lg:col-span-6 bg-brand-surface-alt border border-brand-border p-6 rounded-2xl shadow-sm">
+<div class="bg-white border border-brand-border/80 p-5 rounded-xl space-y-4">
+<div class="flex justify-between items-center pb-2 border-b border-brand-border/40">
+<span class="text-sm font-semibold text-brand-dark">Inventário de Peças Prontas</span>
+<span class="text-xs text-brand-purple bg-brand-lavender-light px-2.5 py-0.5 rounded font-medium">Estoque Integrado</span>
+</div>
+<!-- Stock Triad Table -->
+<div class="grid grid-cols-3 gap-3 text-center">
+<div class="p-3 bg-brand-surface-alt border border-brand-border/60 rounded-xl">
+<span class="block text-xs text-brand-muted font-medium mb-1">Físico</span>
+<span class="text-xl font-bold text-brand-dark font-mono">24 un</span>
+</div>
+<div class="p-3 bg-brand-surface-alt border border-brand-border/60 rounded-xl">
+<span class="block text-xs text-brand-orange font-medium mb-1">Reservado</span>
+<span class="text-xl font-bold text-brand-orange font-mono">18 un</span>
+</div>
+<div class="p-3 bg-brand-lavender-light border border-brand-lavender/50 rounded-xl">
+<span class="block text-xs text-brand-purple font-medium mb-1">Disponível</span>
+<span class="text-xl font-bold text-brand-purple font-mono">06 un</span>
+</div>
+</div>
+<div class="p-3 bg-brand-surface-alt border border-brand-border/60 rounded-lg flex items-center justify-between text-xs">
+<div>
+<span class="font-medium text-brand-dark block">Suporte Headphone V2</span>
+<span class="text-brand-muted text-[11px]">Pedido #1084 aguardando embalagem</span>
+</div>
+<span class="px-2.5 py-1 rounded bg-white border border-brand-border text-xs font-semibold text-brand-dark">Em dia</span>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 rounded-xl bg-brand-surface-alt border border-brand-border text-center">
+<p class="text-xs sm:text-sm text-brand-muted font-normal">
+<strong class="font-semibold text-brand-dark">Nota:</strong> Os recursos e limites disponíveis variam conforme o plano contratado. Consulte a tabela abaixo para detalhes completos.
+    </p>
+</div>
+</div>
+</section>
+<!-- DIFERENCIAL: PRECIFICAÇÃO BÁSICA VS. INTEGRADA -->
+<section class="w-full py-20 bg-brand-surface-alt border-y border-brand-border">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="bg-white p-8 md:p-12 rounded-2xl border border-brand-border shadow-sm">
+<div class="max-w-3xl mb-10">
+<span class="text-xs uppercase tracking-wider text-brand-purple font-semibold">Comparativo Técnico</span>
+<h3 class="text-2xl sm:text-3xl font-bold text-brand-dark mt-2">
+        Precificação Básica vs. Preenchimento Integrado aos Cadastros
+      </h3>
+<p class="text-base text-brand-muted mt-2 font-normal">
+        Entenda como a integração entre os módulos poupa minutos preciosos a cada orçamento gerado.
+      </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Plano Aprendiz -->
+<div class="p-6 rounded-xl bg-brand-surface-alt border border-brand-border flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="text-lg font-bold text-brand-dark">No plano Aprendiz</span>
+<span class="text-xs px-2.5 py-1 rounded bg-white border border-brand-border text-brand-muted font-medium">Preenchimento Manual</span>
+</div>
+<p class="text-sm text-brand-muted font-normal leading-relaxed">
+            O cálculo de precificação está disponível e funcional. Você informa manualmente os parâmetros da impressora (potência, depreciação), os materiais e os carretéis a cada nova simulação que realiza.
+          </p>
+</div>
+<div class="mt-6 pt-4 border-t border-brand-border flex items-center gap-2 text-xs text-brand-muted font-medium">
+<span class="material-symbols-outlined text-[18px]">edit_note</span> Ideal para quem está iniciando e tem baixo volume diário.
+        </div>
+</div>
+<!-- Planos Pagos -->
+<div class="p-6 rounded-xl bg-brand-lavender-light/50 border-2 border-brand-purple flex flex-col justify-between shadow-sm">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="text-lg font-bold text-brand-dark">Nos planos pagos</span>
+<span class="text-xs px-2.5 py-1 rounded bg-brand-purple text-white font-medium">Preenchimento Integrado</span>
+</div>
+<p class="text-sm text-brand-dark font-normal leading-relaxed">
+            Selecione seus cadastros prévios e carregue os parâmetros na precificadora com um único clique. Reduz o preenchimento repetido, garante que o custo real do carretel em uso seja aplicado e agiliza sua resposta aos clientes.
+          </p>
+</div>
+<div class="mt-6 pt-4 border-t border-brand-lavender/40 flex items-center gap-2 text-xs text-brand-purple font-semibold">
+<span class="material-symbols-outlined text-[18px]">bolt</span> Preenchimento integrado aos cadastros com máxima agilidade.
+        </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- PLANOS & PREÇOS (CARDS) -->
+<section class="w-full py-20 bg-brand-surface-alt" id="planos">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center max-w-2xl mx-auto mb-16">
+<span class="text-xs uppercase tracking-wider text-brand-purple font-semibold">Preços Transparentes</span>
+<h2 class="text-3xl sm:text-4xl font-bold text-brand-dark mt-2">
+      Planos desenhados para cada fase da sua oficina
+    </h2>
+<p class="text-base text-brand-muted mt-2 font-normal">
+      Sem taxas ocultas, sem fidelidade. Mude ou cancele quando quiser.
+    </p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+<!-- CARD 1: Aprendiz -->
+<div class="bg-white p-8 rounded-2xl border border-brand-border shadow-sm flex flex-col justify-between hover:border-brand-lavender transition-all">
+<div>
+<div class="flex justify-between items-center mb-2">
+<h3 class="text-xl font-bold text-brand-dark">Aprendiz</h3>
+<span class="text-xs px-2.5 py-1 rounded bg-brand-surface-card text-brand-muted font-medium">Inicial</span>
+</div>
+<p class="text-sm text-brand-muted mb-6 font-normal">Para começar a organizar sua operação.</p>
+<div class="mb-6">
+<span class="text-4xl font-bold text-brand-dark">Grátis</span>
+<span class="block text-xs text-brand-muted mt-1 font-medium">Sem limite de tempo</span>
+</div>
+<div class="space-y-3 pt-2 text-sm text-brand-dark font-normal">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Precificadora com preenchimento manual</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>1 perfil de acesso</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Até 3 produtos cadastrados</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Até 3 pedidos simultâneos</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Até 3 clientes cadastrados</span>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-brand-border">
+<a class="block w-full py-3 rounded-xl bg-brand-surface-card hover:bg-brand-lavender-light text-brand-dark font-medium text-sm text-center transition-all" href="#">
+          Começar grátis
+        </a>
+</div>
+</div>
+<!-- CARD 2: Visionário (Destaque) -->
+<div class="bg-white p-8 rounded-2xl border-2 border-brand-purple shadow-xl flex flex-col justify-between relative transform lg:-translate-y-3">
+<!-- Highlight Badge -->
+<div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-brand-purple text-white text-xs uppercase tracking-wider font-semibold shadow-md">
+        Destaque
+      </div>
+<div>
+<div class="flex justify-between items-center mb-2 pt-2">
+<h3 class="text-xl font-bold text-brand-dark">Visionário</h3>
+<span class="text-xs px-2.5 py-1 rounded bg-brand-lavender-light text-brand-purple font-semibold border border-brand-lavender/50">Mais Escolhido</span>
+</div>
+<p class="text-sm text-brand-muted mb-6 font-normal">Para ganhar praticidade no dia a dia.</p>
+<div class="mb-6">
+<div class="flex items-baseline gap-1">
+<span class="text-4xl font-bold text-brand-dark">R$ 39,90</span>
+<span class="text-sm text-brand-muted font-normal">/mês</span>
+</div>
+<span class="block text-xs text-brand-muted mt-1 font-medium">Assinatura mensal, sem fidelidade</span>
+</div>
+<div class="space-y-3 pt-2 text-sm text-brand-dark">
+<div class="flex items-center gap-2.5 font-semibold text-brand-purple">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+<span>Preenchimento integrado aos cadastros</span>
+</div>
+<div class="flex items-center gap-2.5 font-normal">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>1 perfil master + 1 operador</span>
+</div>
+<div class="flex items-center gap-2.5 font-normal">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Produtos ilimitados no lançamento*</span>
+</div>
+<div class="flex items-center gap-2.5 font-normal">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Pedidos ilimitados no lançamento*</span>
+</div>
+<div class="flex items-center gap-2.5 font-normal">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Cadastro de impressoras</span>
+</div>
+<div class="flex items-center gap-2.5 font-normal">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Controle de carretéis e consumo</span>
+</div>
+<div class="flex items-center gap-2.5 font-normal">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Até 15 clientes cadastrados</span>
+</div>
+<div class="flex items-center gap-2.5 font-normal">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Até 15 materiais cadastrados</span>
+</div>
+</div>
+<p class="text-xs text-brand-muted mt-6 pt-3 border-t border-brand-border/60 font-normal leading-relaxed">
+          *Produtos e pedidos ilimitados no Visionário durante esta fase de lançamento. Os limites serão revistos com o lançamento do Magnata.
+        </p>
+</div>
+<div class="mt-8 pt-4">
+<a class="block w-full py-3.5 rounded-xl bg-brand-purple hover:bg-brand-purple-hover text-white font-medium text-sm text-center shadow-[0_6px_18px_rgba(43,0,255,0.25)] transition-all" href="#">
+          Escolher Visionário
+        </a>
+</div>
+</div>
+<!-- CARD 3: Magnata (Em breve) -->
+<div class="bg-white p-8 rounded-2xl border border-brand-border shadow-sm flex flex-col justify-between opacity-95">
+<div>
+<div class="flex justify-between items-center mb-2">
+<h3 class="text-xl font-bold text-brand-dark">Magnata</h3>
+<span class="text-xs px-2.5 py-1 rounded bg-brand-surface-card text-brand-muted font-semibold">Em breve</span>
+</div>
+<p class="text-sm text-brand-muted mb-6 font-normal">Para ampliar a visão sobre o negócio.</p>
+<div class="mb-6">
+<div class="flex items-baseline gap-1">
+<span class="text-4xl font-bold text-brand-dark">R$ 79,90</span>
+<span class="text-sm text-brand-muted font-normal">/mês previsto</span>
+</div>
+<span class="block text-xs text-brand-muted mt-1 font-medium">Assinatura mensal, sem fidelidade</span>
+</div>
+<div class="space-y-3 pt-2 text-sm text-brand-dark font-normal">
+<div class="flex items-center gap-2.5 font-semibold text-brand-dark">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Todos os recursos do Visionário</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>1 perfil master + 3 operadores</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Produtos e pedidos ilimitados</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">check</span>
+<span>Clientes e materiais ilimitados</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">insights</span>
+<span class="font-medium text-brand-dark">Análise financeira consolidada</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">description</span>
+<span class="font-medium text-brand-dark">Relatórios financeiros avançados</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">bar_chart</span>
+<span class="font-medium text-brand-dark">Gráficos de apoio à gestão</span>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-brand-purple text-[20px]">notifications_active</span>
+<span class="font-medium text-brand-dark">Notificações com insights</span>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-brand-border">
+<button class="w-full py-3 rounded-xl bg-brand-surface-card text-brand-muted font-medium text-sm text-center cursor-not-allowed border border-brand-border" disabled="">
+          Disponível em breve
+        </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- TABELA COMPARATIVA DE RECURSOS -->
+<section class="w-full py-20 bg-white border-t border-brand-border overflow-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="mb-10">
+<span class="text-xs uppercase tracking-wider text-brand-purple font-semibold">Matriz de Recursos</span>
+<h2 class="text-2xl sm:text-3xl font-bold text-brand-dark mt-2">
+      Comparação detalhada plano a plano
+    </h2>
+</div>
+<div class="w-full overflow-x-auto rounded-xl border border-brand-border">
+<table class="w-full text-left text-sm border-collapse min-w-[640px]">
+<thead>
+<tr class="bg-brand-surface-alt border-b border-brand-border text-brand-dark">
+<th class="py-4 px-6 text-sm font-semibold">Recurso</th>
+<th class="py-4 px-6 text-sm font-semibold w-1/5">Aprendiz</th>
+<th class="py-4 px-6 text-sm font-semibold text-brand-purple w-1/5 bg-brand-lavender-light/40">Visionário</th>
+<th class="py-4 px-6 text-sm font-semibold text-brand-muted w-1/5">Magnata <span class="text-[10px] uppercase font-semibold bg-brand-surface-card px-2 py-0.5 rounded ml-1 text-brand-dark">Em breve</span></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-brand-border/60">
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-medium text-brand-dark">Mensalidade</td>
+<td class="py-3.5 px-6 font-semibold text-brand-dark">Grátis</td>
+<td class="py-3.5 px-6 font-bold text-brand-purple bg-brand-lavender-light/20">R$ 39,90</td>
+<td class="py-3.5 px-6 text-brand-muted">R$ 79,90 previsto</td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-normal text-brand-dark">Precificadora com preenchimento manual</td>
+<td class="py-3.5 px-6 text-brand-dark"><span class="material-symbols-outlined text-brand-purple text-[20px]">check</span></td>
+<td class="py-3.5 px-6 text-brand-dark bg-brand-lavender-light/20"><span class="material-symbols-outlined text-brand-purple text-[20px]">check</span></td>
+<td class="py-3.5 px-6 text-brand-dark"><span class="material-symbols-outlined text-brand-purple text-[20px]">check</span></td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors bg-brand-lavender-light/30">
+<td class="py-3.5 px-6 font-semibold text-brand-dark">Preenchimento integrado aos cadastros</td>
+<td class="py-3.5 px-6 text-brand-muted"><span class="material-symbols-outlined text-brand-muted/50 text-[20px]">close</span></td>
+<td class="py-3.5 px-6 text-brand-purple font-semibold bg-brand-lavender-light/40 flex items-center gap-1.5"><span class="material-symbols-outlined text-brand-purple text-[20px]">check</span> Sim</td>
+<td class="py-3.5 px-6 text-brand-dark"><span class="material-symbols-outlined text-brand-purple text-[20px]">check</span></td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-normal text-brand-dark">Perfis de acesso</td>
+<td class="py-3.5 px-6 text-brand-muted">1 perfil</td>
+<td class="py-3.5 px-6 font-semibold text-brand-dark bg-brand-lavender-light/20">1 master + 1 operador</td>
+<td class="py-3.5 px-6 text-brand-muted">1 master + 3 operadores</td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-normal text-brand-dark">Produtos cadastrados</td>
+<td class="py-3.5 px-6 text-brand-muted">Até 3</td>
+<td class="py-3.5 px-6 font-semibold text-brand-purple bg-brand-lavender-light/20">Ilimitados no lançamento</td>
+<td class="py-3.5 px-6 text-brand-muted">Ilimitados</td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-normal text-brand-dark">Pedidos simultâneos</td>
+<td class="py-3.5 px-6 text-brand-muted">Até 3</td>
+<td class="py-3.5 px-6 font-semibold text-brand-purple bg-brand-lavender-light/20">Ilimitados no lançamento</td>
+<td class="py-3.5 px-6 text-brand-muted">Ilimitados</td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-normal text-brand-dark">Clientes cadastrados</td>
+<td class="py-3.5 px-6 text-brand-muted">Até 3</td>
+<td class="py-3.5 px-6 font-semibold text-brand-dark bg-brand-lavender-light/20">Até 15</td>
+<td class="py-3.5 px-6 text-brand-muted">Ilimitados</td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-normal text-brand-dark">Cadastro de impressoras</td>
+<td class="py-3.5 px-6 text-brand-muted"><span class="material-symbols-outlined text-brand-muted/50 text-[20px]">close</span></td>
+<td class="py-3.5 px-6 text-brand-dark bg-brand-lavender-light/20"><span class="material-symbols-outlined text-brand-purple text-[20px]">check</span></td>
+<td class="py-3.5 px-6 text-brand-dark"><span class="material-symbols-outlined text-brand-purple text-[20px]">check</span></td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-normal text-brand-dark">Controle de carretéis</td>
+<td class="py-3.5 px-6 text-brand-muted"><span class="material-symbols-outlined text-brand-muted/50 text-[20px]">close</span></td>
+<td class="py-3.5 px-6 text-brand-dark bg-brand-lavender-light/20"><span class="material-symbols-outlined text-brand-purple text-[20px]">check</span></td>
+<td class="py-3.5 px-6 text-brand-dark"><span class="material-symbols-outlined text-brand-purple text-[20px]">check</span></td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-normal text-brand-dark">Cadastro de materiais</td>
+<td class="py-3.5 px-6 text-brand-muted"><span class="material-symbols-outlined text-brand-muted/50 text-[20px]">close</span></td>
+<td class="py-3.5 px-6 font-semibold text-brand-dark bg-brand-lavender-light/20">Até 15</td>
+<td class="py-3.5 px-6 text-brand-muted">Ilimitados</td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-normal text-brand-dark">Análise financeira consolidada</td>
+<td class="py-3.5 px-6 text-brand-muted"><span class="material-symbols-outlined text-brand-muted/50 text-[20px]">close</span></td>
+<td class="py-3.5 px-6 text-brand-muted bg-brand-lavender-light/20"><span class="material-symbols-outlined text-brand-muted/50 text-[20px]">close</span></td>
+<td class="py-3.5 px-6 font-semibold text-brand-purple"><span class="material-symbols-outlined text-brand-purple text-[20px] align-middle">check</span> Em breve</td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-normal text-brand-dark">Relatórios financeiros</td>
+<td class="py-3.5 px-6 text-brand-muted"><span class="material-symbols-outlined text-brand-muted/50 text-[20px]">close</span></td>
+<td class="py-3.5 px-6 text-brand-muted bg-brand-lavender-light/20"><span class="material-symbols-outlined text-brand-muted/50 text-[20px]">close</span></td>
+<td class="py-3.5 px-6 font-semibold text-brand-purple"><span class="material-symbols-outlined text-brand-purple text-[20px] align-middle">check</span> Em breve</td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-normal text-brand-dark">Gráficos de apoio à gestão</td>
+<td class="py-3.5 px-6 text-brand-muted"><span class="material-symbols-outlined text-brand-muted/50 text-[20px]">close</span></td>
+<td class="py-3.5 px-6 text-brand-muted bg-brand-lavender-light/20"><span class="material-symbols-outlined text-brand-muted/50 text-[20px]">close</span></td>
+<td class="py-3.5 px-6 font-semibold text-brand-purple"><span class="material-symbols-outlined text-brand-purple text-[20px] align-middle">check</span> Em breve</td>
+</tr>
+<tr class="hover:bg-brand-surface-alt/60 transition-colors">
+<td class="py-3.5 px-6 font-normal text-brand-dark">Notificações com insights</td>
+<td class="py-3.5 px-6 text-brand-muted"><span class="material-symbols-outlined text-brand-muted/50 text-[20px]">close</span></td>
+<td class="py-3.5 px-6 text-brand-muted bg-brand-lavender-light/20"><span class="material-symbols-outlined text-brand-muted/50 text-[20px]">close</span></td>
+<td class="py-3.5 px-6 font-semibold text-brand-purple"><span class="material-symbols-outlined text-brand-purple text-[20px] align-middle">check</span> Em breve</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- PERGUNTAS FREQUENTES (FAQ COM ACORDEÃO INTERATIVO) -->
+<section class="w-full py-20 bg-brand-surface-alt border-t border-brand-border" id="duvidas">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-14">
+<span class="text-xs uppercase tracking-wider text-brand-purple font-semibold">Tire suas dúvidas</span>
+<h2 class="text-2xl sm:text-4xl font-bold text-brand-dark mt-2">
+      Perguntas Frequentes
+    </h2>
+<p class="text-base text-brand-muted mt-2 font-normal">
+      Respostas diretas sobre os recursos, cobrança e evolução da plataforma.
+    </p>
+</div>
+<div class="space-y-3" id="faq-accordion">
+<!-- FAQ Item 1 -->
+<div class="rounded-xl bg-white border border-brand-border p-5 shadow-sm transition-all">
+<button class="faq-toggle w-full flex items-center justify-between text-left text-base text-brand-dark font-semibold focus:outline-none cursor-pointer" type="button">
+<span>Posso usar a precificadora no plano gratuito?</span>
+<span class="material-symbols-outlined faq-icon text-brand-muted transition-transform duration-200">expand_more</span>
+</button>
+<div class="faq-content hidden pt-3 text-sm text-brand-muted font-normal leading-relaxed border-t border-brand-border/40 mt-3">
+        Sim. No plano Aprendiz, você pode realizar simulações e cálculos de custos preenchendo os parâmetros manualmente. Nos planos pagos, esses parâmetros podem ser carregados automaticamente a partir dos seus cadastros salvos.
+      </div>
+</div>
+<!-- FAQ Item 2 -->
+<div class="rounded-xl bg-white border border-brand-border p-5 shadow-sm transition-all">
+<button class="faq-toggle w-full flex items-center justify-between text-left text-base text-brand-dark font-semibold focus:outline-none cursor-pointer" type="button">
+<span>Qual a diferença entre material e carretel?</span>
+<span class="material-symbols-outlined faq-icon text-brand-muted transition-transform duration-200">expand_more</span>
+</button>
+<div class="faq-content hidden pt-3 text-sm text-brand-muted font-normal leading-relaxed border-t border-brand-border/40 mt-3">
+        O material guarda as características gerais (tipo de polímero, marca, densidade e referências médias de custo). Já cada carretel representa uma unidade física real da sua bancada, com saldo inicial, peso líquido restante e consumo próprio auditável.
+      </div>
+</div>
+<!-- FAQ Item 3 -->
+<div class="rounded-xl bg-white border border-brand-border p-5 shadow-sm transition-all">
+<button class="faq-toggle w-full flex items-center justify-between text-left text-base text-brand-dark font-semibold focus:outline-none cursor-pointer" type="button">
+<span>O Hub se conecta automaticamente à minha impressora?</span>
+<span class="material-symbols-outlined faq-icon text-brand-muted transition-transform duration-200">expand_more</span>
+</button>
+<div class="faq-content hidden pt-3 text-sm text-brand-muted font-normal leading-relaxed border-t border-brand-border/40 mt-3">
+        Nesta versão, a integração da precificadora utiliza os dados e cadastros mantidos no Hub. Ela não representa conexão física de telemetria ou automação direta com a porta de comunicação da máquina.
+      </div>
+</div>
+<!-- FAQ Item 4 -->
+<div class="rounded-xl bg-white border border-brand-border p-5 shadow-sm transition-all">
+<button class="faq-toggle w-full flex items-center justify-between text-left text-base text-brand-dark font-semibold focus:outline-none cursor-pointer" type="button">
+<span>Os planos pagos têm fidelidade?</span>
+<span class="material-symbols-outlined faq-icon text-brand-muted transition-transform duration-200">expand_more</span>
+</button>
+<div class="faq-content hidden pt-3 text-sm text-brand-muted font-normal leading-relaxed border-t border-brand-border/40 mt-3">
+        Não. A cobrança é mensal e recorrente, sem qualquer contrato de fidelidade. Você pode cancelar sua assinatura a qualquer momento com apenas um clique.
+      </div>
+</div>
+<!-- FAQ Item 5 -->
+<div class="rounded-xl bg-white border border-brand-border p-5 shadow-sm transition-all">
+<button class="faq-toggle w-full flex items-center justify-between text-left text-base text-brand-dark font-semibold focus:outline-none cursor-pointer" type="button">
+<span>O Magnata já está disponível?</span>
+<span class="material-symbols-outlined faq-icon text-brand-muted transition-transform duration-200">expand_more</span>
+</button>
+<div class="faq-content hidden pt-3 text-sm text-brand-muted font-normal leading-relaxed border-t border-brand-border/40 mt-3">
+        Ainda não. O plano Magnata e seus módulos exclusivos de análise financeira aprofundada, relatórios analíticos e insights inteligentes serão lançados nas próximas atualizações da plataforma.
+      </div>
+</div>
+<!-- FAQ Item 6 -->
+<div class="rounded-xl bg-white border border-brand-border p-5 shadow-sm transition-all">
+<button class="faq-toggle w-full flex items-center justify-between text-left text-base text-brand-dark font-semibold focus:outline-none cursor-pointer" type="button">
+<span>Os limites do Visionário vão mudar?</span>
+<span class="material-symbols-outlined faq-icon text-brand-muted transition-transform duration-200">expand_more</span>
+</button>
+<div class="faq-content hidden pt-3 text-sm text-brand-muted font-normal leading-relaxed border-t border-brand-border/40 mt-3">
+        Produtos e pedidos estão liberados como ilimitados durante esta janela de lançamento oficial. Os limites definitivos serão revistos e comunicados previamente com a chegada do plano Magnata.
+      </div>
+</div>
+</div>
+</div>
+</section>
+<!-- CHAMADA FINAL (CTA SECTION) -->
+<section class="w-full py-20 bg-brand-surface-card border-t border-brand-border relative overflow-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+<div class="max-w-3xl mx-auto space-y-6">
+<span class="text-xs uppercase tracking-wider text-brand-purple font-semibold">
+      Próximo Passo
+    </span>
+<h2 class="text-3xl sm:text-5xl font-bold text-brand-dark tracking-tight">
+      Comece a organizar sua operação de impressão 3D.
+    </h2>
+<p class="text-base sm:text-lg text-brand-muted max-w-xl mx-auto font-normal leading-relaxed">
+      Conheça o Modulus Hub no plano Aprendiz e escolha o próximo passo conforme sua necessidade operacional aumentar.
+    </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+<a class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-brand-purple hover:bg-brand-purple-hover text-white text-base font-medium transition-all shadow-[0_8px_20px_rgba(43,0,255,0.25)]" href="#planos">
+        Começar grátis
+      </a>
+<a class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white hover:bg-brand-surface-alt text-brand-dark text-base font-medium border border-brand-border transition-all shadow-sm" href="#planos">
+        Comparar planos
+      </a>
+</div>
+<div class="pt-4 flex flex-wrap items-center justify-center gap-6 text-brand-muted text-xs font-medium">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-brand-purple">verified</span> Configuração em 2 minutos
+      </span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-brand-purple">credit_card_off</span> Sem cartão de crédito
+      </span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<footer class="w-full bg-[#FFFFFF] py-16 border-t border-brand-border">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+<div class="md:col-span-2 flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<img alt="Modulus Hub Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WdJbq4SklBPIaTEsr1iqe6GDy2hyW3008am_fPDawEkDDY3tbkoM0Zo8PwARnZ_fRFBZUtMImHGNxQebo_t7GEzRaCkTTuEEuC1yba2ZbXwa4KiNLWKSok5E539RMwlsPmzeh_OHsPIMnTdPOdfowEG6Us99561PfgH_WS6Lm0Ekkqb8RG1WHjQIihrXbKpoNJwJTjLZc8ttZfFO28gwBWQtV1EF8Nvzx-ym19ApOReNujJMOg4s7oAlia_n8j1wxCo7DXgLkRhA"/>
+<span class="text-xs font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-brand-lavender-light text-brand-purple border border-brand-lavender/50">Hub</span>
+</div>
+<p class="text-sm text-brand-muted max-w-md font-normal leading-relaxed">
+        Plataforma integrada de alta performance para orquestração modular de operações, produtos e dados em tempo real.
+      </p>
+</div>
+<div class="flex flex-col gap-2.5">
+<span class="text-xs uppercase tracking-wider text-brand-dark font-semibold mb-1">Plataforma</span>
+<a class="text-sm text-brand-muted hover:text-brand-purple transition-colors font-normal" data-path="hub" href="#">O Hub</a>
+<a class="text-sm text-brand-muted hover:text-brand-purple transition-colors font-normal" data-path="funcionalidades" href="#funcionalidades">Módulos &amp; Funcionalidades</a>
+<a class="text-sm text-brand-muted hover:text-brand-purple transition-colors font-normal" data-path="planos" href="#planos">Tabela de Preços</a>
+</div>
+<div class="flex flex-col gap-2.5">
+<span class="text-xs uppercase tracking-wider text-brand-dark font-semibold mb-1">Suporte &amp; Termos</span>
+<a class="text-sm text-brand-muted hover:text-brand-purple transition-colors font-normal" data-path="duvidas" href="#duvidas">Perguntas Frequentes</a>
+<a class="text-sm text-brand-muted hover:text-brand-purple transition-colors font-normal" data-path="privacidade" href="#">Privacidade de Dados</a>
+<a class="text-sm text-brand-muted hover:text-brand-purple transition-colors font-normal" data-path="termos" href="#">Termos de Uso</a>
+</div>
+</div>
+<div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-brand-border text-brand-muted text-xs font-normal">
+<p>© 2025 Modulus Hub Inc. Todos os direitos reservados.</p>
+<div class="flex gap-4">
+<span class="font-mono text-xs text-brand-muted">v2.4.0-prod</span>
+</div>
+</div>
+</div>
+</footer>
+<script>
+  // Simple interactive accordion logic for the FAQ section
+  document.addEventListener('DOMContentLoaded', () => {
+    const accordions = document.querySelectorAll('#faq-accordion .faq-toggle');
+    accordions.forEach(button => {
+      button.addEventListener('click', () => {
+        const content = button.nextElementSibling;
+        const icon = button.querySelector('.faq-icon');
+        const isOpen = !content.classList.contains('hidden');
+
+        // Close all items
+        document.querySelectorAll('#faq-accordion .faq-content').forEach(c => c.classList.add('hidden'));
+        document.querySelectorAll('#faq-accordion .faq-icon').forEach(i => i.style.transform = 'rotate(0deg)');
+
+        // If it was closed, open it
+        if (!isOpen) {
+          content.classList.remove('hidden');
+          if (icon) {
+            icon.style.transform = 'rotate(180deg)';
+          }
+        }
+      });
+    });
+  });
+</script>
+</body></html>

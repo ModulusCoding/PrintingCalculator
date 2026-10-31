@@ -825,7 +825,7 @@ return [
 
   false,
 ];
-  }, [colorMaterials, kwhValue, packagingItems, printerConsumption, printingHours, taxPercent, pieceQuantity]);
+  }, [colorMaterials, kwhValue, packagingItems, printerConsumption, printingHours, printingMinutes, taxPercent, pieceQuantity]);
 
   // ─── Navigation ───────────────────────────────────────────────────────────
 

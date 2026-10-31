@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "error": "#ba1a1a", "on-secondary": "#ffffff", "on-error": "#ffffff", "inverse-primary": "#c2c1ff", "surface-container-lowest": "#ffffff", "on-tertiary-fixed-variant": "#7b2f00", "outline": "#777588", "surface-container-high": "#e7e8e9", "surface-container-low": "#f3f4f5", "error-container": "#ffdad6", "on-primary-fixed": "#0c006a", "inverse-on-surface": "#f0f1f2", "primary": "#3d32e6", "primary-container": "#5852ff", "on-tertiary-fixed": "#351000", "on-surface-variant": "#464556", "on-secondary-fixed-variant": "#474747", "surface-tint": "#483ff0", "on-secondary-container": "#646464", "on-tertiary-container": "#ffede6", "on-primary": "#ffffff", "surface-bright": "#f8f9fa", "inverse-surface": "#2e3132", "surface-container-highest": "#e1e3e4", "surface-container": "#edeeef", "secondary-fixed": "#e2e2e2", "secondary-container": "#e2e2e2", "outline-variant": "#c7c4d9", "on-secondary-fixed": "#1b1b1b", "on-surface": "#191c1d", "tertiary-fixed": "#ffdbcc", "on-error-container": "#93000a", "primary-fixed-dim": "#c2c1ff", "on-primary-fixed-variant": "#2c18d9", "secondary-fixed-dim": "#c6c6c6", "background": "#f8f9fa", "secondary": "#5e5e5e", "on-background": "#191c1d", "tertiary-container": "#ba4a00", "on-tertiary": "#ffffff", "tertiary": "#933900", "on-primary-container": "#f2eeff", "primary-fixed": "#e2dfff", "surface": "#f8f9fa", "surface-variant": "#e1e3e4", "surface-dim": "#d9dadb", "tertiary-fixed-dim": "#ffb695" }, "borderRadius": { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, "spacing": { "xs": "4px", "gutter": "24px", "unit": "4px", "lg": "24px", "md": "16px", "margin-mobile": "16px", "container-max-width": "1200px", "sm": "8px", "xl": "40px" }, "fontFamily": { "label-mono": ["Geist"], "body-base": ["Geist"], "display-lg": ["Geist"], "body-sm": ["Geist"], "headline-md": ["Geist"], "display-lg-mobile": ["Geist"] }, "fontSize": { "label-mono": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }], "body-base": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.04em", "fontWeight": "700" }], "body-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "display-lg-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.03em", "fontWeight": "700" }] } } } };</script><style>@layer base{html,body{width:100vw;margin:0;padding:0;overflow-x:hidden;}body{overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-base text-body-base text-on-surface flex flex-col min-h-screen selection:bg-primary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-margin-mobile flex items-center justify-between gap-sm"><div class="flex items-center gap-sm"><button aria-label="Abrir Menu Gaveta" class="w-11 h-11 -ml-2 rounded-lg flex items-center justify-center text-on-surface active:bg-surface-container"><span class="material-symbols-outlined text-[24px]">menu</span></button><img alt="logo_Horizontal.png" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1UDLNIThQesGPtGfe4C7uIPoEZZnqqc38FGBkkR8z-w7nsJSriM5xi_xjhs7lPzvXG1zrl0JLJdzzYvCyXFz3p5VPlCZ1MSzkqsQOULV9yaH1Ocq0aVedRVEN88v6JrH2vSupJFioLayml2qmLcJhLJzJ6hLcGUVGeU9_NO0aw-r96qqXvmdTNJXbUOzMrifovSHDWD009fnGzx0vQdjmcGJaJgi6NVhyywUXjjjbzEEz4paMINmtsCkNCQD_cmoYJ5e-crMtWL_Q"/><div class="flex flex-col justify-center min-w-0"><div class="flex items-center gap-xs"><span class="font-label-mono text-label-mono text-on-surface font-semibold truncate">Modulus Hub</span><span class="px-1.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-mono text-[10px] tracking-wide uppercase">Online</span></div><span class="font-label-mono text-[11px] text-on-surface-variant truncate">Oficina 3D Criativa</span></div></div><div class="flex items-center gap-sm shrink-0"><div class="flex items-center gap-xs"><span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span><span class="font-label-mono text-[11px] text-on-surface-variant hidden xs:inline">Ativo</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex flex-col relative w-full px-margin-mobile pt-16 pb-20 bg-surface"><div class="flex flex-col w-full pb-8">
+<!-- Breadcrumb Navigation -->
+<div class="flex items-center gap-xs text-on-surface-variant mb-3 pt-1">
+<span class="font-label-mono text-label-mono">Operação</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="font-label-mono text-label-mono">Produtos</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="font-label-mono text-label-mono text-primary font-semibold">Novo produto</span>
+</div>
+<!-- Back Link -->
+<a class="inline-flex items-center gap-1.5 text-on-surface-variant hover:text-primary active:text-primary transition-colors py-1 -ml-1 w-fit group" href="#">
+<span class="material-symbols-outlined text-[18px] transition-transform group-active:-translate-x-1">arrow_back</span>
+<span class="font-label-mono text-label-mono font-medium">Voltar para produtos</span>
+</a>
+<!-- Header Section -->
+<div class="mt-4 mb-6">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary inline-block"></span>
+<h1 class="font-headline-md text-headline-md text-on-surface tracking-tight">Novo produto</h1>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1.5 leading-relaxed">
+      Cadastre as informações e as fotos do produto em um fluxo único.
+    </p>
+</div>
+<!-- Unified Form Container -->
+<form class="flex flex-col gap-5 w-full" id="product-form" onsubmit="event.preventDefault(); triggerSubmitFeedback();">
+<!-- Card: Informações Principais -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between pb-1">
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-on-surface-variant font-semibold">Dados Básicos</span>
+<span class="font-label-mono text-[10px] px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">* Obrigatório</span>
+</div>
+<!-- Nome do Produto -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-mono text-label-mono text-on-surface font-semibold flex items-center justify-between" for="prod-name">
+<span>Nome do produto <span class="text-error">*</span></span>
+<span class="text-[11px] font-normal text-on-surface-variant" id="name-counter">0/80</span>
+</label>
+<div class="relative flex items-center">
+<input class="w-full bg-surface-container-low text-on-surface placeholder:text-outline font-body-base text-body-base px-3.5 py-3 rounded-lg focus:outline-none focus:bg-surface-container-lowest focus:shadow-[0_0_0_2px_#3d32e6] transition-all" id="prod-name" maxlength="80" oninput="document.getElementById('name-counter').innerText = `${this.value.length}/80`" placeholder="Ex: Luminária Lua Paramétrica 20cm" required="" type="text"/>
+</div>
+</div>
+<!-- Preço de Venda -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-mono text-label-mono text-on-surface font-semibold flex items-center gap-1" for="prod-price">
+<span>Preço de venda (R$)</span>
+<span class="font-normal text-on-surface-variant text-[11px]">(Opcional)</span>
+</label>
+<div class="relative flex items-center">
+<span class="absolute left-3.5 font-label-mono text-label-mono text-on-surface-variant font-semibold">R$</span>
+<input class="w-full bg-surface-container-low text-on-surface placeholder:text-outline font-body-base text-body-base pl-11 pr-3.5 py-3 rounded-lg focus:outline-none focus:bg-surface-container-lowest focus:shadow-[0_0_0_2px_#3d32e6] transition-all" id="prod-price" inputmode="decimal" oninput="formatCurrency(this)" placeholder="0,00" type="text"/>
+</div>
+<p class="font-body-sm text-[12px] text-on-surface-variant flex items-start gap-1.5 mt-0.5 leading-normal">
+<span class="material-symbols-outlined text-[15px] text-primary shrink-0 mt-0.5">info</span>
+<span>Deixe em branco para exibir <strong class="text-on-surface font-medium">"Sob consulta"</strong> automaticamente no catálogo.</span>
+</p>
+</div>
+<!-- Descrição Detalhada -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-mono text-label-mono text-on-surface font-semibold flex items-center justify-between" for="prod-desc">
+<span>Descrição detalhada</span>
+<span class="font-normal text-on-surface-variant text-[11px]">(Opcional)</span>
+</label>
+<textarea class="w-full bg-surface-container-low text-on-surface placeholder:text-outline font-body-base text-body-base p-3.5 rounded-lg focus:outline-none focus:bg-surface-container-lowest focus:shadow-[0_0_0_2px_#3d32e6] transition-all resize-none leading-relaxed" id="prod-desc" placeholder="Descreva acabamento, filamento recomendado (ex: PLA Silk, PETG), espessura de camada ou cuidados pós-impressão..." rows="3"></textarea>
+</div>
+</div>
+<!-- Card: Mídia & Fotos -->
+<div class="bg-surface-container-lowest rounded-xl p-4 shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">photo_library</span>
+<span class="font-label-mono text-label-mono uppercase tracking-wider text-on-surface font-semibold">Mídia &amp; Fotos</span>
+</div>
+<span class="font-label-mono text-[11px] text-on-surface-variant font-medium" id="media-count">2 fotos prontas</span>
+</div>
+<!-- Upload Touch Area -->
+<label class="group relative flex flex-col items-center justify-center p-5 bg-surface-container-low hover:bg-surface-container active:scale-[0.99] transition-all rounded-xl cursor-pointer text-center">
+<input accept="image/png, image/jpeg, image/webp" class="sr-only" multiple="" onchange="simulatePhotoAdd(this)" type="file"/>
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center text-primary mb-2.5 transition-transform group-active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[24px]">cloud_upload</span>
+</div>
+<span class="font-body-base text-body-sm font-semibold text-on-surface">Toque para selecionar fotos do dispositivo</span>
+<span class="font-label-mono text-[11px] text-on-surface-variant mt-0.5">Suporte para JPG, PNG ou WebP (máx. 10MB)</span>
+</label>
+<!-- Visual Hint Note -->
+<div class="flex items-center gap-2.5 px-3 py-2.5 bg-surface-container-low rounded-lg">
+<span class="material-symbols-outlined text-[20px] text-secondary shrink-0">view_in_ar</span>
+<span class="font-body-sm text-[12px] text-on-surface-variant leading-snug">
+          A inclusão de imagens é opcional. Produtos sem foto recebem um ícone isométrico padrão no catálogo.
+        </span>
+</div>
+<!-- Photos Preview Grid -->
+<div class="flex flex-col gap-3 pt-1" id="photos-grid">
+<!-- Photo Item 1 (Principal) -->
+<div class="relative flex items-center gap-3 p-2 bg-surface-container-low rounded-lg group">
+<div class="relative w-16 h-16 rounded-md overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close up photo of an elegant 3D printed lunar surface night lamp glowing with soft warm internal illumination on a modern minimalist dark oak technical desk, clean macro shot, premium product showcase" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPDj-sl5BTCi0twBkubZqK5bUJIdFNOqSB743yredA01Dm-E1TN4fTcqNDZlict7WZFssVZXMK6wWEklpkODu_I9DUuLZOMLPTtl3NnotbszmkrBL1h1Zw-Ajq1v8JVXmIjS1YiSQr2qlLXgHMj8rTnH-ySkN1nKhUP3jAYmjcR3RrvWBp4x4F4L2yev6Yg4oTNn80AoohYglUsiFxcjg0Rvu_cPey0ySbozrqpteaJWBNwYucC75fwg"/>
+<span class="absolute top-1 left-1 bg-primary text-on-primary font-label-mono text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[10px]">star</span> Principal
+            </span>
+</div>
+<div class="flex flex-col justify-center min-w-0 flex-1">
+<div class="flex items-center justify-between gap-1">
+<span class="font-label-mono text-label-mono text-on-surface font-medium truncate">luminaria_lua_20cm_final.jpg</span>
+<button aria-label="Remover foto" class="w-8 h-8 rounded-md flex items-center justify-center text-error hover:bg-error-container hover:text-on-error-container active:scale-95 transition-all" onclick="this.closest('.relative.flex').remove(); updatePhotoCount();" type="button">
+<span class="material-symbols-outlined text-[19px]">delete</span>
+</button>
+</div>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-label-mono text-[11px] text-on-surface-variant">2.4 MB</span>
+<span class="text-on-surface-variant text-[10px]">•</span>
+<span class="font-label-mono text-[11px] text-primary font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[13px]">check_circle</span> Pronto
+              </span>
+</div>
+</div>
+</div>
+<!-- Photo Item 2 (Carregando / Em Upload) -->
+<div class="relative flex items-center gap-3 p-2 bg-surface-container-low rounded-lg group">
+<div class="relative w-16 h-16 rounded-md overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover opacity-60" data-alt="Overhead technical angle photo of 3D printing modular parts with smooth textured geometric seams, natural studio lighting, minimalist industrial aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbEGRjo13v84JAQYhmPaTUIDAyqpu23gxV_fCSkmJJAMiHtkOKoJLUeCiq8Rw-SVkVnpVRHvG8k1cecZNCbPVhEqgGaw4uVCHzRz1tN8E4ZWRJqxCmnFdnnsIfrRn413iUYGhsWjj-iB-MrTLYUNnoWF8T1VLt2orMYnryn1RyWe391_1qGOL20xSMOEO1UyZsBez_fLSFFy2e9W4WfKlZf9-oyod__XjD-D4KgOuxVm3bLZzkeInDpg"/>
+<div class="absolute inset-0 bg-inverse-surface/30 flex items-center justify-center">
+<span class="font-label-mono text-[11px] font-bold text-on-primary">78%</span>
+</div>
+</div>
+<div class="flex flex-col justify-center min-w-0 flex-1">
+<div class="flex items-center justify-between gap-1">
+<span class="font-label-mono text-label-mono text-on-surface font-medium truncate">base_suporte_madeira.png</span>
+<button aria-label="Cancelar upload" class="w-8 h-8 rounded-md flex items-center justify-center text-on-surface-variant hover:text-error active:scale-95 transition-all" onclick="this.closest('.relative.flex').remove(); updatePhotoCount();" type="button">
+<span class="material-symbols-outlined text-[19px]">close</span>
+</button>
+</div>
+<!-- Progress Bar -->
+<div class="w-full bg-surface-container rounded-full h-1.5 mt-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-300" style="width: 78%;"></div>
+</div>
+<div class="flex items-center justify-between mt-1">
+<span class="font-label-mono text-[10px] text-on-surface-variant">Enviando mídia...</span>
+<span class="font-label-mono text-[10px] text-primary font-semibold">78%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Summary Banner -->
+<div class="hidden flex items-center gap-2.5 p-3.5 bg-primary text-on-primary rounded-xl shadow-md transition-all" id="toast-feedback">
+<span class="material-symbols-outlined text-[20px] shrink-0">check_circle</span>
+<span class="font-body-sm text-body-sm font-medium">Produto criado e pronto para a linha de produção!</span>
+</div>
+<!-- Bottom Actions Container -->
+<div class="flex flex-col gap-2.5 mt-3 pt-2">
+<!-- Main Primary Action -->
+<button class="w-full h-13 py-3.5 px-6 rounded-xl bg-primary hover:bg-primary-container text-on-primary font-headline-md text-[16px] font-semibold tracking-wide shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-2" style="background-color: #2b00ff;" type="submit">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span>Cadastrar produto</span>
+</button>
+<!-- Secondary Neutral Action -->
+<button class="w-full h-12 py-3 px-6 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface font-body-base text-body-sm font-medium active:scale-[0.99] transition-all flex items-center justify-center gap-1.5" onclick="window.history.length &gt; 1 ? window.history.back() : alert('Navegar para catálogo de produtos');" type="button">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">close</span>
+<span>Cancelar</span>
+</button>
+</div>
+</form>
+</div>
+<script>
+  function formatCurrency(input) {
+    let value = input.value.replace(/\D/g, '');
+    if (!value) {
+      input.value = '';
+      return;
+    }
+    value = (parseInt(value, 10) / 100).toFixed(2) + '';
+    value = value.replace('.', ',');
+    value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+    input.value = value;
+  }
+
+  function updatePhotoCount() {
+    const grid = document.getElementById('photos-grid');
+    const items = grid.querySelectorAll('.relative.flex');
+    const badge = document.getElementById('media-count');
+    if (items.length === 0) {
+      badge.innerText = 'Nenhuma foto anexada';
+    } else if (items.length === 1) {
+      badge.innerText = '1 foto anexada';
+      // Garante badge principal
+      const firstBadge = items[0].querySelector('.bg-primary');
+      if (!firstBadge) {
+        const thumb = items[0].querySelector('.relative.w-16');
+        const span = document.createElement('span');
+        span.className = 'absolute top-1 left-1 bg-primary text-on-primary font-label-mono text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm flex items-center gap-0.5';
+        span.innerHTML = '<span class="material-symbols-outlined text-[10px]">star</span> Principal';
+        thumb.appendChild(span);
+      }
+    } else {
+      badge.innerText = `${items.length} fotos anexadas`;
+    }
+  }
+
+  function simulatePhotoAdd(input) {
+    if (input.files && input.files.length > 0) {
+      const fileName = input.files[0].name;
+      const grid = document.getElementById('photos-grid');
+      
+      const newCard = document.createElement('div');
+      newCard.className = 'relative flex items-center gap-3 p-2 bg-surface-container-low rounded-lg group animate-pulse';
+      newCard.innerHTML = `
+        <div class="relative w-16 h-16 rounded-md overflow-hidden shrink-0 bg-surface-container flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary text-[24px]">image</span>
+        </div>
+        <div class="flex flex-col justify-center min-w-0 flex-1">
+          <div class="flex items-center justify-between gap-1">
+            <span class="font-label-mono text-label-mono text-on-surface font-medium truncate">${fileName}</span>
+            <button type="button" onclick="this.closest('.relative.flex').remove(); updatePhotoCount();" class="w-8 h-8 rounded-md flex items-center justify-center text-error hover:bg-error-container">
+              <span class="material-symbols-outlined text-[19px]">delete</span>
+            </button>
+          </div>
+          <span class="font-label-mono text-[11px] text-primary font-medium mt-1">Carregada com sucesso</span>
+        </div>
+      `;
+      grid.appendChild(newCard);
+      setTimeout(() => newCard.classList.remove('animate-pulse'), 800);
+      updatePhotoCount();
+    }
+  }
+
+  function triggerSubmitFeedback() {
+    const toast = document.getElementById('toast-feedback');
+    toast.classList.remove('hidden');
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    setTimeout(() => {
+      toast.classList.add('hidden');
+    }, 4000);
+  }
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/85 backdrop-blur-xl shadow-[0_-1px_8px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-semibold"><div class="flex items-center justify-around h-16 px-xs"><a class="flex flex-col items-center justify-center w-full min-h-[44px] py-1 text-on-surface-variant transition-colors" data-path="painel-de-operacoes" href="#"><span class="material-symbols-outlined text-[22px]">precision_manufacturing</span><span class="font-label-mono text-[11px] mt-0.5">Operação</span></a><a class="flex flex-col items-center justify-center w-full min-h-[44px] py-1 text-on-surface-variant transition-colors" data-path="fila-de-impressao" href="#"><span class="material-symbols-outlined text-[22px]">format_list_numbered</span><span class="font-label-mono text-[11px] mt-0.5">Fila</span></a><a class="flex flex-col items-center justify-center w-full min-h-[44px] py-1 text-on-surface-variant transition-colors" data-path="catalogo-de-produtos" href="#"><span class="material-symbols-outlined text-[22px]">inventory_2</span><span class="font-label-mono text-[11px] mt-0.5">Produtos</span></a><a class="flex flex-col items-center justify-center w-full min-h-[44px] py-1 text-on-surface-variant transition-colors" data-path="estoque-de-filamentos" href="#"><span class="material-symbols-outlined text-[22px]">view_in_ar</span><span class="font-label-mono text-[11px] mt-0.5">Insumos</span></a></div></nav></body></html>

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Modulus Hub — Carretel 3D interativo</title>
+<style>
+:root{--blue:#2B00FF;--navy:#152336;--pale:#A6B4FF;--orange:#FF4E26}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 52% 15%,#edf0ff 0%,#f7f9fd 47%,#edf2fa 100%);font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--navy);display:grid;place-items:center;padding:22px}.shell{width:min(930px,100%);background:#fff;border:1px solid #e1e7f4;border-radius:26px;box-shadow:0 20px 80px #18254912;overflow:hidden}.top{display:flex;align-items:center;justify-content:space-between;padding:22px 30px;border-bottom:1px solid #edf0f7}.brand{display:flex;align-items:center;gap:11px;font-size:15px;font-weight:780}.brandmark{width:35px;height:35px;border-radius:11px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:900}.eyebrow{font-size:11px;font-weight:740;letter-spacing:.1em;text-transform:uppercase;color:#7a89aa}.content{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);min-height:470px}.stage{min-width:0;position:relative;overflow:hidden;background:radial-gradient(ellipse at 45% 40%,#ffffff 0%,#f1f4fc 60%,#eaf0fa 100%);display:grid;place-items:center}.stage::after{content:"";position:absolute;bottom:32px;width:55%;height:28px;filter:blur(19px);border-radius:50%;background:#1b275229;pointer-events:none}canvas{display:block;touch-action:none;cursor:grab;width:100%;height:470px;position:relative;z-index:1}canvas:active{cursor:grabbing}.stage-label{position:absolute;top:21px;left:22px;font-size:12px;font-weight:600;color:#53637f;z-index:2;background:#fff9;border:1px solid #e0e7f4;border-radius:999px;padding:8px 12px}.stage-note{position:absolute;bottom:17px;left:0;right:0;text-align:center;color:#6f7f9e;font-size:12px;z-index:2}.panel{display:flex;flex-direction:column;gap:19px;padding:32px 29px 25px}.title{font-size:28px;font-weight:800;letter-spacing:-.045em;margin:0;line-height:1.1}.sub{font-size:14px;color:#66748e;line-height:1.6;margin:0}.stat{border-radius:16px;padding:18px 17px;background:#f6f8fc;border:1px solid #e9eef8}.stathead{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;color:#62718d;font-weight:650}.pct{font-size:42px;font-weight:850;letter-spacing:-.06em;font-variant-numeric:tabular-nums;margin:7px 0 2px}.small{font-size:13px;color:#64718a}.bar{height:8px;border-radius:20px;overflow:hidden;background:#dce3f2;margin-top:14px}.barfill{height:100%;border-radius:20px;background:var(--blue);width:72%;transition:width .45s cubic-bezier(.2,.8,.2,1),background-color .3s}.control-label{display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:750;margin-bottom:8px}.range{width:100%;accent-color:var(--blue);cursor:pointer}.limits{display:flex;justify-content:space-between;font-size:11px;color:#8994a9;margin-top:5px}.chips{display:flex;gap:9px;flex-wrap:wrap}.chip{appearance:none;border:2px solid #fff;width:30px;height:30px;border-radius:100%;box-shadow:0 0 0 1px #dbe1eb;cursor:pointer;transition:transform .15s,box-shadow .15s}.chip:hover{transform:scale(1.1)}.chip[aria-pressed="true"]{box-shadow:0 0 0 2px var(--blue)}.low{color:#cc5227}.good{color:#16805f}.empty{color:#c23a46}.footer{border-top:1px solid #edf0f7;padding:12px 28px;background:#fcfdff;color:#74819b;font-size:11px}.notice{font-size:12px;color:#6d7b95;line-height:1.55}.statusdot{display:inline-block;width:8px;height:8px;background:#12aa7f;border-radius:50%;margin-right:5px}@media(max-width:720px){body{padding:10px}.content{grid-template-columns:1fr}.top{padding:17px}.panel{padding:22px}.stage canvas{height:340px}.stage-note{bottom:8px}.title{font-size:24px}}
+</style>
+</head>
+<body>
+<main class="shell">
+<header class="top"><div class="brand"><span class="brandmark">M</span>Modulus Hub</div><div class="eyebrow">Conceito interativo · 3D real</div></header>
+<div class="content">
+<section class="stage" aria-label="Visualização 3D de carretel de filamento"><span class="stage-label">Modelo 3D · arraste para girar</span><canvas id="spool" aria-label="Carretel 3D com representação do nível de filamento"></canvas><span class="stage-note">O filamento diminui fisicamente conforme o saldo</span></section>
+<section class="panel"><div><div class="eyebrow">Estoque de filamentos</div><h1 class="title">Carretel dinâmico</h1><p class="sub">O modelo 3D representa o filamento restante. Mude o saldo e veja as camadas diminuírem.</p></div>
+<div class="stat"><div class="stathead"><span>Saldo atual</span><strong id="status" class="good"><i class="statusdot"></i>Disponível</strong></div><div class="pct" id="percent">72%</div><div class="small" id="remaining">720 g de 1.000 g</div><div class="bar"><div id="bar" class="barfill"></div></div></div>
+<div><div class="control-label"><label for="level">Simular saldo</label><span id="level-num">720 g</span></div><input class="range" id="level" type="range" min="0" max="1000" step="10" value="720"><div class="limits"><span>0 g · vazio</span><span>1.000 g · cheio</span></div></div>
+<div><div class="control-label"><span>Cor do filamento</span></div><div class="chips" id="colors"><button class="chip" type="button" style="background:#2B00FF" data-color="#2B00FF" aria-label="Azul elétrico" aria-pressed="true"></button><button class="chip" type="button" style="background:#FF4E26" data-color="#FF4E26" aria-label="Laranja" aria-pressed="false"></button><button class="chip" type="button" style="background:#13AD76" data-color="#13AD76" aria-label="Verde" aria-pressed="false"></button><button class="chip" type="button" style="background:#C22B8D" data-color="#C22B8D" aria-label="Rosa" aria-pressed="false"></button><button class="chip" type="button" style="background:#272C36" data-color="#272C36" aria-label="Preto" aria-pressed="false"></button></div></div>
+<div class="notice">Demonstração independente, sem conexão ao estoque. No Hub, o percentual virá dos dados reais e o aviso de estoque baixo seguirá o limite configurado pela empresa.</div>
+</section>
+</div><footer class="footer">Protótipo WebGL sem bibliotecas externas · nenhuma alteração de estoque é realizada</footer>
+</main>
+<script>
+(()=>{
+const canvas=document.getElementById('spool');const gl=canvas.getContext('webgl2',{antialias:true,alpha:true,premultipliedAlpha:true});
+if(!gl){canvas.replaceWith(Object.assign(document.createElement('p'),{textContent:'WebGL 2 não está disponível neste navegador.'}));return;}
+const vs=`#version 300 es
+precision highp float;
+in vec3 aPosition; in vec3 aNormal; in vec3 aColor;
+uniform mat4 uMVP; uniform mat4 uModel;
+out vec3 vColor;out vec3 vNormal;out vec3 vWorld;
+void main(){vec4 wp=uModel*vec4(aPosition,1.);vWorld=wp.xyz;vNormal=mat3(uModel)*aNormal;vColor=aColor;gl_Position=uMVP*vec4(aPosition,1.);}`;
+const fs=`#version 300 es
+precision highp float;
+in vec3 vColor,vNormal,vWorld;
+out vec4 fragColor;
+void main(){vec3 n=normalize(vNormal);vec3 light=normalize(vec3(-.35,.85,1.));float dif=max(dot(n,light),0.);float fill=.36+.68*dif;float rim=pow(1.-abs(dot(n,normalize(vec3(0.,0.,1.)))),2.)*.1;vec3 col=vColor*(fill+rim);fragColor=vec4(pow(clamp(col,0.,1.),vec3(.90)),1.);}`;
+function shader(type,src){const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s}
+const program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vs));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fs));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(program));gl.useProgram(program);
+const loc={pos:gl.getAttribLocation(program,'aPosition'),nor:gl.getAttribLocation(program,'aNormal'),col:gl.getAttribLocation(program,'aColor'),mvp:gl.getUniformLocation(program,'uMVP'),model:gl.getUniformLocation(program,'uModel')};
+gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);gl.disable(gl.CULL_FACE);gl.clearColor(0,0,0,0);
+function hexToRGB(h){const x=parseInt(h.substring(1),16);return [(x>>16&255)/255,(x>>8&255)/255,(x&255)/255]}
+function geom(){return {arr:[]}}
+function tri(g,a,b,c,na,nb,nc,color){for(const [v,n] of [[a,na],[b,nb],[c,nc]])g.arr.push(...v,...n,...color)}
+function quad(g,a,b,c,d,na,nb,nc,nd,color){tri(g,a,b,c,na,nb,nc,color);tri(g,a,c,d,na,nc,nd,color)}
+function ring(g,x,inner,outer,base,front=true,seg=96){const norm=front?[1,0,0]:[-1,0,0];for(let i=0;i<seg;i++){const a=2*Math.PI*i/seg,b=2*Math.PI*(i+1)/seg;const p=(r,t)=>[x,r*Math.cos(t),r*Math.sin(t)];const color=base;quad(g,p(inner,a),p(outer,a),p(outer,b),p(inner,b),norm,norm,norm,norm,color)}}
+function shell(g,r,x1,x2,col,seg=96){for(let i=0;i<seg;i++){const a=2*Math.PI*i/seg,b=2*Math.PI*(i+1)/seg;const p=(x,t)=>[x,r*Math.cos(t),r*Math.sin(t)];const n=t=>[0,Math.cos(t),Math.sin(t)];quad(g,p(x1,a),p(x2,a),p(x2,b),p(x1,b),n(a),n(a),n(b),n(b),col)}}
+function spokes(g,x,col,front){const norm=front?[1,0,0]:[-1,0,0];for(let i=0;i<7;i++){const a=i*2*Math.PI/7;const a1=a-.115,a2=a+.115;const p=(r,t)=>[x,r*Math.cos(t),r*Math.sin(t)];quad(g,p(.30,a1),p(1.17,a1),p(1.17,a2),p(.30,a2),norm,norm,norm,norm,col)}}
+function addFlange(g,x,front){const black=[.11,.135,.175],rim=[.19,.225,.275],edge=[.29,.33,.37],hub=[.15,.18,.23];ring(g,x,1.09,1.34,black,front);ring(g,x+(front?.012:-.012),1.285,1.35,rim,front);ring(g,x,.13,.38,hub,front);spokes(g,x,black,front);shell(g,1.34,x-.063,x+.063,rim);shell(g,1.285,x-.064,x+.064,edge)}
+const staticGeom=geom();addFlange(staticGeom,-.68,false);shell(staticGeom,.39,-.66,.66,[.145,.17,.21]);addFlange(staticGeom,.68,true);
+function filamentGeom(level,col){const g=geom();if(level<.001)return g;const inner=.43;const outer=1.17;const radius=Math.sqrt(inner*inner+level*(outer*outer-inner*inner));const seg=88,steps=95;const start=-.575,end=.575;for(let j=0;j<steps;j++){const x1=start+(end-start)*j/steps,x2=start+(end-start)*(j+1)/steps;const wave1=.006*Math.cos(j*2.4),wave2=.006*Math.cos((j+1)*2.4);const r1=radius+wave1,r2=radius+wave2;const shading=j%3===0?.89:1;const c=col.map(x=>x*shading);for(let i=0;i<seg;i++){let a=i*2*Math.PI/seg,b=(i+1)*2*Math.PI/seg;const p=(x,r,t)=>[x,r*Math.cos(t),r*Math.sin(t)],n=t=>[0,Math.cos(t),Math.sin(t)];quad(g,p(x1,r1,a),p(x2,r2,a),p(x2,r2,b),p(x1,r1,b),n(a),n(a),n(b),n(b),c)}}
+ring(g,.577,inner,radius,col.map(x=>x*.89),true,96);ring(g,-.577,inner,radius,col.map(x=>x*.89),false,96);for(let r=inner+.022;r<radius;r+=.035){ring(g,.58,r,Math.min(radius,r+.008),col.map(x=>x*.76),true,96)}return g}
+function createBuffer(g){const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(g.arr),gl.STATIC_DRAW);return {buf:b,n:g.arr.length/9}}
+let staticBuffer=createBuffer(staticGeom),fillBuffer=null;
+function setFilament(level,col){if(fillBuffer)gl.deleteBuffer(fillBuffer.buf);fillBuffer=createBuffer(filamentGeom(level,col))}
+function drawMesh(o){if(!o||!o.n)return;gl.bindBuffer(gl.ARRAY_BUFFER,o.buf);for(const [index,attr] of [[loc.pos,0],[loc.nor,3],[loc.col,6]]){gl.enableVertexAttribArray(index);gl.vertexAttribPointer(index,3,gl.FLOAT,false,36,attr*4)}gl.drawArrays(gl.TRIANGLES,0,o.n)}
+function identity(){return [1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]}
+function mul(a,b){let o=new Array(16).fill(0);for(let c=0;c<4;c++)for(let r=0;r<4;r++)for(let k=0;k<4;k++)o[c*4+r]+=a[k*4+r]*b[c*4+k];return o}
+function ry(a){let c=Math.cos(a),s=Math.sin(a);return [c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1]}
+function rx(a){let c=Math.cos(a),s=Math.sin(a);return [1,0,0,0,0,c,s,0,0,-s,c,0,0,0,0,1]}
+function rz(a){let c=Math.cos(a),s=Math.sin(a);return [c,s,0,0,-s,c,0,0,0,0,1,0,0,0,0,1]}
+function translation(x,y,z){let m=identity();m[12]=x;m[13]=y;m[14]=z;return m}
+function perspective(fov,asp,n,f){let q=1/Math.tan(fov/2);return [q/asp,0,0,0,0,q,0,0,0,0,(f+n)/(n-f),-1,0,0,2*f*n/(n-f),0]}
+const slider=document.getElementById('level'),percent=document.getElementById('percent'),remaining=document.getElementById('remaining'),levelNum=document.getElementById('level-num'),bar=document.getElementById('bar'),status=document.getElementById('status');let target=.72,current=.72,color='#2B00FF',rotation=-.94,tilt=.16,dragging=false,startX=0,startY=0,last=0,lastLvl=1;
+function fmt(n){return new Intl.NumberFormat('pt-BR').format(n)}
+function updateLabel(){const grams=Number(slider.value),p=grams/10;target=grams/1000;percent.textContent=p+'%';remaining.textContent=fmt(grams)+' g de 1.000 g';levelNum.textContent=fmt(grams)+' g';bar.style.width=p+'%';bar.style.background=p===0?'#d44449':p<=20?'#FF4E26':'#2B00FF';status.className=p===0?'empty':p<=20?'low':'good';status.innerHTML=p===0?'Esgotado':p<=20?'Estoque baixo':'<i class="statusdot"></i>Disponível'}
+slider.addEventListener('input',updateLabel);
+document.getElementById('colors').addEventListener('click',e=>{const b=e.target.closest('[data-color]');if(!b)return;color=b.dataset.color;for(const ch of document.querySelectorAll('.chip'))ch.setAttribute('aria-pressed',String(ch===b));lastLvl=-1});
+canvas.addEventListener('pointerdown',e=>{dragging=true;startX=e.clientX;startY=e.clientY;canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener('pointermove',e=>{if(!dragging)return;rotation+=(e.clientX-startX)*.009;tilt=Math.max(-.8,Math.min(.8,tilt+(e.clientY-startY)*.009));startX=e.clientX;startY=e.clientY});
+canvas.addEventListener('pointerup',()=>dragging=false);canvas.addEventListener('pointercancel',()=>dragging=false);
+function render(t){const rect=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);const w=Math.max(1,Math.round(rect.width*dpr)),h=Math.max(1,Math.round(rect.height*dpr));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h)}gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);current+= (target-current)*.085;if(Math.abs(current-target)<.0005)current=target;
+const level=Math.max(0,Math.min(1,current)),discrete=Math.round(level*250)/250;if(discrete!==lastLvl){setFilament(discrete,hexToRGB(color));lastLvl=discrete}
+// Idle rocking keeps the form genuinely three-dimensional; drag takes priority.
+const idle=dragging?0:Math.sin(t*.00044)*.075;
+const model=mul(ry(rotation+idle),mul(rx(tilt),rz(-.085)));
+const view=translation(0,0,-5.8);const proj=perspective(Math.PI/4,w/h,.1,30);const mvp=mul(proj,mul(view,model));gl.useProgram(program);gl.uniformMatrix4fv(loc.model,false,new Float32Array(model));gl.uniformMatrix4fv(loc.mvp,false,new Float32Array(mvp));drawMesh(staticBuffer);drawMesh(fillBuffer);requestAnimationFrame(render)}
+updateLabel();requestAnimationFrame(render);
+})();
+</script>
+</body>
+</html>

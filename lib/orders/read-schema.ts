@@ -1,0 +1,7 @@
+import { z } from "zod";
+import { financialFields, money, operationalStatus, safeInteger } from "./operation-schema";
+const timestamp=z.string().datetime({offset:true});
+const fields={id:z.string().uuid(),display_number:safeInteger,operational_status:operationalStatus,buyer_name:z.string(),buyer_phone:z.string().nullable(),buyer_email:z.string().nullable(),currency:z.literal("BRL"),subtotal:money,discount_amount:money,shipping_amount:money,created_at:timestamp,updated_at:timestamp,archived_at:timestamp.nullable(),version:safeInteger,...financialFields};
+export const orderListRowSchema=z.object({...fields,items_count:safeInteger,total_count:safeInteger}).strict();
+export const orderDetailRowSchema=z.object({...fields,enterprise_id:z.string().uuid(),buyer_address:z.string().nullable(),discount_type:z.enum(["fixed","percent"]),discount_input:money,discount_base:money,notes:z.string().nullable(),created_by:z.string().uuid(),delivered_at:timestamp.nullable(),cancelled_at:timestamp.nullable()}).strict();
+export const orderItemRowSchema=z.object({id:z.string().uuid(),order_id:z.string().uuid(),product_id:z.string().uuid().nullable(),origin:z.enum(["catalog","custom"]),name:z.string(),description:z.string().nullable(),quantity:safeInteger.refine(n=>n>0 && n<=1000000000),unit_price:money,line_subtotal:money,fulfillment_mode:z.enum(["stock","make_to_order","untracked"]),line_number:safeInteger}).strict();

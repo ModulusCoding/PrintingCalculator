@@ -1,0 +1,1 @@
+export default function Loading(){return <section className="mx-auto max-w-4xl rounded-2xl border bg-white p-8"><div className="h-8 w-40 animate-pulse rounded bg-gray-200"/><div className="mt-8 h-56 animate-pulse rounded bg-gray-100" aria-label="Carregando equipe"/></section>}

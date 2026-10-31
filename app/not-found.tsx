@@ -1,6 +1,7 @@
 "use client";
 
 import React, { JSX, useEffect, useRef } from "react";
+import Link from "next/link";
 
 /**
  * Modulus - 404 "Malha Não Encontrada"
@@ -105,17 +106,16 @@ export default function Modulus404(): JSX.Element {
                         </p>
 
                         <div className="flex flex-wrap gap-4">
-                            <a
+                            <Link
                                 href="/"
                                 className="px-6 py-4 rounded-xl font-medium flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all"
-
                                 style={{ backgroundColor: MODULUS_COLORS.primary, color: MODULUS_COLORS.onPrimary }}
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                                 </svg>
                                 Voltar para a Página Inicial
-                            </a>
+                            </Link>
 
                         </div>
                     </div>

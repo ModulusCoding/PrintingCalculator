@@ -1,0 +1,58 @@
+-- M7.2-C.1 functional regression plan. NOT EXECUTED; requires disposable tenant fixtures.
+-- Use authenticated JWT sessions through public RPCs; never service_role as auth proof.
+--
+-- CREATE / PLAN / MONEY
+-- 1. Free/Aprendiz create custom untracked item: exact header + line totals, buyer snapshots,
+--    version 0, em_conversao, one created event, one receipt.
+-- 2. Third lifetime order succeeds; fourth fails plan_limit_reached. Archived/cancelled/delivered
+--    fixtures still count. Two creates near quota must leave no more than three total.
+-- 3. Intermediate and Advanced/Visionário plan can create without order cap; expired/cancelled
+--    access resolves to Free. Unselected plan is rejected.
+-- 4. Fixed/percent discount, freight, negotiated catalog price; exact numeric and scale checks.
+--    Reject exponent, whitespace, >2 decimals, NaN/infinity, negative, excessive range.
+--
+-- ITEMS / TENANCY / JSON
+-- 5. Catalog product same tenant snapshots current name/description and accepts negotiated price.
+-- 6. Custom item with product_id in same tenant must still validate active/deleted/visibility and
+--    lock product; cross-tenant, invisible, archived products fail without writes.
+-- 7. Custom item with NULL/no product is valid only untracked.
+-- 8. Malformed product UUID, numeric/object UUID, malformed quantity ('1.2','+1','1e2', overflow),
+--    missing quantity, object/array item, invalid origin and unknown fulfillment mode return
+--    stable invalid_input / stock_integration_unavailable, not raw cast error.
+-- 9. stock and make_to_order are rejected; inventory/reservations/movements remain unchanged.
+--
+-- IDEMPOTENCY / EDIT / HISTORY
+-- 10. Same create attempt+payload replays exact result, one order/number/items/event/receipt;
+--     changed payload returns idempotency_conflict.
+-- 11. Update expected_version correct: version increments exactly once; order update trigger changes
+--     updated_at; one updated event has new version and unchanged status.
+-- 12. Stale version fails and all rows remain unchanged. Terminal order rejected.
+-- 13. Update with active reservation -> active_reservation_edit_unsupported; no row changes.
+-- 14. Update with released reservation -> reservation_history_edit_unsupported; item ID and FK stay.
+-- 15. Update with consumed reservation -> reservation_history_edit_unsupported; item ID and FK stay.
+-- 16. Update same attempt/payload replays; different payload conflicts. Concurrent duplicate calls
+--     result in one mutation/event/receipt and same stored result.
+-- 17. Item replacement on order with no reservation history succeeds, version/event consistent.
+--
+-- STRUCTURE / ATOMICITY
+-- 18. Inject failure after item/header write on disposable DB: rollback header, items, counter,
+--     event and receipt. Verify order_items references and reservation FKs remain valid.
+-- 19. Verify owner/search_path/EXECUTE grants and no DML grants to anon/authenticated/service_role.
+-- 20. Verify status/timestamp and version trigger/constraints against effective A/B/B.1 catalog.
+--
+-- Additional targeted C.1 stabilization cases (disposable PostgreSQL only):
+-- 21. Valid create/update receipt replay returns exact stored result and changes no rows.
+--     Update receipt is compared against the persisted current update result only; a later
+--     independent update may advance the order, so replay still returns its original receipt result.
+-- 22. Corrupt result JSON (wrong order_id, missing keys, malformed UUID/numeric, wrong status)
+--     returns receipt_result_unavailable; no receipt repair or duplicate order is allowed.
+-- 23. Create receipt with order_id pointing to another persisted order, or mismatched result ID,
+--     fails closed. Repeat analogous update receipt tests, including mismatched p_order_id.
+-- 24. Concurrent duplicate create attempt in two sessions produces exactly one aggregate and both
+--     callers receive same persisted result; corrupt receipt fixture is tested only in disposable DB.
+-- 25. Create and update with multiple ordered items preserve line order and exact numeric values;
+--     invalid quantity/UUID/price returns before any permanent write.
+-- 26. Failure injection before first permanent write produces no order/counter/event/receipt changes;
+--     failures after writes rollback the full transaction (not partial effects).
+--
+-- No functional or PostgreSQL test has been executed in this workspace.

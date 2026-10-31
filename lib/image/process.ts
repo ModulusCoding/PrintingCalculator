@@ -7,7 +7,10 @@ const ALLOWED_INPUT_MIME_TYPES = [
 ] as const;
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+const MIN_FILE_SIZE = 32;
+const MAX_OUTPUT_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_DIMENSION = 2000;
+const MAX_INPUT_PIXELS = 4_000_000;
 const WEBP_QUALITY = 90;
 
 export type AllowedInputMimeType =
@@ -55,7 +58,7 @@ export async function processImageToWebP(
     };
   }
 
-  if (file.size > MAX_FILE_SIZE) {
+  if (file.size < MIN_FILE_SIZE || file.size > MAX_FILE_SIZE) {
     return {
       error:
         "O tamanho do arquivo excede o limite máximo de 5MB.",
@@ -68,7 +71,7 @@ export async function processImageToWebP(
 
     const metadata = await sharp(inputBuffer).metadata();
 
-    if (!metadata.width || !metadata.height) {
+    if (!metadata.width || !metadata.height || metadata.width * metadata.height > MAX_INPUT_PIXELS) {
       return {
         error: "Arquivo de imagem inválido ou corrompido.",
       };
@@ -102,6 +105,10 @@ export async function processImageToWebP(
         quality: WEBP_QUALITY,
       })
       .toBuffer();
+
+    if (processedBuffer.length < MIN_FILE_SIZE || processedBuffer.length > MAX_OUTPUT_FILE_SIZE) {
+      return { error: "A imagem processada excede os limites permitidos." };
+    }
 
     const processedMetadata =
       await sharp(processedBuffer).metadata();

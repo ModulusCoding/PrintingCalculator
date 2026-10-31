@@ -37,19 +37,22 @@ export async function updateSession(request: NextRequest) {
 
   const isAuthRoute = request.nextUrl.pathname.startsWith("/admin/login");
   const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
+  const redirectWithSessionCookies = (pathname: string) => {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname;
+    const response = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie));
+    return response;
+  };
 
   if (isAdminRoute && !isAuthRoute && !user) {
-    // If not authenticated and trying to access any protected admin route -> redirect to login
-    const url = request.nextUrl.clone();
-    url.pathname = "/admin/login";
-    return NextResponse.redirect(url);
+    return redirectWithSessionCookies("/admin/login");
   }
 
   if (isAuthRoute && user) {
-    // If already authenticated and accessing login -> redirect to admin dashboard
-    const url = request.nextUrl.clone();
-    url.pathname = "/admin";
-    return NextResponse.redirect(url);
+    // The middleware deliberately does not resolve business context. The account
+    // route safely routes ready users onward while preserving blocked states.
+    return redirectWithSessionCookies("/conta");
   }
 
   return supabaseResponse;

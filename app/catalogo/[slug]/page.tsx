@@ -1,3 +1,4 @@
+import { isLegacyEnabled } from "@/lib/legacy-gate";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CatalogoModulus from "@/components/catalog/CatalogoModulus";
@@ -13,6 +14,8 @@ interface CatalogPageProps {
 export async function generateMetadata({
   params,
 }: CatalogPageProps): Promise<Metadata> {
+  if (!(await isLegacyEnabled())) return { title: "Unavailable", robots: { index: false, follow: false } };
+
   const { slug } = await params;
   const catalog = await getCatalogBySlug(slug);
 
@@ -77,6 +80,8 @@ export async function generateMetadata({
 export default async function DynamicCatalogPage({
   params,
 }: CatalogPageProps) {
+  if (!(await isLegacyEnabled())) return <p className="p-8 text-center">Unavailable</p>;
+
   const { slug } = await params;
   const catalog = await getCatalogBySlug(slug);
 

@@ -1,230 +1,310 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
-import { productSchema } from "@/lib/validations";
-import { rateLimitProductCreate, rateLimitProductUpdate, rateLimitProductDelete } from "@/lib/rate-limit";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { requireBusinessContext } from "@/lib/auth/context";
+import { productFailure } from "@/lib/products/access";
+import { createClient } from "@/lib/supabase/server";
+import { loadTrace } from "@/lib/diagnostics/load-trace";
+import { planRpcErrorCode } from "@/lib/plans";
 
-export async function getAllCatalogsForSelect() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.from("catalogs").select("id, name").order("name");
-  return { catalogs: data || [], error: error ? "Erro ao buscar catálogos." : null };
-}
+export type ProductRecord = {
+  id: string;
+  name: string;
+  description: string | null;
+  price: string | null;
+  active: boolean;
+  version: number;
+  created_at: string;
+  updated_at: string;
+};
 
-export async function getProducts() {
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from("products")
-      .select("*, catalog_products(catalog_id), product_images(id, url, display_order)")
-      .order("created_at", { ascending: false });
-    if (error) return { products: [], error: "Erro ao carregar os produtos." };
-    return {
-      products: (data || []).map((item) => {
-        const sortedImages = (item.product_images || []).sort(
-          (a: { display_order: number }, b: { display_order: number }) => a.display_order - b.display_order
-        );
-        return {
-          ...item,
-          price: item.price == null ? null : Number(item.price),
-          images: sortedImages,
-          catalog_ids: item.catalog_products.map((cp: { catalog_id: string }) => cp.catalog_id),
-          catalog_count: item.catalog_products.length,
-        };
-      }),
-      error: null,
+export type ProductResult =
+  | { status: "success"; productId: string; version: number }
+  | { status: "deleted"; productId: string; version: number }
+  | { status: "invalid_input"; fieldErrors: Record<string, string[]> }
+  | {
+      status:
+        | "session_expired"
+        | "permission_denied"
+        | "product_unavailable"
+        | "version_conflict"
+        | "selection_required"
+        | "plan_limit_reached"
+        | "plan_feature_unavailable"
+        | "member_plan_blocked"
+        | "team_regularization_required"
+        | "idempotency_conflict"
+        | "authorization_conflict"
+        | "technical"
+        | "unknown";
+      message?: string;
+      reference?: string;
+      version?: number;
     };
-  } catch {
-    return { products: [], error: "Erro inesperado ao buscar produtos." };
-  }
+
+const uuid = z.string().uuid();
+const rpcRowSchema = z
+  .object({
+    status: z.enum([
+      "success",
+      "deleted",
+      "invalid_input",
+      "permission_denied",
+      "product_unavailable",
+      "version_conflict",
+    ]),
+    product_id: z.string().uuid().nullable(),
+    version: z.coerce.number().int().nonnegative().nullable(),
+  })
+  .strict();
+
+const inputSchema = z.object({
+  attempt_id: z.string().uuid().optional(),
+  name: z.string().trim().min(2).max(255),
+  description: z.string().max(3000).nullable(),
+  price: z.string(),
+});
+
+const contextFailure = productFailure;
+
+function parsePrice(value: string): { value: string | null } | { error: string } {
+  const raw = value.trim();
+  if (!raw) return { value: null };
+  const withoutCurrency = raw.replace(/^R\$\s*/i, "");
+  if (!/^(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d{1,2})?$/.test(withoutCurrency))
+    return { error: "Formato inválido." };
+  const normalized = withoutCurrency.replace(/\./g, "").replace(",", ".");
+  if (!/^\d+(?:\.\d{1,2})?$/.test(normalized)) return { error: "Formato inválido." };
+  const amount = Number(normalized);
+  if (!Number.isFinite(amount) || amount < 0 || amount > 1_000_000)
+    return { error: "Valor fora do limite." };
+  return { value: normalized };
 }
 
-export async function getProductById(id: string) {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("products")
-    .select("*, catalog_products(catalog_id), product_images(id, url, display_order)")
-    .eq("id", id)
-    .single();
-  if (error || !data) return { product: null, error: "Produto não encontrado." };
-  const sortedImages = (data.product_images || []).sort(
-    (a: { display_order: number }, b: { display_order: number }) => a.display_order - b.display_order
-  );
+function validate(payload: unknown):
+  | { errors: Record<string, string[]> }
+  | { data: { attempt_id?: string; name: string; description: string | null; price: string | null } } {
+  const parsed = inputSchema.safeParse(payload);
+  if (!parsed.success)
+    return { errors: parsed.error.flatten().fieldErrors as Record<string, string[]> };
+  const price = parsePrice(parsed.data.price);
+  if ("error" in price) return { errors: { price: [price.error] } };
   return {
-    product: {
-      ...data,
-      price: data.price == null ? null : Number(data.price),
-      images: sortedImages,
-      catalog_ids: data.catalog_products.map((cp: { catalog_id: string }) => cp.catalog_id),
+    data: {
+      ...parsed.data,
+      description: parsed.data.description?.trim() || null,
+      price: price.value,
     },
-    error: null,
   };
 }
 
-async function getAuthorizedContext(type: "create" | "update" | "delete") {
-  const headerList = await headers();
-  const ip = headerList.get("x-forwarded-for") || "127.0.0.1";
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Não autorizado. Faça login para continuar.", supabase: null };
-  const checks = { create: rateLimitProductCreate, update: rateLimitProductUpdate, delete: rateLimitProductDelete };
-  if (!checks[type](ip, user.id).allowed) return { error: "Muitas operações recentes. Por favor, aguarde alguns minutos.", supabase: null };
-  return { supabase, error: null };
-}
-
-function refreshPaths(id?: string) {
-  revalidatePath("/admin");
+function refresh(id?: string) {
   revalidatePath("/admin/products");
-  revalidatePath("/admin/catalogs");
   if (id) revalidatePath(`/admin/products/${id}`);
 }
 
-export async function createProductAction(payload: unknown) {
-  const context = await getAuthorizedContext("create");
-  if (context.error || !context.supabase) return { error: context.error };
-  const parsed = productSchema.safeParse(payload);
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message || "Dados inválidos." };
-  const data = parsed.data;
-
-  if (data.images && data.images.length > 3) {
-    return { error: "O limite máximo por produto é de 3 imagens." };
-  }
-
-  const primaryImage = data.images && data.images.length > 0 ? data.images[0] : data.image_url || null;
-
-  const { data: product, error } = await context.supabase
-    .from("products")
-    .insert({
-      name: data.name,
-      slug: data.slug,
-      description: data.description || null,
-      price: data.price,
-      image_url: primaryImage,
-      active: data.active,
-    })
-    .select()
-    .single();
-
-  if (error || !product) return { error: "Erro ao criar o produto." };
-
-  if (data.images && data.images.length > 0) {
-    const imageRows = data.images.slice(0, 3).map((url, idx) => ({
-      product_id: product.id,
-      url,
-      display_order: idx + 1,
-    }));
-    const { error: imgError } = await context.supabase.from("product_images").insert(imageRows);
-    if (imgError) {
-      await context.supabase.from("products").delete().eq("id", product.id);
-      return { error: "Erro ao salvar as imagens do produto." };
-    }
-  }
-
-  if (data.catalog_ids.length) {
-    const { error: relationError } = await context.supabase
-      .from("catalog_products")
-      .insert(data.catalog_ids.map((catalog_id, display_order) => ({ catalog_id, product_id: product.id, display_order })));
-    if (relationError) {
-      await context.supabase.from("products").delete().eq("id", product.id);
-      return { error: "Erro ao associar os catálogos selecionados." };
-    }
-  }
-
-  refreshPaths();
-  return { success: true, product };
+function escapeIlike(value: string) {
+  return value.replace(/\\/g, "\\\\").replace(/%/g, "\\%").replace(/_/g, "\\_");
 }
 
-export async function updateProductAction(id: string, payload: unknown) {
-  const context = await getAuthorizedContext("update");
-  if (context.error || !context.supabase) return { error: context.error };
-  const parsed = productSchema.safeParse(payload);
-  if (!parsed.success) return { error: parsed.error.issues[0]?.message || "Dados inválidos." };
-  const data = parsed.data;
+export async function listInternalProducts(
+  params: { search?: string; status?: string; page?: string } = {}
+) {
+  const trace = loadTrace("products-list");
+  trace.mark("start");
+  try {
+    const context = await requireBusinessContext("products.read");
+    trace.mark("context:end");
+    const search = (params.search || "").trim().slice(0, 200);
+    const status = ["active", "archived", "all"].includes(params.status || "")
+      ? params.status!
+      : "active";
+    const requested = Math.max(
+      1,
+      Math.min(10_000, Number.parseInt(params.page || "1", 10) || 1)
+    );
+    const supabase = await createClient();
 
-  if (data.images && data.images.length > 3) {
-    return { error: "O limite máximo por produto é de 3 imagens." };
+    let countQuery = supabase
+      .from("products")
+      .select("id", { count: "exact", head: true })
+      .eq("enterprise_id", context.enterpriseId)
+      .is("deleted_at", null);
+    if (status === "active") countQuery = countQuery.eq("active", true);
+    if (status === "archived") countQuery = countQuery.eq("active", false);
+    if (search) countQuery = countQuery.ilike("name", `%${escapeIlike(search)}%`);
+
+    trace.mark("count:start");
+    const { count, error: countError } = await countQuery;
+    trace.mark("count:end");
+    if (countError) throw countError;
+
+    const total = count || 0;
+    const page = Math.min(requested, Math.max(1, Math.ceil(total / 20)));
+
+    let rowsQuery = supabase
+      .from("products")
+      .select("id,name,description,price,active,version,created_at,updated_at")
+      .eq("enterprise_id", context.enterpriseId)
+      .is("deleted_at", null);
+    if (status === "active") rowsQuery = rowsQuery.eq("active", true);
+    if (status === "archived") rowsQuery = rowsQuery.eq("active", false);
+    if (search) rowsQuery = rowsQuery.ilike("name", `%${escapeIlike(search)}%`);
+
+    trace.mark("rows:start");
+    const { data, error } = await rowsQuery
+      .order("created_at", { ascending: false })
+      .order("id", { ascending: false })
+      .range((page - 1) * 20, page * 20 - 1);
+    trace.mark("rows:end");
+
+    if (error) throw error;
+    trace.mark("done");
+    return {
+      products: (data || []) as ProductRecord[],
+      total,
+      page,
+      status,
+      search,
+      error: null,
+      reference: undefined as string | undefined,
+    };
+  } catch (error) {
+    const failure = contextFailure(error);
+    trace.mark("done:exception");
+    return {
+      products: [] as ProductRecord[],
+      total: 0,
+      page: 1,
+      status: "active",
+      search: "",
+      error: failure.status,
+      reference: "reference" in failure ? failure.reference : undefined,
+    };
   }
-
-  const primaryImage = data.images && data.images.length > 0 ? data.images[0] : data.image_url || null;
-
-  const { data: product, error } = await context.supabase
-    .from("products")
-    .update({
-      name: data.name,
-      slug: data.slug,
-      description: data.description || null,
-      price: data.price,
-      image_url: primaryImage,
-      active: data.active,
-    })
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error || !product) return { error: "Erro ao atualizar o produto." };
-
-  const { error: deleteImgErr } = await context.supabase.from("product_images").delete().eq("product_id", id);
-  if (deleteImgErr) return { error: "Erro ao atualizar imagens existentes." };
-
-  if (data.images && data.images.length > 0) {
-    const imageRows = data.images.slice(0, 3).map((url, idx) => ({
-      product_id: id,
-      url,
-      display_order: idx + 1,
-    }));
-    const { error: insertImgErr } = await context.supabase.from("product_images").insert(imageRows);
-    if (insertImgErr) return { error: "Erro ao salvar as novas imagens do produto." };
-  }
-
-  const { error: deleteError } = await context.supabase.from("catalog_products").delete().eq("product_id", id);
-  if (deleteError) return { error: "Erro ao atualizar as associações de catálogo." };
-  if (data.catalog_ids.length) {
-    const { error: insertError } = await context.supabase
-      .from("catalog_products")
-      .insert(data.catalog_ids.map((catalog_id, display_order) => ({ catalog_id, product_id: id, display_order })));
-    if (insertError) return { error: "Erro ao salvar as novas associações de catálogo." };
-  }
-
-  refreshPaths(id);
-  return { success: true, product };
 }
 
-export async function deleteProductAction(id: string) {
-  const context = await getAuthorizedContext("delete");
-  if (context.error || !context.supabase) return { error: context.error };
-
-  // Buscar imagens para limpar Storage sem deixar arquivos órfãos
-  const { data: images } = await context.supabase
-    .from("product_images")
-    .select("url")
-    .eq("product_id", id);
-
-  const { error } = await context.supabase.from("products").delete().eq("id", id);
-  if (error) return { error: "Erro ao excluir o produto." };
-
-  if (images && images.length > 0) {
-    const filePaths = images
-      .map((img) => {
-        try {
-          const url = new URL(img.url);
-          const pathParts = url.pathname.split("/");
-          const bucketIndex = pathParts.indexOf("products");
-          if (bucketIndex >= 0 && pathParts.length > bucketIndex + 1) {
-            return pathParts.slice(bucketIndex + 1).join("/");
-          }
-        } catch {
-          return null;
-        }
-        return null;
-      })
-      .filter((p): p is string => Boolean(p));
-
-    if (filePaths.length > 0) {
-      await context.supabase.storage.from("products").remove(filePaths);
-    }
+export async function getInternalProduct(id: string) {
+  if (!uuid.safeParse(id).success)
+    return { product: null, error: "product_unavailable" as const, reference: undefined as string | undefined };
+  try {
+    const context = await requireBusinessContext("products.read");
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select("id,name,description,price,active,version,created_at,updated_at")
+      .eq("enterprise_id", context.enterpriseId)
+      .eq("id", id)
+      .is("deleted_at", null)
+      .maybeSingle();
+    if (error) throw error;
+    return {
+      product: data as ProductRecord | null,
+      error: !data ? ("product_unavailable" as const) : null,
+      reference: undefined as string | undefined,
+    };
+  } catch (error) {
+    const failure = contextFailure(error);
+    return { product: null, error: failure.status, reference: "reference" in failure ? failure.reference : undefined };
   }
+}
 
-  refreshPaths();
-  return { success: true };
+async function callRpc(
+  fn: "create_internal_product" | "update_internal_product" | "set_internal_product_active" | "delete_internal_product",
+  args: Record<string, unknown>,
+  requestedId?: string
+): Promise<ProductResult> {
+  try {
+    await requireBusinessContext(
+      fn === "set_internal_product_active" || fn === "delete_internal_product" ? "products.delete" : "products.write"
+    );
+    const supabase = await createClient();
+    const { data, error } = await supabase.rpc(fn, args);
+    if (error) {
+      const code = error.message.replace(/^(?:ERROR: |[A-Z0-9]{5}: )/, "");
+      const planCode = planRpcErrorCode(error);
+      if (planCode) return { status: planCode };
+      if (code === "version_conflict") return { status: "version_conflict" };
+      if (code === "product_unavailable") return { status: "product_unavailable" };
+      if (code === "unauthorized") return { status: "permission_denied" };
+      if (code === "invalid_input") return { status: "invalid_input", fieldErrors: {} };
+      return contextFailure(error);
+    }
+    if (!Array.isArray(data) || data.length !== 1) return contextFailure(new Error("Invalid product RPC response"));
+    const row = rpcRowSchema.safeParse(data[0]);
+    if (!row.success || (requestedId && row.data.product_id !== requestedId))
+      return contextFailure(new Error("Invalid product RPC row"));
+    if ((row.data.status === "success" || row.data.status === "deleted") && row.data.product_id && row.data.version !== null)
+      return { status: row.data.status, productId: row.data.product_id, version: row.data.version };
+    if (row.data.status === "invalid_input") return { status: "invalid_input", fieldErrors: {} };
+    if (row.data.status === "version_conflict") return { status: "version_conflict", version: row.data.version ?? undefined };
+    if (row.data.status === "permission_denied") return { status: "permission_denied" };
+    if (row.data.status === "product_unavailable") return { status: "product_unavailable" };
+    return contextFailure(new Error("Incomplete product RPC success"));
+  } catch (error) {
+    return contextFailure(error);
+  }
+}
+
+export async function deleteInternalProduct(id: string, version: number, attemptId: string): Promise<ProductResult> {
+  if (!uuid.safeParse(id).success || !uuid.safeParse(attemptId).success || !Number.isSafeInteger(version) || version < 0) return { status: "invalid_input", fieldErrors: {} };
+  const result = await callRpc("delete_internal_product", { p_attempt_id: attemptId, p_id: id, p_expected_version: version }, id);
+  if (result.status === "deleted") refresh(id);
+  return result;
+}
+
+export async function createInternalProduct(payload: unknown): Promise<ProductResult> {
+  const checked = validate(payload);
+  if ("errors" in checked) return { status: "invalid_input", fieldErrors: checked.errors };
+  const result = await callRpc("create_internal_product", {
+    p_attempt_id: checked.data.attempt_id ?? crypto.randomUUID(),
+    p_name: checked.data.name,
+    p_description: checked.data.description,
+    p_price: checked.data.price,
+    p_images: [],
+  });
+  if (result.status === "success") refresh(result.productId);
+  return result;
+}
+
+export async function updateInternalProduct(
+  id: string,
+  version: number,
+  payload: unknown
+): Promise<ProductResult> {
+  const checked = validate(payload);
+  if (!uuid.safeParse(id).success || !Number.isSafeInteger(version) || version < 0)
+    return { status: "invalid_input", fieldErrors: {} };
+  if ("errors" in checked) return { status: "invalid_input", fieldErrors: checked.errors };
+  const result = await callRpc(
+    "update_internal_product",
+    {
+      p_id: id,
+      p_expected_version: version,
+      p_name: checked.data.name,
+      p_description: checked.data.description,
+      p_price: checked.data.price,
+      p_images: [],
+    },
+    id
+  );
+  if (result.status === "success") refresh(id);
+  return result;
+}
+
+export async function setInternalProductActive(
+  id: string,
+  version: number,
+  active: boolean
+): Promise<ProductResult> {
+  if (!uuid.safeParse(id).success || !Number.isSafeInteger(version) || version < 0)
+    return { status: "invalid_input", fieldErrors: {} };
+  const result = await callRpc(
+    "set_internal_product_active",
+    { p_id: id, p_expected_version: version, p_active: active },
+    id
+  );
+  if (result.status === "success") refresh(id);
+  return result;
 }

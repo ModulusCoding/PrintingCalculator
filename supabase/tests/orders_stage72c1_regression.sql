@@ -1,0 +1,8 @@
+-- M7.2-C.1 disposable-DB test harness (manual). NOT EXECUTED.
+-- Do not run on a shared/production Supabase project. Populate a fixture matrix with
+-- owner/admin/operator, Free and paid Intermediate/Visionario, two enterprises.
+-- Invoke RPCs under real authenticated JWTs. Follow cases in
+-- orders_stage72c1_functional_manual.sql and concurrency_manual.md.
+-- Assertions required after each expected failure: no new orders/items/events/receipts,
+-- no counter change except a transaction that committed, unchanged old order/version/items.
+-- This file intentionally contains no writes or fabricated auth context.
